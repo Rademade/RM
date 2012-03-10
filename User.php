@@ -1,5 +1,5 @@
 <?php
-	/**
+/**
  * @class RM_User
  * @property int idUser
  * @property int idAvatar
@@ -20,10 +20,10 @@ class RM_User
 	extends
 		RM_Entity
 	implements
-		Application_Model_System_Interface_Hideable,
-		Application_Model_System_Interface_Deletable {
+		RM_Interface_Hideable,
+		RM_Interface_Deletable {
 
-	protected static $_table = 'users';
+	const TABLE_NAME = 'users';
 
 	protected static $_properties = array(
 		'idUser' => array(
@@ -33,7 +33,7 @@ class RM_User
 		),
 		'idRole' => array(
 			'type' => 'int',
-			'default' => Application_Model_System_User_Role::USER_ACCESS_BASE_ROLE_ID
+			'default' => RM_User_Role::USER_ACCESS_BASE_ROLE_ID
 		),
 		'idAvatar' => array(
 			'type' => 'int'
@@ -87,7 +87,7 @@ class RM_User
 	private $_discount;
 
 	/**
-	 * @var Application_Model_System_Photo
+	 * @var RM_Photo
 	 */
 	private $_avatar;
 
@@ -97,16 +97,16 @@ class RM_User
 	private $_city;
 
 	/**
-	 * @var Application_Model_System_User_Role
+	 * @var RM_User_Role
 	 */
 	private $_role;
 
 	/**
-	 * @var Application_Model_System_Content_Field_Process_Text
+	 * @var RM_Content_Field_Process_Text
 	 */
 	private $_textProcessor;
 	/**
-	 * @var Application_Model_System_Content_Field_Process_Line
+	 * @var RM_Content_Field_Process_Line
 	 */
 	private $_lineProcessor;
 
@@ -123,7 +123,7 @@ class RM_User
 
 	public function __construct(stdClass $data) {
 		parent::__construct($data);
-		$this->_phone = new Application_Model_System_Phone( $data->phoneNumber );
+		$this->_phone = new RM_Phone( $data->phoneNumber );
 	}
 
 	public static function create($mail, $password) {
@@ -145,7 +145,7 @@ class RM_User
 		return $this->idAvatar;
 	}
 
-	public function setAvatar(Application_Model_System_Photo $avatar) {
+	public function setAvatar(RM_Photo $avatar) {
 		$this->idAvatar = $avatar->getIdPhoto();
 		$this->_avatar = $avatar;
 	}
@@ -155,18 +155,18 @@ class RM_User
 	}
 
 	/**
-	 * @return Application_Model_System_Photo
+	 * @return RM_Photo
 	 */
 	public function getAvatar() {
-		if (!$this->_avatar instanceof Application_Model_System_Photo) {
+		if (!$this->_avatar instanceof RM_Photo) {
 			if ($this->getIdAvatar() === 0) {
-				$this->_avatar = new Application_Model_System_Photo( new Application_Model_System_Compositor( array(
+				$this->_avatar = new RM_Photo( new RM_Compositor( array(
 					'idUser' => $this->getId(),
 					'photoPath' => self::EMPTY_AVATAR_PATH
 				) ) );
 				$this->_avatar->noSave();
 			} else {
-				$this->_avatar = Application_Model_System_Photo::getById( $this->getIdAvatar() );
+				$this->_avatar = RM_Photo::getById( $this->getIdAvatar() );
 			}
 		}
 		return $this->_avatar;
@@ -195,7 +195,7 @@ class RM_User
 	}
 
 	public function setPhone($phoneNumber) {
-		$phone = new Application_Model_System_Phone($phoneNumber);
+		$phone = new RM_Phone($phoneNumber);
 		if (!$phone->isEmpty())
 			$phone->validate();
 		$this->_phone = $phone;
@@ -232,13 +232,13 @@ class RM_User
 		return $this->idRole;
 	}
 
-	public function setRole(Application_Model_System_User_Role $role) {
+	public function setRole(RM_User_Role $role) {
 		$this->idRole = $role->getId();
 	}
 
 	public function getRole() {
 		if (is_null($this->_role)) {
-			$this->_role = Application_Model_System_User_Role::getById($this->getIdRole());
+			$this->_role = RM_User_Role::getById($this->getIdRole());
 		}
 		return $this->_role;
 	}
@@ -296,11 +296,11 @@ class RM_User
 
 	private function _validateLogin(
 		$login,
-		Application_Model_System_Exception $e = null,
+		RM_Exception $e = null,
 		$isThrow
 	) {
 		if (is_null($e))
-			$e = new Application_Model_System_Exception();
+			$e = new RM_Exception();
 		$validator = new Application_Model_System_User_Validation_Login( $login );
 		$validator->format();
 		if (!$validator->isValid()) {
@@ -428,11 +428,11 @@ class RM_User
 
 	private function _validateEmail(
 		$email,
-		Application_Model_System_Exception $e = null,
+		RM_Exception $e = null,
 		$isThrow
 	) {
 		if (is_null($e))
-			$e = new Application_Model_System_Exception();
+			$e = new RM_Exception();
 		$validator = new Application_Model_System_User_Validation_Email( $email );
 		$validator->format();
 		if (!$validator->isValid()) {
@@ -453,7 +453,7 @@ class RM_User
 			$this->userMail = $email;
 			if ($needConfirm) {
 				$this->userMailStatus = self::MAIL_STATUS_NOT_VALID;
-				$mail = new Application_Model_System_Mail_MailConfirm( $this );
+				$mail = new Application_Model_Mail_MailConfirm( $this );
 				$mail->send( $email );
 			}
 		}
@@ -490,7 +490,7 @@ class RM_User
 	}
 
 	public function validate() {
-		$e = new Application_Model_System_Exception();
+		$e = new RM_Exception();
 		$this->_validateEmail($this->getEmail(), $e, false);
 		$this->_validateLogin($this->getLogin(), $e, false);
 		if (!$this->getPhone()->isEmpty())
@@ -549,15 +549,15 @@ class RM_User
 	}
 
 	private function _getLineProcessor() {
-		if (!($this->_lineProcessor instanceof Application_Model_System_Content_Field_Process_Line)) {
-			$this->_lineProcessor = Application_Model_System_Content_Field_Process_Line::init();
+		if (!($this->_lineProcessor instanceof RM_Content_Field_Process_Line)) {
+			$this->_lineProcessor = RM_Content_Field_Process_Line::init();
 		}
 		return $this->_lineProcessor;
 	}
 
 	private function _getTextProcessor() {
-		if (!($this->_textProcessor instanceof Application_Model_System_Content_Field_Process_Text)) {
-			$this->_textProcessor = Application_Model_System_Content_Field_Process_Text::init();
+		if (!($this->_textProcessor instanceof RM_Content_Field_Process_Text)) {
+			$this->_textProcessor = RM_Content_Field_Process_Text::init();
 		}
 		return $this->_textProcessor;
 	}
