@@ -2,7 +2,7 @@
 /**
 * @property int idUser
 * @property int idContent
-* @property int idPhoto
+* @property int id
 * @property string photoPath
 * @property int photoStatus
 */
@@ -13,8 +13,9 @@ class RM_Photo
 	const TABLE_NAME = 'photos';
 
 	protected static $_properties = array(
-		'idPhoto' => array(
+		'id' => array(
 			'id' => true,
+			'field' => 'idPhoto',
 			'type' => 'int'
 		),
 		'idContent' => array(
@@ -60,14 +61,22 @@ class RM_Photo
 	const CACHE_NAME = 'photo';
 
 	public function __construct($data) {
-		if ($this->isEntity()) {
-			$this->_entityWorker = new RM_Entity_Worker(
-				'RM_Photo',
-				$data,
-				RM_Photo::TABLE_NAME
-			);
+		$this->_entityWorker = new RM_Entity_Worker(get_class(), $data);
+	}
+
+	public function __get($name) {
+		$val = $this->_entityWorker->getValue($name);
+		if (is_null($val)) {
+			throw new Exception("Try to get unexpected attribute {$name}");
+		} else {
+			return $val;
 		}
-		parent::__construct($data);
+	}
+
+	public function __set($name, $value) {
+		if (is_null($this->_entityWorker->setValue($name, $value))) {
+			throw new Exception("Try to set unexpected attribute {$name}");
+		}
 	}
 
 	public static function create(RM_User $user) {
@@ -76,29 +85,8 @@ class RM_Photo
 		return $photo;
 	}
 
-	private function isEntity() {
-		return get_class() !== get_called_class();
-	}
-
-	public function __get($name) {
-		$val = ($this->isEntity()) ? $this->_entityWorker->getValue($name) : null;
-		return (is_null($val)) ? parent::__get($name) : $val;
-	}
-
-	public function __set($name, $value) {
-		$parent = true;
-		if ($this->isEntity()) {
-			$parent = is_null($this->_entityWorker->setValue($name, $value));
-		}
-		if ($parent)
-			parent::__set($name, $value);
-	}
-
 	public function save() {
-		if ($this->isEntity()) {
-			$this->_entityWorker->save();
-		}
-		parent::save();
+		$this->_entityWorker->save();
 	}
 
 	public static function getEmpty() {
@@ -138,7 +126,7 @@ class RM_Photo
 	}
 
 	public function getIdPhoto() {
-		return $this->idPhoto;
+		return $this->id;
 	}
 
 	public function getIdContent() {

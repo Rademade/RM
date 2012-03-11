@@ -1,5 +1,5 @@
 <?php
-	/**
+/**
  * @property int idPage
  * @property int idCategory
  * @property int page

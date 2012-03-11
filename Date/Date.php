@@ -1,5 +1,5 @@
 <?php 
-class RM_Date {
+class RM_Date_Date {
 	
 	private $_year;
 	private $_month;
@@ -66,7 +66,7 @@ class RM_Date {
 		return $this->getTimestamp() < time();
 	}
 
-	public function isMore(RM_Date $then) {
+	public function isMore(RM_Date_Date $then) {
 		return $this->getTimestamp() >= $then->getTimestamp();
 	}
 
@@ -130,7 +130,7 @@ class RM_Date {
 		}
 	}
 
-	public function getRangeDaysCount(RM_Date $fromDate) {
+	public function getRangeDaysCount(RM_Date_Date $fromDate) {
 		return floor( ( $this->getTimestamp() - $fromDate->getTimestamp() ) / self::DAY );
 	}
 

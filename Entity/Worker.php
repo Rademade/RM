@@ -22,20 +22,15 @@ class RM_Entity_Worker
 	/**
 	 * @param string $className
 	 * @param stdClass $data
-	 * @param $tableName
 	 */
-	public function __construct(
-		$className,
-		stdClass $data,
-		$tableName
-	) {
-		$this->_table = $tableName;
+	public function __construct($className, stdClass $data) {
 		$this->_callClassName = $className;
-		$this->_initAttributeProperties( $className );
+		$this->_initProperties( $className );
 		$this->_initEntity( $data );
 	}
 
-	private function _initAttributeProperties($className) {
+	private function _initProperties($className) {
+		$this->_table = $className::TABLE_NAME;
 		$this->_attributeProperties = call_user_func( array(
             $className,
             'getAttributesProperties'
@@ -126,7 +121,6 @@ class RM_Entity_Worker
 			$values[ $attribute->getAttributeName() ] = $attribute->getValue();
 		}
 		return serialize( array(
-            't' => $this->_table,
             'c' => $this->_callClassName,
 			'v' => $values
 		));
@@ -135,8 +129,7 @@ class RM_Entity_Worker
 	public function unserialize($serializedData) {
 		$data = unserialize( $serializedData );
 		$this->_callClassName = $data['c'];
-		$this->_table = $data['t'];
-		$this->_initAttributeProperties( $data['c'] );
+		$this->_initProperties( $data['c'] );
 		$this->_initEntity(  $data['v'] );
 	}
 

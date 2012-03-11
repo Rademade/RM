@@ -30,6 +30,27 @@ class RM_Gallery_Photo
 			'type' => 'int'
 		)
 	);
+
+	/**
+	 * @var RM_Entity_Worker
+	 */
+	private $_entityWorker;
+
+	public function __construct($data) {
+		$this->_entityWorker = new RM_Entity_Worker(get_class(), $data);
+		parent::__construct($data);
+	}
+
+	public function __get($name) {
+		$val = $this->_entityWorker->getValue($name);
+		return (is_null($val)) ? parent::__get($name) : $val;
+	}
+
+	public function __set($name, $value) {
+		if (is_null($this->_entityWorker->setValue($name, $value))) {
+			parent::__set($name, $value);
+		}
+	}
 	
 	public static function createGalleryPhoto(
 		$idGallery,
@@ -102,6 +123,12 @@ class RM_Gallery_Photo
 	public function remove(RM_User $user) {
 		$this->setStatus( RM_Interface_Deletable::STATUS_DELETED );
 		$this->save();
+	}
+
+	public function save() {
+		parent::save();
+		$this->idPhoto = $this->getIdPhoto();
+		$this->_entityWorker->save();
 	}
 		
 }

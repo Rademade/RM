@@ -8,21 +8,16 @@ abstract class RM_Entity {
 	/**
 	 * @var RM_Entity_Worker
 	 */
-	private $_dbWorker;
+	private $_entityWorker;
 
 	public function __construct($data = null) {
-		if (is_null($data)) {
+		if (is_null($data))
 			$data = new stdClass();
-		}
-		$this->_dbWorker = new RM_Entity_Worker(
-			get_called_class(),
-			$data,
-			static::TABLE_NAME
-		);
+		$this->_entityWorker = new RM_Entity_Worker(get_called_class(), $data);
 	}
 
 	public function __get($name) {
-		$val = $this->_dbWorker->getValue($name);
+		$val = $this->_entityWorker->getValue($name);
 		if (is_null($val)) {
 			throw new Exception("Try to get unexpected attribute {$name}");
 		} else {
@@ -31,13 +26,13 @@ abstract class RM_Entity {
 	}
 
 	public function __set($name, $value) {
-		if (is_null($this->_dbWorker->setValue($name, $value))) {
+		if (is_null($this->_entityWorker->setValue($name, $value))) {
 			throw new Exception("Try to set unexpected attribute {$name}");
 		}
 	}
 
 	public function save() {
-		$this->_dbWorker->save();
+		$this->_entityWorker->save();
 	}
 
 	protected static function _getStorage() {

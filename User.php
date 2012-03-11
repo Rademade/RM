@@ -77,7 +77,7 @@ class RM_User
 
 
 	/**
-	 * @var Application_Model_System_Phone
+	 * @var RM_Phone
 	 */
 	private $_phone;
 
@@ -203,7 +203,7 @@ class RM_User
 	}
 
 	/**
-	 * @return Application_Model_System_Phone
+	 * @return RM_Phone
 	 */
 	public function getPhone() {
 		return $this->_phone;

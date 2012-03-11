@@ -1,6 +1,6 @@
 <?php
 /**
- * @property int idPage
+ * @property int id
  * @property int idRoute
  * @property int idContent
  * @property int pageStatus
@@ -17,8 +17,9 @@ class RM_Page
 	const TABLE_NAME = 'pages';
 
 	protected static $_properties = array(
-		'idPage' => array(
+		'id' => array(
 			'id' => true,
+			'field' => 'idPage',
 			'type' => 'int'
 		),
 		'idRoute' => array(
@@ -54,32 +55,22 @@ class RM_Page
 	const TYPE_CATEGORY = 2;
 
 	public function __construct($data) {
-		if ($this->isEntity()) {
-			$this->_entityWorker = new RM_Entity_Worker(
-				'RM_Page',
-				$data,
-				RM_Page::TABLE_NAME
-			);
-		}
-		parent::__construct($data);
-	}
-
-	private function isEntity() {
-		return get_class() !== get_called_class();
+		$this->_entityWorker = new RM_Entity_Worker(get_class(), $data);
 	}
 
 	public function __get($name) {
-		$val = ($this->isEntity()) ? $this->_entityWorker->getValue($name) : null;
-		return (is_null($val)) ? parent::__get($name) : $val;
+		$val = $this->_entityWorker->getValue($name);
+		if (is_null($val)) {
+			throw new Exception("Try to get unexpected attribute {$name}");
+		} else {
+			return $val;
+		}
 	}
 
 	public function __set($name, $value) {
-		$parent = true;
-		if ($this->isEntity()) {
-			$parent = is_null($this->_entityWorker->setValue($name, $value));
+		if (is_null($this->_entityWorker->setValue($name, $value))) {
+			throw new Exception("Try to set unexpected attribute {$name}");
 		}
-		if ($parent)
-			parent::__set($name, $value);
 	}
 
 	protected function __setPageData( $controller, $action, $url) {
@@ -99,9 +90,9 @@ class RM_Page
 	}
 	
 	public function saveRoteDate() {
-		if (intval($this->getRoute()->idPage) !== $this->getId()) {
-			$this->getRoute()->setName( $this->getId() );
-			$this->getRoute()->idPage = $this->getId();
+		if (intval($this->getRoute()->idPage) !== $this->getIdPage()) {
+			$this->getRoute()->setName( $this->getIdPage() );
+			$this->getRoute()->idPage = $this->getIdPage();
 			$this->getRoute()->save();
 		}
 	}
@@ -109,17 +100,12 @@ class RM_Page
 	public function save() {
 		$this->idContent = $this->getContentManager()->save()->getId();
 		$this->idRoute = $this->getRoute()->save()->getId();
-		if ($this->isEntity()) {
-			$this->_entityWorker->save();
-			parent::__set('idPage', $this->idPage);
-		}
-		parent::save();
+		$this->_entityWorker->save();
 		$this->saveRoteDate();
-		return true;
 	}
-	
+
 	public function getIdPage() {
-		return $this->idPage;
+		return $this->id;
 	}
 	
 	public function getIdContent() {

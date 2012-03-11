@@ -111,7 +111,7 @@ class RM_Gallery
 	 */
 	public function getPosterPhoto() {
 		if (!($this->_poster instanceof RM_Photo)) {
-			$photos = RM_Gallery_Photo::getList(
+			$photos = RM_Gallery_Photo::getGalleryPhotos(
 				$this->getId(),
 				new RM_Query_Limits(1)
 			);
