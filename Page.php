@@ -164,10 +164,7 @@ class RM_Page
 	}
 	
 	public function setStatus($status) {
-		$status = (int)$status;
-		if ($this->getStatus() !== $status) {
-			$this->pageStatus = $status;
-		}
+		$this->pageStatus = (int)$status;
 	}
 	
 	public function getType() {
@@ -190,16 +187,16 @@ class RM_Page
 
 	public function remove() {
 		$this->setStatus(self::STATUS_DELETED);
+		$this->save();
 		$this->getContentManager()->remove();
 		$this->getRoute()->remove();
-		$this->save();
 	}
 	
 	/**
 	 * @static
 	 * @return Zend_Db_Select
 	 */
-	protected static function _getSelect() {
+	public static function _getSelect() {
 		$select = self::getDb()->select();
 		$select->from(RM_Page::TABLE_NAME, RM_Page::_getDbAttributes());
 		$select->where('pages.pageStatus != ?', self::STATUS_DELETED);

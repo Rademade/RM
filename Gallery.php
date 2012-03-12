@@ -158,5 +158,5 @@ class RM_Gallery
 		$this->setStatus( self::STATUS_DELETED );
 		$this->save();
 	}
-
+	
 }

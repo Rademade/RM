@@ -378,7 +378,7 @@ class RM_User
 	 * @static
 	 * @return Zend_Db_Select
 	 */
-	protected static function _getSelect() {
+	public static function _getSelect() {
 		$select = parent::_getSelect();
 		$select->where('users.userStatus != ?', self::STATUS_DELETED);
 		return $select;

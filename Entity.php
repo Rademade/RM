@@ -71,13 +71,18 @@ abstract class RM_Entity {
 	 * @static
 	 * @return Zend_Db_Select
 	 */
-	protected static function _getSelect() {
+	public static function _getSelect() {
 		$select = self::getDb()->select();
 		/* @var $select Zend_Db_Select */
 		$select->from(static::TABLE_NAME, static::_getDbAttributes());
 		return $select;
 	}
 
+	/**
+	 * @static
+	 * @param $id
+	 * @return static
+	 */
 	public static function getById($id) {
 		$id = (int)$id;
 		$select = static::_getSelect();
