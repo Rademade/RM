@@ -44,13 +44,29 @@ class RM_Query_Limits
 	public function getPage() {
 		return $this->_page;
 	}
+
+	public function _setPaginatorParams(Zend_Paginator $paginator) {
+		$paginator->setItemCountPerPage( $this->getLimit() );
+		$paginator->setPageRange( $this->getPageRange() );
+		$paginator->setCurrentPageNumber( $this->getPage() );
+	}
+
+	/**
+	 * @param array $items
+	 * @return array|Zend_Paginator
+	 */
+	public function getPaginator(array $items) {
+		if (is_int($this->getPage())) {
+			$items = Zend_Paginator::factory( $items );
+			$this->_setPaginatorParams( $items );
+		}
+		return $items;
+	}
 	
 	public function getResult(Zend_Db_Select $select) {
 		if (is_int($this->getPage())) {
 			$items = Zend_Paginator::factory( $select );
-			$items->setItemCountPerPage( $this->getLimit() );
-			$items->setPageRange( $this->getPageRange() );
-			$items->setCurrentPageNumber( $this->getPage() );
+			$this->_setPaginatorParams( $items );
 		} else {
 			if ($this->getLimit() !== 0) {
 				$select->limit( $this->getLimit() );

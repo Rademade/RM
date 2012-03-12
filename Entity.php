@@ -1,7 +1,7 @@
 <?php
 abstract class RM_Entity {
 
-	const TABLE_NAME = '';
+	const TABLE_NAME = null;
 
 	protected static $_properties = array();
 
@@ -36,11 +36,11 @@ abstract class RM_Entity {
 	}
 
 	protected static function _getStorage() {
-		$storge = RM_Entity_Storage::getInstance( get_called_class() );
-		if (!is_array($storge->getAttributeProperties())) {
-			$storge->parse( static::$_properties );
+		$storage = RM_Entity_Storage::getInstance( get_called_class() );
+		if (!is_array($storage->getAttributeProperties())) {
+			$storage->parse( static::$_properties );
 		}
-		return $storge;
+		return $storage;
 	}
 
 	/**
@@ -55,7 +55,7 @@ abstract class RM_Entity {
 		return static::_getStorage()->getKeyAttributeProperties();
 	}
 
-	protected static function _getDbAttributes() {
+	public static function _getDbAttributes() {
 		return static::_getStorage()->getFieldNames();
 	}
 
@@ -72,6 +72,9 @@ abstract class RM_Entity {
 	 * @return Zend_Db_Select
 	 */
 	public static function _getSelect() {
+		if (is_null(static::TABLE_NAME)) {
+			throw new Exception('Table name not setted');
+		}
 		$select = self::getDb()->select();
 		/* @var $select Zend_Db_Select */
 		$select->from(static::TABLE_NAME, static::_getDbAttributes());
@@ -93,7 +96,7 @@ abstract class RM_Entity {
 		return self::_initItem($select);
 	}
 
-	protected static function _initItem(Zend_Db_Select $select) {
+	public static function _initItem(Zend_Db_Select $select) {
 		$select->limit(1);
 		if (($data = self::getDb()->fetchRow($select)) !== false) {
 			return new static( $data );
@@ -109,7 +112,7 @@ abstract class RM_Entity {
 		);
 	}
 
-	protected static function _initList(
+	public static function _initList(
 		Zend_Db_Select $select,
 		array $queryComponents
 	) {
