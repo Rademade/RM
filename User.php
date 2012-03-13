@@ -301,7 +301,7 @@ class RM_User
 	) {
 		if (is_null($e))
 			$e = new RM_Exception();
-		$validator = new Application_Model_System_User_Validation_Login( $login );
+		$validator = new RM_User_Validation_Login( $login );
 		$validator->format();
 		if (!$validator->isValid()) {
 			$e[] = 'Login not valid';
@@ -413,7 +413,7 @@ class RM_User
 	) {
 		if (is_null($e))
 			$e = new RM_Exception();
-		$validator = new Application_Model_System_User_Validation_Email( $email );
+		$validator = new RM_User_Validation_Email( $email );
 		$validator->format();
 		if (!$validator->isValid()) {
 			$e[] = 'Email not valid';
