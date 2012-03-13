@@ -371,7 +371,6 @@ class RM_User
 
 	public function save() {
 		parent::save();
-		$this->clean();
 	}
 
 	/**
