@@ -78,8 +78,11 @@ abstract class RM_Entity {
 		$select = self::getDb()->select();
 		/* @var $select Zend_Db_Select */
 		$select->from(static::TABLE_NAME, static::_getDbAttributes());
+		static::_setSelectRules( $select );
 		return $select;
 	}
+
+	public static function _setSelectRules(Zend_Db_Select $select) {}
 
 	/**
 	 * @static
@@ -112,6 +115,16 @@ abstract class RM_Entity {
 		);
 	}
 
+	public static function getCount(RM_Query_Where $where) {
+		$select = self::getDb()->select();
+		$select->from(static::TABLE_NAME, array(
+            'count' => 'COUNT(' . static::_getKeyAttributeProperties()->getFieldName() . ')'
+		));
+		static::_setSelectRules( $select );
+		$where->improveQuery($select);
+		return (int)self::getDb()->fetchRow( $select )->count;
+	}
+
 	public static function _initList(
 		Zend_Db_Select $select,
 		array $queryComponents
@@ -122,5 +135,6 @@ abstract class RM_Entity {
 		}
 		return $list;
 	}
+
 
 }

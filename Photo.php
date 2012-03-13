@@ -192,13 +192,10 @@ class RM_Photo
 
 	/**
 	 * @static
-	 * @return Zend_Db_Select
+	 * @param $select Zend_Db_Select
 	 */
-	public static function _getSelect() {
-		$select = self::getDb()->select();
-		$select->from(RM_Photo::TABLE_NAME, RM_Photo::_getDbAttributes());
-//		$select->where(RM_Photo::TABLE_NAME . '.photoStatus != ?', RM_Interface_Deletable::STATUS_DELETED);
-		return $select;
+	public static function _setSelectRules(Zend_Db_Select $select) {
+		$select->where(RM_Photo::TABLE_NAME . '.photoStatus != ?', RM_Interface_Deletable::STATUS_DELETED);
 	}
 	
 	public function getPath(

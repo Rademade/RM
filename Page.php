@@ -191,21 +191,13 @@ class RM_Page
 		$this->getContentManager()->remove();
 		$this->getRoute()->remove();
 	}
-	
+
 	/**
 	 * @static
-	 * @return Zend_Db_Select
+	 * @param $select Zend_Db_Select
 	 */
-	public static function _getSelect() {
-		$select = self::getDb()->select();
-		$select->from(RM_Page::TABLE_NAME, RM_Page::_getDbAttributes());
+	public static function _setSelectRules(Zend_Db_Select $select) {
 		$select->where('pages.pageStatus != ?', self::STATUS_DELETED);
-		$select->join(
-			static::TABLE_NAME,
-			'pages.idPage = ' . static::TABLE_NAME . '.idPage',
-			static::_getDbAttributes()
-		);
-		return $select;
 	}
 
 }

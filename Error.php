@@ -106,23 +106,11 @@ class RM_Error
 	}
 
 	/**
-	 * @return Zend_Db_Select
+	 * @param Zend_Db_Select
+	 * @return void
 	 */
-	public static function _getSelect() {
-		$select = parent::_getSelect();
+	public static function _setSelectRules(Zend_Db_Select $select) {
 		$select->where('errorStatus != ?', self::STATUS_DELETED);
-		return $select;
-	}
-
-	public static function getCount(
-		RM_Query_Where $conditions
-	) {
-		$select = self::getDb()->select()->from('_errorLogRow', array(
-			'count'=> 'COUNT(idLogRow)'
-		));
-		$select->where('errorStatus != ?', self::STATUS_DELETED);
-		$conditions->improveQuery($select);
-		return (int)self::getDb()->fetchRow($select)->count;
 	}
 	
 	public static function getNewErrorsCount() {

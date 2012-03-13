@@ -376,29 +376,10 @@ class RM_User
 
 	/**
 	 * @static
-	 * @return Zend_Db_Select
+	 * @param Zend_Db_Select
 	 */
-	public static function _getSelect() {
-		$select = parent::_getSelect();
+	public static function _setSelectRules(Zend_Db_Select $select) {
 		$select->where('users.userStatus != ?', self::STATUS_DELETED);
-		return $select;
-	}
-
-	public static function getById($id) {
-		if (($user = self::_getCache()->load($id)) === false) {
-			$id = (int)$id;
-			$db = Zend_Registry::get('db');
-			/* @var $db Zend_Db_Adapter_Abstract */
-			$select = self::_getSelect();
-			$select->where('users.idUser = ?', intval ( $id ) )->limit(1);
-			if (($row = $db->fetchRow ( $select )) !== false) {
-				$user = new self($row);
-				$user->cache();
-			} else {
-				return null;
-			}
-		}
-		return $user;
 	}
 
 	public static function getByMail($mail) {
@@ -507,23 +488,6 @@ class RM_User
 			return true;
 	}
 
-	/**
-	 * @static
-	 * @return Zend_Cache_Core
-	 */
-	private static function _getCache() {
-		$cachemanager = Zend_Registry::get('cachemanager');
-		/* @var $cachemanager Zend_Cache_Manager */
-		return $cachemanager->getCache('user');
-	}
-
-	public function cache() {
-		self::_getCache()->save($this, $this->getId());
-	}
-
-	public function clean() {
-		self::_getCache()->remove( $this->getId() );
-	}
 
 	public function isShow() {
 		return $this->getStatus() === self::STATUS_SHOW;

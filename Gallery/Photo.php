@@ -79,13 +79,11 @@ class RM_Gallery_Photo
 
 	/**
 	 * @static
-	 * @return Zend_Db_Select
+	 * @param Zend_Db_Select
 	 */
-	public static function _getSelect() {
-		$select = parent::_getSelect();
-		$select->join('galleriesPhotos', 'galleriesPhotos.idPhoto = photos.idPhoto', self::_getDbAttributes());
+	public static function _setSelectRules(Zend_Db_Select $select) {
+		$select->join('photos', 'galleriesPhotos.idPhoto = photos.idPhoto', RM_Photo::_getDbAttributes());
 		$select->where('galleryPhotoStatus != ?', RM_Interface_Deletable::STATUS_DELETED);
-		return $select;
 	}
 	
 	public static function getGalleryPhotos(

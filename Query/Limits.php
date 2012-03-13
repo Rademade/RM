@@ -10,7 +10,7 @@ class RM_Query_Limits
 	public function __construct($limit) {
 		$this->_limit = (int)$limit;
 	}
-	
+
 	public function setPageRange($range) {
 		$this->_pageRange = (int)$range;
 		return $this;
@@ -60,6 +60,7 @@ class RM_Query_Limits
 			$items = Zend_Paginator::factory( $items );
 			$this->_setPaginatorParams( $items );
 		}
+		//TODO limit
 		return $items;
 	}
 	

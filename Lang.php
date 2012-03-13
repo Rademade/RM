@@ -92,12 +92,10 @@ class RM_Lang
 	}
 
 	/**
-	 * @return Zend_Db_Select
+	 * @param Zend_Db_Select
 	 */
-	public static function _getSelect() {
-		$select = parent::_getSelect();
+	public static function _setSelectRules(Zend_Db_Select $select) {
 		$select->where('defaultStatus != ?', self::STATUS_DELETED);
-		return $select;
 	}
 
 	public static function getById($id) {
