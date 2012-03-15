@@ -130,7 +130,7 @@ abstract class RM_User_Code {
 	public static function dropUserCode($idUser) {
 		$idUser = (int)$idUser;
 		$conditions = new RM_Query_Where();
-		$conditions->add('idUser', RM_Query_Where::TYPE_EXACTLY, $idUser);
+		$conditions->add('idUser', RM_Query_Where::EXACTLY, $idUser);
 		foreach (static::getList() as $code) {
 			$code->remove();
 		}

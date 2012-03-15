@@ -57,7 +57,7 @@ class RM_Error_Category
 	public function getErrorCount() {
 		if (!is_int($this->_rowCount)) {
 			$conditions = new RM_Query_Where();
-			$conditions->add('idLog', RM_Query_Where::TYPE_EXACTLY, $this->getId());
+			$conditions->add('idLog', RM_Query_Where::EXACTLY, $this->getId());
 			$this->_rowCount = RM_Error::getCount($conditions);
 		}
 		return $this->_rowCount;
@@ -66,8 +66,8 @@ class RM_Error_Category
 	public function getNewErrorCount() {
 		if (!is_int($this->_newRowCount)) {
 			$conditions = new RM_Query_Where();
-			$conditions->add('idLog', RM_Query_Where::TYPE_EXACTLY, $this->getId());
-			$conditions->add('errorStatus', RM_Query_Where::TYPE_EXACTLY, RM_Error::STATUS_NEW);
+			$conditions->add('idLog', RM_Query_Where::EXACTLY, $this->getId());
+			$conditions->add('errorStatus', RM_Query_Where::EXACTLY, RM_Error::STATUS_NEW);
 			$this->_newRowCount = RM_Error::getCount($conditions);
 		}
 		return $this->_newRowCount;

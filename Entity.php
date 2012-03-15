@@ -93,8 +93,7 @@ abstract class RM_Entity {
 		$id = (int)$id;
 		$select = static::_getSelect();
 		$select->where(
-			static::TABLE_NAME . '.' .static::_getKeyAttributeProperties()->getFieldName() .
-			' = ' . $id
+			static::TABLE_NAME . '.' .static::_getKeyAttributeProperties()->getFieldName() . ' = ' . $id
 		);
 		return self::_initItem($select);
 	}

@@ -24,6 +24,8 @@ class RM_Entity_Attribute {
 				return (int)$value;
 			case 'string':
 				return (string)$value;
+			case 'decimal':
+				return $value - 0.0;
 			default:
 				throw new Exception("Unknow '{$this->_getProperties()->getFieldName()}' value type");
 		}

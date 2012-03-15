@@ -115,7 +115,7 @@ class RM_Error
 	
 	public static function getNewErrorsCount() {
 		$conditions = new RM_Query_Where();
-		$conditions->add('errorStatus', RM_Query_Where::TYPE_EXACTLY, self::STATUS_NEW);
+		$conditions->add('errorStatus', RM_Query_Where::EXACTLY, self::STATUS_NEW);
 		return self::getCount( $conditions );
 	}
 	

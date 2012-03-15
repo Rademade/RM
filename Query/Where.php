@@ -9,11 +9,11 @@ class RM_Query_Where
 	 */
 	private $_conditions = array();
 	
-	const TYPE_EXACTLY = 1;
-	const TYPE_MORE = 2;
-	const TYPE_LESS = 3;
-	const TYPE_NOT = 4;
-	const TYPE_IS = 5;
+	const EXACTLY = 1;
+	const MORE = 2;
+	const LESS = 3;
+	const NOT = 4;
+	const IS = 5;
 
 	const SQL_AND = 1;
 	const SQL_OR = 2;
@@ -53,11 +53,11 @@ class RM_Query_Where
 	private function _checkCondition($type) {
 		$type = (int)$type;
 		if (in_array($type, array(
-			self::TYPE_EXACTLY,
-			self::TYPE_MORE,
-			self::TYPE_LESS,
-		    self::TYPE_NOT,
-		    self::TYPE_IS
+			self::EXACTLY,
+			self::MORE,
+			self::LESS,
+		    self::NOT,
+		    self::IS
 		))) {
 			return $type;
 		} else {
@@ -67,22 +67,22 @@ class RM_Query_Where
 	
 	private function _convertCondition($type, $value) {
 		if (is_array($value)) {
-			if ($type === self::TYPE_EXACTLY) {
+			if ($type === self::EXACTLY) {
 				return 'IN';
 			} else {
 				throw new Exception('Array value given with not exactly type');
 			}
 		} else {
 			switch ((int)$type) {
-				case self::TYPE_EXACTLY:
+				case self::EXACTLY:
 					return '=';
-				case self::TYPE_LESS:
+				case self::LESS:
 					return '<';
-				case self::TYPE_MORE:
+				case self::MORE:
 					return '>';
-				case self::TYPE_NOT:
+				case self::NOT:
 					return '!=';
-				case self::TYPE_IS:
+				case self::IS:
 					return 'IS';
 			}
 		}
