@@ -83,7 +83,7 @@ class RM_Content_Lang {
 	}
 	
 	public function setFieldContent($name, $value, $processType) {
-		$name = mb_strtolower($name);
+		$name = mb_strtolower($name, 'utf-8');
 		$this->checkField($name);
 		$field = $this->fields[ $name ];
 		/*@var $field RM_Content_Field */

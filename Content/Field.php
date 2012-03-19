@@ -175,7 +175,6 @@ class RM_Content_Field {
 	}
 	
 	public static function getList($idContent, $idLang) {
-		$db = Zend_Registry::get('db');
 		$key = $idContent . '_' .  $idLang;
 		if ( ($fields = self::getFromCache($key, self::CACHE_LIST_NAME) ) !== false) {
 			return $fields;
