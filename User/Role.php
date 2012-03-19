@@ -42,27 +42,6 @@ class RM_User_Role
 	const USER_ACCESS_BASE = 1;
 	const USER_ACCESS_BASE_ROLE_ID = 5;
 
-	public static function getById($idRole) {
-		$cachemanager = Zend_Registry::get('cachemanager');
-		$cache = $cachemanager->getCache('role');
-		if (($role = $cache->load($idRole)) !== false) {
-			return $role;
-		} else {
-			$idRole = (int)$idRole;
-			$db = Zend_Registry::get('db');
-			$select = $db->select()
-				->from('roles')
-				->where('idRole = ?', $idRole)
-				->limit(1);
-			if (($data = $db->fetchRow($select)) === false) {
-				throw new Exception('SUCH ROLE ID NOT FOUND');
-			}
-			$role = new self($data);
-			$cache->save($role);
-			return $role;
-		}
-	}
-
 	public static function clear() {
 		Zend_Registry::get('cachemanager')
 			->getCache('role')
