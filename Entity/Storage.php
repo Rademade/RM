@@ -11,7 +11,10 @@ class RM_Entity_Storage {
 	 * @var RM_Entity_Attribute_Properties
 	 */
 	private $_keyAttributeProperties;
+
 	private $_fields;
+
+	private $_entities = array();
 
 	private function __construct() {}
 
@@ -56,6 +59,14 @@ class RM_Entity_Storage {
 			}
 		}
 		return $this->_fields;
+	}
+
+	public function setEntity($key, RM_Entity &$entity){
+		$this->_entities[$key] = $entity;
+	}
+
+	public function getEntity($key) {
+		return (isset($this->_entities[$key])) ? $this->_entities[$key] : null;
 	}
 
 	public function parse($properties) {

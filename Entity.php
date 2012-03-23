@@ -91,11 +91,15 @@ abstract class RM_Entity {
 	 */
 	public static function getById($id) {
 		$id = (int)$id;
-		$select = static::_getSelect();
-		$select->where(
-			static::TABLE_NAME . '.' .static::_getKeyAttributeProperties()->getFieldName() . ' = ' . $id
-		);
-		return self::_initItem($select);
+		if (!(($item = static::_getStorage()->getEntity($id)) instanceof RM_Entity)) {
+			$select = static::_getSelect();
+			$select->where(
+				static::TABLE_NAME . '.' .static::_getKeyAttributeProperties()->getFieldName() . ' = ' . $id
+			);
+			$item = self::_initItem($select);
+			static::_getStorage()->setEntity($id, $item);
+		}
+		return $item;
 	}
 
 	public static function _initItem(Zend_Db_Select $select) {
