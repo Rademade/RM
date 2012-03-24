@@ -1,5 +1,5 @@
 <?php
-class RM_Entity_Worker
+class RM_Entity_Worker_Data
 	implements
 		Serializable {
 
@@ -95,6 +95,8 @@ class RM_Entity_Worker
 				$this->_getInsertData()
 			);
 			$this->_getKeyAttribute()->setValue( RM_Entity::getDb()->lastInsertId() );
+			$this->_changes = array();
+			return true;
 		} else {
 			if (!empty($this->_changes)) {
 				RM_Entity::getDb()->update(
@@ -102,9 +104,11 @@ class RM_Entity_Worker
 					$this->_changes,
 					$this->_getKeyAttribute()->getFieldName() . ' = ' . $this->_getKeyAttribute()->getValue()
 				);
+				$this->_changes = array();
+				return true;
 			}
 		}
-		$this->_changes = array();
+		return false;
 	}
 
 	private function _getInsertData() {
@@ -130,7 +134,7 @@ class RM_Entity_Worker
 		$data = unserialize( $serializedData );
 		$this->_callClassName = $data['c'];
 		$this->_initProperties( $data['c'] );
-		$this->_initEntity(  $data['v'] );
+		$this->_initEntity( (object)$data['v'] );
 	}
 
 }

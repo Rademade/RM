@@ -1,41 +1,66 @@
 <?php
-class RM_Content_Lang {
+/**
+* @property int idContentLang
+* @property int idContent
+* @property int idLang
+* @property int contentLangStatus
+*/
+class RM_Content_Lang
+	extends
+		RM_Entity
+	implements
+		RM_Interface_Deletable {
 
-	private $idContentLang;
-	private $idContent;
-	private $idLang;
-
-	private $changes = array();
 	private $loaded = false;
+
+	const CACHE_NAME = 'fields';
+
+	const TABLE_NAME = 'contentLangs';
+
+	protected static $_properties = array(
+		'idContentLang' => array(
+			'id' => true,
+			'type' => 'int'
+		),
+		'idContent' => array(
+			'type' => 'int'
+		),
+		'idLang' => array(
+			'type' => 'int'
+		),
+		'contentLangStatus' => array(
+			'default' => self::STATUS_UNDELETED,
+			'type' => 'int'
+		)
+ 	);
 	
 	/**
-	 * @var Application_Model_System_Content_Field[]
+	 * @var RM_Content_Field[]
 	 */
 	private $fields = array();
-	
-	const STATUS_SHOW = 1;
-	const STATUS_DROP = 2;
-	
-	const CACHE_NAME = 'contentLang';
-	const CACHE_LIST_NAME = 'contentLangList';
 
-	public function __construct(
-		$idContentLang,
-		$idContent,
-		$idLang
-	) {
-		$this->idContentLang = (int)$idContentLang;
-		$this->idContent = (int)$idContent;
-		$this->idLang = (int)$idLang;
+	public static function _setSelectRules(Zend_Db_Select $select) {
+		$select->where('contentLangStatus != ?', self::STATUS_DELETED);
 	}
-	
-	private function loadFields() {
+
+	public function loadFields() {
 		if (!$this->loaded) {
 			$this->loaded = true;
 			$this->fields = array();
-			$fields = RM_Content_Field::getList($this->getIdContent(), $this->getIdLang());
+			$where = new RM_Query_Where();
+			$where->add(
+				'idContent',
+				RM_Query_Where::EXACTLY,
+				$this->getIdContent()
+			);
+			$where->add(
+				'idLang',
+				RM_Query_Where::EXACTLY,
+				$this->getIdLang()
+			);
+			$fields = RM_Content_Field::getList($where);
 			foreach ($fields as $field) {
-				/* @var $field RM_Content_Lang */
+				/* @var $field RM_Content_Field */
 				$this->fields[ $field->getName() ] = $field;
 			}
 		}
@@ -46,16 +71,8 @@ class RM_Content_Lang {
 		$this->fields = array();
 	}
 
-	public function getId() {
-		return $this->idContentLang;
-	}
-	
 	public function setIdContent($id) {
-		$id = (int)$id;
-		if ($this->getIdContent() !== $id) {
-			$this->idContent = $id;
-			$this->changes['idContent'] = $id;
-		}
+		$this->idContent = (int)$id;
 	}
 
 	public function getIdContent() {
@@ -86,15 +103,12 @@ class RM_Content_Lang {
 		$name = mb_strtolower($name, 'utf-8');
 		$this->checkField($name);
 		$field = $this->fields[ $name ];
-		/*@var $field RM_Content_Field */
+		/* @var $field RM_Content_Field */
 		$field->setProcessMethodType( $processType );
 		$field->setContent($value);
 		return $field;
 	}
 	
-	/**
-	 * @param RM_Content_Field $name
-	 */
 	public function getField($name) {
 		$this->checkField($name);
 		return $this->fields[ $name ];
@@ -126,121 +140,70 @@ class RM_Content_Lang {
 		} else {
 			throw new Exception('Unexpected function ' . $name);
 		}
+		return null;
 	}
 
-	private function saveFields() {
+	/**
+	 * @return RM_Lang
+	 */
+	public function getLang() {
+		return RM_Lang::getById( $this->getIdLang() );
+	}
+
+	public function getContentManager() {
+		return RM_Content::getById( $this->getIdContent() );
+	}
+
+	private function _saveFields() {
 		foreach ($this->fields as $field) {
 			$field->setIdContent( $this->getIdContent() );
 			$field->save();
 		}
 	}
-	
-	public function save() {
-		$db = Zend_Registry::get('db');
-		if ($this->getId() === 0) {
-			$db->insert( 'contentLangs', array(
-				'idContent' => $this->getIdContent(),
-				'idLang' => $this->getIdLang(),
-				'contentLangStatus' => self::STATUS_SHOW
-			));
-			$this->idContentLang = (int)$db->lastInsertId();
-			$this->changes = array();
-			$this->saveFields();
-			$this->clear();
-			$this->cache();
-		} else {
-			$this->saveFields();
-			if (!empty($this->changes)) {
-				$db->update( 'contentLangs', $this->changes, 'idContentLang = ' . $this->getId() );
-				$this->changes = array();
-				$this->clear();
-				$this->cache();
-			}
-		}
+
+	public function __refreshCache() {
+		$this->getContentManager()->__refreshCache();
+	}
+
+	public function __cachePrepare() {
+		$this->loadFields();
+	}
+
+	protected function __cache() {
+		parent::__cache();
+		$this->__cacheEntity( $this->getIdContent()  . '_' . $this->getIdLang() );
 	}
 
 	public static function getByContent($idContent, $idLang) {
 		$key = $idContent . '_' . $idLang;
-		if ( ($contentLang = self::getFromCache( $key, self::CACHE_NAME ) ) === false) {
-			$db = Zend_Registry::get('db');
-			$select = $db->select()->from('contentLangs', array(
-				'idContentLang'
-			));
-			$select->where('idContent = ?', $idContent);
-			$select->where('idLang = ?', $idLang);
-			$select->where('contentLangStatus = ?', self::STATUS_SHOW);
-			$select->limit(1);
-			if ( ($data = $db->fetchRow($select)) !== false) {
-				$contentLang = new self($data->idContentLang, $idContent, $idLang);
-				$contentLang->cache();
-			} else {
-				$contentLang = new self(0, $idContent, $idLang);
+		if (is_null($contentLang = self::_getStorage()->getData($key))) {
+			if (is_null($contentLang = self::__load($key))) {
+				$select = self::_getSelect();
+				$select->where('idContent = ?', $idContent);
+				$select->where('idLang = ?', $idLang);
+				$contentLang = self::_initItem($select );
+				if (!($contentLang instanceof self)) {
+					$contentLang =  new self( new RM_Compositor( array(
+		                'idContent' => $idContent,
+		                'idLang' => $idLang,
+		            ) ) );
+				}
+				$contentLang->__cache();
 			}
+			self::_getStorage()->setData($contentLang, $key);
 		}
-		$contentLang->loadFields();
 		return $contentLang;
 	}
-	
 
-	/**
-	 * @static
-	 * @param $idContent
-	 * @return Application_Model_System_Content_Lang[]
-	 */
-	public static function getList($idContent) {
-		if ( ($result = self::getFromCache( $idContent, self::CACHE_LIST_NAME ) ) === false) {
-			$idContent = (int)$idContent;
-			$db = Zend_Registry::get('db');
-			$select = $db->select()->from('contentLangs', array(
-				'idContentLang',
-				'idLang'
-			));
-			$select->where('idContent = ?', $idContent);
-			$select->where('contentLangStatus = ?', self::STATUS_SHOW);
-			$result = array();
-			if ( ($data = $db->fetchAll($select)) !== false) {
-				foreach ($data as $row) {
-					$result[] = new self($row->idContentLang, $idContent, $row->idLang);
-				}
-			}
-			$cache = Zend_Registry::get('cachemanager')->getCache( self::CACHE_LIST_NAME );
-			$cache->save( $result, $idContent );	
-		}
-		foreach ($result as &$contentLang) {
-			$contentLang->loadFields();
-		}
-		return $result;
+	public function save() {
+		parent::save();
+		$this->_saveFields();
 	}
-	
-	public function clear() {
-		$cachemanager = Zend_Registry::get('cachemanager');
-		$cache = $cachemanager->getCache(self::CACHE_NAME);
-		$cache->remove( $this->getIdContent() . '_' . $this->getIdLang() );
-		$cache = $cachemanager->getCache(self::CACHE_LIST_NAME);
-		$cache->remove( $this->getIdContent() );
-	}
-	
-	private static function getFromCache($key, $cacheName) {
-		$cachemanager = Zend_Registry::get('cachemanager');
-		$cache = $cachemanager->getCache($cacheName);
-		return (($field = $cache->load($key)) !== false) ? $field : false;
-	}
-	
+
 	public function remove() {
-		$db = Zend_Registry::get('db');
-		$db->update('contentLangs', array(
-			'contentLangStatus' => self::STATUS_DROP
-		), 'idContentLang = ' . $this->getId());
-		foreach ($this->fields as $field) {
-			$field->remove();
-		}
-		$this->clear();
-	}
-
-	public function cache() {
-		$this->clearLoadedFields();//clear fields
-		$cache = Zend_Registry::get('cachemanager')->getCache( self::CACHE_NAME );
-		$cache->save( $this, $this->getIdContent() . '_' . $this->getIdLang() );
+		$this->contentLangStatus = self::STATUS_DELETED;
+		$this->save();
+		$this->__cleanCache();
 	}
 
 }

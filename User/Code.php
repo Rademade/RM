@@ -1,15 +1,47 @@
 <?php
-abstract class RM_User_Code {
-	
-	private $_idCode;
-	private $_idUser;
-	private $_activationCode;
-	private $_codeStatus;
-	private $_codeType;
-	private $_makeDate;
-	
-	private $_changes = array();
-	
+/**
+* @property int id
+* @property int codeType
+* @property string activationCode
+* @property int idUser
+* @property int codeStatus
+* @property int makeDate
+*/
+abstract class RM_User_Code
+	extends
+		RM_Entity {
+
+	/**
+	 * @var RM_Entity_Worker_Data
+	 */
+	private $_entityWorker;
+
+	const TABLE_NAME = 'activationCodes';
+
+	protected static $_properties = array(
+		'id' => array(
+			'id' => true,
+			'field' => 'idCode',
+			'type' => 'int'
+		),
+		'idUser' => array(
+			'type' => 'int'
+		),
+		'activationCode' => array(
+			'type' => 'string'
+		),
+		'codeStatus' => array(
+			'default' => self::STATUS_WAIT,
+			'type' => 'int'
+		),
+		'codeType' => array(
+			'type' => 'int'
+		),
+		'makeDate' => array(
+			'type' => 'int'
+		)
+	);
+
 	const STATUS_WAIT = 1;
 	const STATUS_ACTIVATE = 2;
 	const STATUS_DROPED = 3;
@@ -17,70 +49,73 @@ abstract class RM_User_Code {
 	const TYPE_FORGOT_PASSWORD = 1;
 	const TYPE_EMAIL_CONFIRM = 2;
 
-	const TABLE_NAME = 'activationCodes';
-
-	public function __construct(stdClass $data) {
-		$this->_idCode = (int)$data->idCode;
-		$this->_idUser = (int)$data->idUser;
-		$this->_activationCode = $data->activationCode;
-		$this->_codeStatus = (int)$data->codeStatus;
-		$this->_codeType = (int)$data->codeType;
-		$this->_makeDate = (int)$data->makeDate;
+	public function __construct($data) {
+		$this->_entityWorker = new RM_Entity_Worker_Data(get_class(), $data);
 	}
-	
+
+	public function __get($name) {
+		$val = $this->_entityWorker->getValue($name);
+		if (is_null($val)) {
+			throw new Exception("Try to get unexpected attribute {$name}");
+		} else {
+			return $val;
+		}
+	}
+
+	public function __set($name, $value) {
+		if (is_null($this->_entityWorker->setValue($name, $value))) {
+			throw new Exception("Try to set unexpected attribute {$name}");
+		}
+	}
+
+	public function save() {
+		if ($this->_entityWorker->save()) {
+			$this->__refreshCache();
+		}
+	}
+
 	public function getId() {
-		return $this->_idCode;
+		return $this->id;
 	}
 
 	public function getType() {
-		return $this->_codeType;
+		return $this->codeType;
 	}
 
 	public function getCode() {
-		return $this->_activationCode;
+		return $this->activationCode;
 	}
 	
 	public function getIdUser() {
-		return $this->_idUser;
+		return $this->idUser;
 	}
 	
 	public static function create(RM_User $user) {
 		return new static( new RM_Compositor( array(
 			'idUser' => $user->getId(),
 		    'activationCode' =>self::_generateCode(),
-			'codeStatus' => self::STATUS_WAIT,
 			'codeType' => static::getMyType(),
 			'makeDate' => time()
         ) ) );
 	}
 
-	/**
-	 * @static
-	 * @return Zend_Db_Select
-	 */
-	protected static function __getSelect() {
-		$db = Zend_Registry::get('db');
-		/* @var $db Zend_Db_Adapter_Abstract */
-		$select = $db->select();
-		/* @var $select Zend_Db_Select */
-		$select->from(self::TABLE_NAME, '*');
-		return $select->where('codeStatus != ?', self::STATUS_DROPED);
+	public static function getMyType(){
+		throw new Exception('You must redefine this method');
+	}
+
+	public static function _setSelectRules(Zend_Db_Select $select) {
+		$select->where('codeStatus != ?', self::STATUS_DROPED);
+		$select->where('codeType = ?', static::getMyType());
 	}
 
 	public static function getByCode($code) {
-		$select = static::__getSelect();
+		$select = self::_getSelect();
 		$select->where('activationCode = ?', mb_strtoupper(trim($code), 'UTF-8'));
-		$select->where('codeType = ?', static::getMyType());
-		$select->limit(1);
-		if (($data = Zend_Registry::get('db')->fetchRow($select)) !== false) {
-			return new static($data);
-		} else {
-			return false;
-		}
+		return self::_initItem($select);
 	}
 
 	public function getDate() {
-		return $this->_makeDate;
+		return $this->makeDate;
 	}
 
 	public function isUsed(){
@@ -88,15 +123,11 @@ abstract class RM_User_Code {
 	}
 
 	public function getStatus() {
-		return $this->_codeStatus;
+		return $this->codeStatus;
 	}
 
 	public function setStatus($status) {
-		$status = (int)$status;
-		if ($this->getStatus() !== $status) {
-			$this->_codeStatus = $status;
-			$this->_changes['codeStatus'] = $status;
-		}
+		$this->codeStatus = (int)$status;
 	}
 
 	public function setUsed() {
@@ -107,6 +138,7 @@ abstract class RM_User_Code {
 	public function remove() {
 		$this->setStatus( self::STATUS_DROPED );
 		$this->save();
+		$this->__cleanCache();
 	}
 
 	protected static function __generate($length) {
@@ -132,42 +164,10 @@ abstract class RM_User_Code {
 		$conditions = new RM_Query_Where();
 		$conditions->add('idUser', RM_Query_Where::EXACTLY, $idUser);
 		foreach (static::getList() as $code) {
+			/* @var $code RM_User_Code */
 			$code->remove();
 		}
 
 	}
 
-	/**
-	 * @return Application_Model_System_User_Code[]
-	 */
-	public static function getList() {
-		$select = static::__getSelect();
-		$select->where('codeType = ?', static::getMyType());
-		$list = RM_Query_Exec::select($select, func_get_args());
-		foreach ($list as &$code) {
-			$code = new static($code);
-		}
-		return $list;
-	}
-
-	public function save() {
-		$db = Zend_Registry::get('db');
-		/* @var $db Zend_Db_Adapter_Abstract */
-		if ($this->_idCode === 0) {
-			static::dropUserCode($this->getIdUser());
-			$db->insert(self::TABLE_NAME, array(
-				 'idUser' => $this->_idUser,
-				 'activationCode' => $this->getCode(),
-				 'codeStatus' => $this->getStatus(),
-				 'codeType' => $this->getType(),
-				 'makeDate' => $this->getDate()
-			));
-			$this->_idCode = $db->lastInsertId();
-		} else {
-			if (!empty($this->_changes)) {
-				$db->update(self::TABLE_NAME, $this->_changes, 'idCode = ' . $this->getId());
-			}
-		}
-	}
-	
 }

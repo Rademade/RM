@@ -36,10 +36,6 @@ class RM_Error_Category
 		);
 	}
 	
-	public function getId() {
-		return $this->idLog;
-	}
-
 	public function getName() {
 		return $this->logName;
 	}

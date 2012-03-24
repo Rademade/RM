@@ -14,7 +14,11 @@ class RM_Entity_Storage {
 
 	private $_fields;
 
-	private $_entities = array();
+	private $_dataStorage = array();
+	/**
+	 * @var RM_Entity_Worker_Cache
+	 */
+	private $_cacher;
 
 	private function __construct() {}
 
@@ -61,12 +65,23 @@ class RM_Entity_Storage {
 		return $this->_fields;
 	}
 
-	public function setEntity($key, RM_Entity &$entity){
-		$this->_entities[$key] = $entity;
+	public function setData($data, $key){
+		$this->_dataStorage[$key] = $data;
 	}
 
-	public function getEntity($key) {
-		return (isset($this->_entities[$key])) ? $this->_entities[$key] : null;
+	public function getData($key) {
+		return (isset($this->_dataStorage[$key])) ? $this->_dataStorage[$key] : null;
+	}
+
+	/**
+	 * @param $className
+	 * @return RM_Entity_Worker_Cache
+	 */
+	public function getCacher($className) {
+		if (!($this->_cacher instanceof RM_Entity_Worker_Cache)) {
+			$this->_cacher = new RM_Entity_Worker_Cache( $className );
+		}
+		return $this->_cacher;
 	}
 
 	public function parse($properties) {

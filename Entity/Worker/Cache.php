@@ -1,0 +1,63 @@
+<?php
+class RM_Entity_Worker_Cache
+	implements
+		Serializable {
+
+	/**
+	 * @var Zend_Cache_Core
+	 */
+	private $_cache;
+
+	private $_cacheName;
+
+	public function __construct($className) {
+		$this->_cacheName = $className::CACHE_NAME;
+		$this->_initCache();
+	}
+
+	private function _initCache() {
+		$cm = Zend_Registry::get('cachemanager');
+		/* @var $cm Zend_Cache_Manager */
+		if (!is_null($this->_cacheName)) {
+			$this->_cache = $cm->getCache( $this->_cacheName );
+		}
+	}
+
+	public function clean($tag) {
+		if ($this->_cache instanceof Zend_Cache_Core) {
+			$this->_cache ->clean(
+			    Zend_Cache::CLEANING_MODE_MATCHING_TAG,
+				(is_array($tag)) ? $tag : array($tag)
+			);
+		}
+	}
+
+	public function cache($data, $key, $tags) {
+		if ($this->_cache instanceof Zend_Cache_Core) {
+			$this->_cache->save( $data, $key, $tags);
+		}
+	}
+
+	public function load($key) {
+		if ($this->_cache instanceof Zend_Cache_Core) {
+			$data = $this->_cache->load($key);
+			if ($data != false) {
+				return $data;
+			}
+		}
+		return null;
+	}
+
+	public function serialize() {
+		return serialize(array(
+			'c' => $this->_cacheName
+        ));
+	}
+
+	public function unserialize($serializedData) {
+		$data = unserialize( $serializedData );
+		$this->_cacheName = $data['c'];
+		$this->_initCache();
+	}
+
+}

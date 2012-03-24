@@ -3,21 +3,37 @@ abstract class RM_Entity {
 
 	const TABLE_NAME = null;
 
+	const CACHE_NAME = null;
+
 	protected static $_properties = array();
 
 	/**
-	 * @var RM_Entity_Worker
+	 * @var RM_Entity_Worker_Data
 	 */
-	private $_entityWorker;
+	private $_dataWorker;
+
+	/**
+	 * @var RM_Entity_Worker_Cache
+	 */
+	protected $_cacheWorker;
 
 	public function __construct($data = null) {
 		if (is_null($data))
 			$data = new stdClass();
-		$this->_entityWorker = new RM_Entity_Worker(get_called_class(), $data);
+		$this->_dataWorker = new RM_Entity_Worker_Data( get_called_class(), $data);
+		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_called_class());
+	}
+
+	/* Manipulation data block */
+
+	public function getId() {
+		return $this->__get(
+			static::_getKeyAttributeProperties()->getName()
+		);
 	}
 
 	public function __get($name) {
-		$val = $this->_entityWorker->getValue($name);
+		$val = $this->_dataWorker->getValue($name);
 		if (is_null($val)) {
 			throw new Exception("Try to get unexpected attribute {$name}");
 		} else {
@@ -26,22 +42,51 @@ abstract class RM_Entity {
 	}
 
 	public function __set($name, $value) {
-		if (is_null($this->_entityWorker->setValue($name, $value))) {
+		if (is_null($this->_dataWorker->setValue($name, $value))) {
 			throw new Exception("Try to set unexpected attribute {$name}");
 		}
 	}
 
 	public function save() {
-		$this->_entityWorker->save();
+		if ($this->_dataWorker->save()) {
+			$this->__refreshCache();
+		}
 	}
 
-	protected static function _getStorage() {
-		$storage = RM_Entity_Storage::getInstance( get_called_class() );
-		if (!is_array($storage->getAttributeProperties())) {
-			$storage->parse( static::$_properties );
-		}
-		return $storage;
+	/* Cache data block */
+
+	public function __refreshCache() {
+		$this->__cache();
 	}
+
+	protected function __cachePrepare() {
+
+	}
+
+	protected function __getCacheTags() {
+		return array((string)$this->getId());
+	}
+
+	protected function __cacheEntity($key) {
+		$this->_cacheWorker->cache($this, $key, $this->__getCacheTags());
+	}
+	
+	protected function __cache() {
+		$this->__cachePrepare();
+		$this->__cacheEntity( $this->getId() );
+	}
+
+	protected function __cleanCache() {
+		$this->_cacheWorker->clean( (string)$this->getId() );
+	}
+
+	protected static function __load($key) {
+		return static::_getStorage()
+			->getCacher(get_called_class())
+			->load( $key );
+	}
+
+	/* Attribute process block */
 
 	/**
 	 * @static
@@ -59,6 +104,8 @@ abstract class RM_Entity {
 		return static::_getStorage()->getFieldNames();
 	}
 
+	/* Load entities block */
+
 	/**
 	 * @static
 	 * @return Zend_Db_Adapter_Abstract
@@ -66,6 +113,8 @@ abstract class RM_Entity {
 	public static function getDb() {
 		return Zend_Registry::get('db');
 	}
+
+	public static function _setSelectRules(Zend_Db_Select $select) {}
 
 	/**
 	 * @static
@@ -82,8 +131,6 @@ abstract class RM_Entity {
 		return $select;
 	}
 
-	public static function _setSelectRules(Zend_Db_Select $select) {}
-
 	/**
 	 * @static
 	 * @param $id
@@ -91,13 +138,16 @@ abstract class RM_Entity {
 	 */
 	public static function getById($id) {
 		$id = (int)$id;
-		if (!(($item = static::_getStorage()->getEntity($id)) instanceof RM_Entity)) {
-			$select = static::_getSelect();
-			$select->where(
-				static::TABLE_NAME . '.' .static::_getKeyAttributeProperties()->getFieldName() . ' = ' . $id
-			);
-			$item = self::_initItem($select);
-			static::_getStorage()->setEntity($id, $item);
+		if (is_null($item = static::_getStorage()->getData($id))) {
+			if (is_null($item = static::__load($id))) {
+				$select = static::_getSelect();
+				$select->where(
+					static::TABLE_NAME . '.' .static::_getKeyAttributeProperties()->getFieldName() . ' = ' . $id
+				);
+				$item = static::_initItem($select);
+				$item->__cache();
+			}
+			static::_getStorage()->setData($item, $id);
 		}
 		return $item;
 	}
@@ -139,5 +189,14 @@ abstract class RM_Entity {
 		return $list;
 	}
 
+	/* Entity storage data block */
+
+	protected static function _getStorage() {
+		$storage = RM_Entity_Storage::getInstance( get_called_class() );
+		if (!is_array($storage->getAttributeProperties())) {
+			$storage->parse( static::$_properties );
+		}
+		return $storage;
+	}
 
 }

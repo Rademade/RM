@@ -14,6 +14,8 @@ class RM_Page
 		RM_Interface_Deletable,
 		RM_Interface_Contentable {
 
+	const CACHE_NAME = 'page';
+
 	const TABLE_NAME = 'pages';
 
 	protected static $_properties = array(
@@ -38,10 +40,13 @@ class RM_Page
 	);
 
 	/**
-	 * @var RM_Entity_Worker
+	 * @var RM_Entity_Worker_Data
 	 */
-	private $_entityWorker;
-
+	private $_dataWorker;
+	/**
+	 * @var RM_Entity_Worker_Cache
+	 */
+	protected $_cacheWorker;
 	/**
 	 * @var RM_Content
 	 */
@@ -55,11 +60,12 @@ class RM_Page
 	const TYPE_CATEGORY = 2;
 
 	public function __construct($data) {
-		$this->_entityWorker = new RM_Entity_Worker(get_class(), $data);
+		$this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
+		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
 	}
 
 	public function __get($name) {
-		$val = $this->_entityWorker->getValue($name);
+		$val = $this->_dataWorker->getValue($name);
 		if (is_null($val)) {
 			throw new Exception("Try to get unexpected attribute {$name}");
 		} else {
@@ -68,7 +74,7 @@ class RM_Page
 	}
 
 	public function __set($name, $value) {
-		if (is_null($this->_entityWorker->setValue($name, $value))) {
+		if (is_null($this->_dataWorker->setValue($name, $value))) {
 			throw new Exception("Try to set unexpected attribute {$name}");
 		}
 	}
@@ -100,7 +106,9 @@ class RM_Page
 	public function save() {
 		$this->idContent = $this->getContentManager()->save()->getId();
 		$this->idRoute = $this->getRoute()->save()->getId();
-		$this->_entityWorker->save();
+		if ($this->_dataWorker->save()) {
+			$this->__refreshCache();
+		}
 		$this->saveRoteDate();
 	}
 
@@ -190,6 +198,7 @@ class RM_Page
 		$this->save();
 		$this->getContentManager()->remove();
 		$this->getRoute()->remove();
+		$this->__cleanCache();
 	}
 
 	/**

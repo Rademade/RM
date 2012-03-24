@@ -15,6 +15,7 @@ class RM_Lang
 		RM_Interface_Hideable,
 		RM_Interface_Deletable {
 
+	const CACHE_NAME = 'lang';
 
 	const TABLE_NAME = 'langs';
 
@@ -51,11 +52,6 @@ class RM_Lang
 	 * @var RM_Photo
 	 */
 	private $photo = null;
-	private $changes = array();
-	
-	const LIST_CACHE = 'LIST';
-	const DEFAULT_LANG_CAHCE = 'DEFAULT';
-
 
 	public static function create(
 		$isoName,
@@ -65,10 +61,6 @@ class RM_Lang
 		$lang->setIsoName( $isoName );
 		$lang->setName( $langName );
 		return $lang;
-	}
-	
-	public function getId() {
-		return $this->idLang;
 	}
 	
 	public function getPhoto() {
@@ -98,22 +90,10 @@ class RM_Lang
 		$select->where('defaultStatus != ?', self::STATUS_DELETED);
 	}
 
-	public static function getById($id) {
-		$select = self::_getSelect();
-		$select->where('idLang = ?', $id);
-		return self::_initItem($select);
-	}
-	
-	public static function getByIsoName($iso) {
-		$select = self::_getSelect();
-		$select->where('idLang = ?', $iso);
-		return self::_initItem($select);
-	}
-	
-	public static function getByUrl($url) {
-		$select = self::_getSelect();
-		$select->where('idLang = ?', $url);
-		return self::_initItem($select);
+	public function __getCacheTags() {
+		return array(
+			'lang_' . $this->getId()
+		);
 	}
 
     /**
@@ -164,7 +144,6 @@ class RM_Lang
 			throw new Exception('NAME NOT ARE TO SHORT');
 		}
 		$this->langName = $name;
-		$this->changes['langName'] = $this->getName();
 	}
 	
 	/**
@@ -222,7 +201,6 @@ class RM_Lang
 	private function removeDefault() {
 		if ($this->isDefault()) {
 			$this->defaultStatus = 0;
-			$this->changes['defaultStatus'] = 0;
 			$this->save();
 		}
 	}
@@ -231,7 +209,6 @@ class RM_Lang
 		if (!$this->isDefault()) {
 			self::getDefault()->removeDefault();
 			$this->defaultStatus = 1;
-			$this->changes['defaultStatus'] = 1;
 		}
 		$this->save();
 	}
@@ -276,6 +253,7 @@ class RM_Lang
 			$this->setStatus(self::STATUS_DELETED);
 			//TODO need to delete content langs
 			$this->save();
+			$this->__cleanCache();
 		}
 	}
 

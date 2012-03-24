@@ -2,12 +2,15 @@
 /**
 * @property int idGalleryPhoto
 * @property int idGallery
-* @property mixed galleryPhotoPosition
-* @property mixed galleryPhotoStatus
-*/
+* @property int galleryPhotoPosition
+* @property int galleryPhotoStatus
+* @property int idPhoto
+ */
 class RM_Gallery_Photo
 	extends
 		RM_Photo {
+
+	const CACHE_NAME = 'galleriesPhotos';
 
 	const TABLE_NAME = 'galleriesPhotos';
 
@@ -32,22 +35,27 @@ class RM_Gallery_Photo
 	);
 
 	/**
-	 * @var RM_Entity_Worker
+	 * @var RM_Entity_Worker_Data
 	 */
-	private $_entityWorker;
+	private $_dataWorker;
+	/**
+	 * @var RM_Entity_Worker_Cache
+	 */
+	protected $_cacheWorker;
 
 	public function __construct($data) {
-		$this->_entityWorker = new RM_Entity_Worker(get_class(), $data);
+		$this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
+		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
 		parent::__construct($data);
 	}
 
 	public function __get($name) {
-		$val = $this->_entityWorker->getValue($name);
+		$val = $this->_dataWorker->getValue($name);
 		return (is_null($val)) ? parent::__get($name) : $val;
 	}
 
 	public function __set($name, $value) {
-		if (is_null($this->_entityWorker->setValue($name, $value))) {
+		if (is_null($this->_dataWorker->setValue($name, $value))) {
 			parent::__set($name, $value);
 		}
 	}
@@ -75,6 +83,10 @@ class RM_Gallery_Photo
 	
 	public function getIdGallery() {
 		return $this->idGallery;
+	}
+
+	public function getGallery() {
+		return RM_Gallery::getById( $this->getIdGallery() );
 	}
 
 	/**
@@ -117,16 +129,21 @@ class RM_Gallery_Photo
 	public function setStatus($status) {
 		$this->galleryPhotoStatus = (int)$status;
 	}
+
+	public function __refreshCache() {
+		$this->getGallery()->__refreshCache();
+	}
 	
 	public function remove(RM_User $user) {
 		$this->setStatus( RM_Interface_Deletable::STATUS_DELETED );
 		$this->save();
+		//TODO clean
 	}
 
 	public function save() {
 		parent::save();
 		$this->idPhoto = $this->getIdPhoto();
-		$this->_entityWorker->save();
+		$this->_dataWorker->save();
 	}
-		
+
 }

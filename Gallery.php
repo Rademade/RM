@@ -10,6 +10,8 @@ class RM_Gallery
 		RM_Interface_Hideable,
 		RM_Interface_Deletable {
 
+	const CACHE_NAME = 'galleries';
+
 	const TABLE_NAME = 'galleries';
 
 	protected static $_properties = array(
@@ -35,10 +37,6 @@ class RM_Gallery
 	public static function create() {
 		$gallery = new self();
 		return $gallery;
-	}
-
-	public function getId() {
-		return $this->idGallery;
 	}
 
 	public function setStatus($statusGallery) {
@@ -140,6 +138,11 @@ class RM_Gallery
 		}
 	}
 
+	public function __cachePrepare() {
+		$this->getPosterPhoto();
+		$this->getPhotos();
+	}
+
 	public function isShow() {
 		return $this->getStatus() === self::STATUS_SHOW;
 	}
@@ -157,6 +160,7 @@ class RM_Gallery
 	public function remove() {
 		$this->setStatus( self::STATUS_DELETED );
 		$this->save();
+		$this->__cleanCache();
 	}
 	
 }

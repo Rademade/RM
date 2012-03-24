@@ -114,7 +114,6 @@ class RM_User
 	const MAIL_STATUS_NOT_VALID = 2;
 
 	const PASSWORD_SALT = 'ade533142f8b5123asd156e';
-	const CACHE_NAME = 'user';
 	const EMPTY_AVATAR_PATH = 'default-avatar.png';
 
 	const FAIL_LOGIN_RESOLVE = 50;
@@ -131,10 +130,6 @@ class RM_User
 		$user->setEmail($mail, false);
 		$user->setPassword($password);
 		return $user;
-	}
-
-	public function getId() {
-		return $this->idUser;
 	}
 
 	public function getFailLoginCount() {
@@ -509,6 +504,7 @@ class RM_User
 	public function remove() {
 		$this->setStatus(self::STATUS_DELETED);
 		$this->save();
+		$this->__cleanCache();
 	}
 
 	private function _getLineProcessor() {

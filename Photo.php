@@ -10,6 +10,8 @@ class RM_Photo
 	extends
 		RM_Entity {
 
+	const CACHE_NAME = 'photos';
+
 	const TABLE_NAME = 'photos';
 
 	protected static $_properties = array(
@@ -42,9 +44,13 @@ class RM_Photo
 	 */
 	private $_content = null;
 	/**
-	 * @var RM_Entity_Worker
+	 * @var RM_Entity_Worker_Data
 	 */
-	private $_entityWorker;
+	private $_dataWorker;
+	/**
+	 * @var RM_Entity_Worker_Cache
+	 */
+	protected $_cacheWorker;
 	/**
 	 * @var bool
 	 */
@@ -58,14 +64,13 @@ class RM_Photo
 	const ERROR_NOT_FOUND = 'Photo not found';
 	const ERROR_WRONG_FILE = 'You can upload only images';
 
-	const CACHE_NAME = 'photo';
-
 	public function __construct($data) {
-		$this->_entityWorker = new RM_Entity_Worker(get_class(), $data);
+		$this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
+		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
 	}
 
 	public function __get($name) {
-		$val = $this->_entityWorker->getValue($name);
+		$val = $this->_dataWorker->getValue($name);
 		if (is_null($val)) {
 			throw new Exception("Try to get unexpected attribute {$name}");
 		} else {
@@ -74,7 +79,7 @@ class RM_Photo
 	}
 
 	public function __set($name, $value) {
-		if (is_null($this->_entityWorker->setValue($name, $value))) {
+		if (is_null($this->_dataWorker->setValue($name, $value))) {
 			throw new Exception("Try to set unexpected attribute {$name}");
 		}
 	}
@@ -86,7 +91,7 @@ class RM_Photo
 	}
 
 	public function save() {
-		$this->_entityWorker->save();
+		$this->_dataWorker->save();
 	}
 
 	public static function getEmpty() {
@@ -165,20 +170,6 @@ class RM_Photo
 		return PUBLIC_PATH . self::SAVE_PATH . $this->getPhotoPath();
 	}
 
-	/**
-	 * @static
-	 * @return Zend_Cache_Core
-	 */
-	private static function _getCache() {
-		$manager = Zend_Registry::get('cachemanager');
-		/* @var $manager Zend_Cache_Manager */
-		return $manager->getCache( self::CACHE_NAME );
-	}
-	
-	private function clearCache() {
-		self::_getCache()->remove($this->getIdPhoto());
-	}
-	
 	private static function getProportionPath($width, $height) {
 		$proportions = intval($width/$height*100)/100;
 		return join('', array(
@@ -266,7 +257,7 @@ class RM_Photo
 		) {
 			$this->setStatus( RM_Interface_Deletable::ACTION_DELETE );
 			$this->save();
-			$this->clearCache();
+			$this->__cleanCache();
 		} else {
 			throw new Exception('Access photo error');
 		}

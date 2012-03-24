@@ -11,6 +11,8 @@ class RM_User_Role
 	extends
 		RM_Entity {
 
+	const CACHE_NAME = 'role';
+
 	const TABLE_NAME = 'roles';
 
 	protected static $_properties = array(
@@ -41,16 +43,6 @@ class RM_User_Role
 	
 	const USER_ACCESS_BASE = 1;
 	const USER_ACCESS_BASE_ROLE_ID = 5;
-
-	public static function clear() {
-		Zend_Registry::get('cachemanager')
-			->getCache('role')
-			->clean();
-	}
-	
-	public function getId() {
-		return $this->idRole;
-	}
 
 	public function getShortDesc() {
 		return $this->shortDesc;

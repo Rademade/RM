@@ -66,10 +66,6 @@ class RM_Error
 		return date('d.m.Y H:i:s', strtotime($this->errorTime));
 	}
 	
-	public function getId() {
-		return $this->idError;
-	}
-	
 	public function getStatus() {
 		return $this->errorStatus;
 	}
@@ -89,6 +85,7 @@ class RM_Error
 	public function remove() {
 		$this->setStatus(self::STATUS_DELETED);
 		$this->save();
+		$this->__cleanCache();
 	}
 
 	public function read() {

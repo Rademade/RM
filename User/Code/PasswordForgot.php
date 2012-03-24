@@ -1,17 +1,46 @@
 <?php
+/**
+* @property int idCode
+* @property string newPassword
+*/
 class RM_User_Code_PasswordForgot
 	extends
 		RM_User_Code {
 
-	private $_newPassword;
+	/**
+	 * @var RM_Entity_Worker_Data
+	 */
+	private $_entityWorker;
 
-	const TABLE_NAME_PASSWORDS = 'forgotPasswords';
+	const TABLE_NAME = 'forgotPasswords';
 
-	private $_changes = array();
+	protected static $_properties = array(
+		'idForgotCode' => array(
+			'id' => true,
+			'type' => 'int'
+		),
+		'idCode' => array(
+			'type' => 'int'
+		),
+		'newPassword' => array(
+			'type' => 'string'
+		)
+	);
 
-	public function __construct(stdClass $data) {
-		$this->_newPassword = $data->newPassword;
+	public function __construct($data) {
 		parent::__construct($data);
+		$this->_entityWorker = new RM_Entity_Worker_Data(get_class(), $data);
+	}
+
+	public function __get($name) {
+		$val = $this->_entityWorker->getValue($name);
+		return (is_null($val)) ? parent::__get($name) : $val;
+	}
+
+	public function __set($name, $value) {
+		if (is_null($this->_entityWorker->setValue($name, $value))) {
+			parent::__set($name, $value);
+		}
 	}
 
 	public static function create(RM_User $user) {
@@ -26,43 +55,28 @@ class RM_User_Code_PasswordForgot
 	}
 
 	private function _generatePassword() {
-		$this->_newPassword = self::__generate( rand(6, 10) );
-		$this->_changes['newPassword'] = $this->_newPassword;
+		$this->newPassword = self::__generate( rand(6, 10) );
 	}
 
 	public function getPassword() {
-		return $this->_newPassword;
+		return $this->newPassword;
 	}
 
-	/**
-	 * @static
-	 * @return Zend_Db_Select
-	 */
-	protected static function __getSelect() {
-		$select = parent::__getSelect();
-		return $select->join(
-			self::TABLE_NAME_PASSWORDS,
-			self::TABLE_NAME . '.idCode = ' . self::TABLE_NAME_PASSWORDS . '.idCode',
-			array('newPassword')
+	public static function _setSelectRules(Zend_Db_Select $select) {
+		parent::_setSelectRules( $select );
+		$select->join(
+			RM_User_Code::TABLE_NAME,
+			RM_User_Code::TABLE_NAME .  '.idCode = ' . self::TABLE_NAME . '.idCode',
+			RM_User_Code::_getDbAttributes()
 		);
+		parent::_setSelectRules( $select );
 	}
 
 	public function save() {
-		$insert = $this->getId() === 0;
 		parent::save();
-		$db = Zend_Registry::get('db');
-		/* @var $db Zend_Db_Adapter_Abstract */
-		if ($insert) {
-			$db->insert(self::TABLE_NAME_PASSWORDS, array(
-				'idCode' => $this->getId(),
-			    'newPassword' => $this->getPassword()
-            ));
-			$this->_changes = array();
-		} else {
-			if (!empty($this->_changes)) {
-				$db->update(self::TABLE_NAME, $this->_changes, 'idCode = ' . $this->getId());
-				$this->_changes = array();
-			}
+		$this->idCode = parent::getId();
+		if ($this->_entityWorker->save()) {
+			$this->__refreshCache();
 		}
 	}
 

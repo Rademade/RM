@@ -1,98 +1,106 @@
 <?php
-class RM_Content_Field {
-	
-	private $idField;
-	private $idContent;
-	private $idLang;
-	private $processType;
-	private $fieldContent;
+/**
+* @property int idField
+* @property int idContent
+* @property int idLang
+* @property int idFieldName
+* @property string fieldContent
+* @property int processType
+* @property int fieldStatus
+*/
+class RM_Content_Field
+	extends
+		RM_Entity
+	implements
+		RM_Interface_Deletable {
+
+	const CACHE_NAME = 'fields';
+
+	const TABLE_NAME = 'fieldsContent';
+
+	protected static $_properties = array(
+		'idField' => array(
+			'id' => true,
+			'type' => 'int'
+		),
+		'idContent' => array(
+			'type' => 'int'
+		),
+		'idLang' => array(
+			'type' => 'int'
+		),
+		'idFieldName' => array(
+			'type' => 'int'
+		),
+		'processType' => array(
+			'default' => RM_Content_Field_Process::PROCESS_TYPE_LINE,
+			'type' => 'int'
+		),
+		'fieldContent' => array(
+			'type' => 'string'
+		),
+		'fieldStatus' => array(
+			'default' => self::STATUS_UNDELETED,
+ 			'type' => 'int'
+		)
+	);
 
 	/**
 	 * @var RM_Content_Field_Process
 	 */
-	private $process;
+	private $_process;
 
 	/**
 	 * @var RM_Content_Field_Name
 	 */
-	private $fieldName;
-	private $changes = array();
-	
-	const STATUS_SHOW = 1;
-	const STATUS_DROP = 2;
-	
-	const CACHE_NAME = 'field';
-	const CACHE_LIST_NAME = 'fieldList';
-	
-	public function  __construct(
-		$idField,
-		$idContent,
-		$idLang,
-		RM_Content_Field_Name $fieldName,
-		$processType,
-		$fieldContent
-	) {
-		$this->idField = (int)$idField;
-		$this->idContent = (int)$idContent;
-		$this->idLang = (int)$idLang;
-		$this->fieldName = $fieldName;
-		$this->processType = (int)$processType;
-		$this->fieldContent = $fieldContent;
+	private $_fieldName;
+
+	public function  __construct(stdClass $data) {
+		parent::__construct($data);
+		$this->_fieldName = RM_Content_Field_Name::getById( $data->idFieldName );
 	}
 
-	public static function init($data) {
-		return new self(
-			$data->idField,
-			$data->idContent,
-			$data->idLang,
-			RM_Content_Field_Name::getById( $data->idFieldName ),
-			$data->processType,
-			$data->fieldContent
-		);
+	public static function _setSelectRules(Zend_Db_Select $select) {
+		$select->where('fieldStatus != ?', self::STATUS_DELETED);
 	}
 
-	public function getId() {
-		return $this->idField;
+	public function getIdName() {
+		return $this->idFieldName;
 	}
-	
+
 	public function setIdContent($id) {
-		$id = (int)$id;
-		if ($this->getIdContent() !== $id) {
-			$this->idContent = $id;
-			$this->changes['idContent'] = $id;
-		}
+		$this->idContent = (int)$id;
 	}
-	
+
 	public function getIdContent() {
 		return $this->idContent;
 	}
-	
+
 	public function getIdLang() {
 		return $this->idLang;
 	}
-	
+
 	/**
 	 * @name getFiledName
 	 * @return RM_Content_Field_Name
 	 */
 	public function getFiledName() {
-		return $this->fieldName;
+		return $this->_fieldName;
 	}
-		
+
 	public function getName() {
 		return $this->getFiledName()->getName();
 	}
-	
+
 	public function getContent() {
 		return $this->fieldContent;
 	}
-	
+
 	public function setProcessMethodType($type) {
 		$type = (int)$type;
 		if ($this->getProcessMethodType() !== $type) {
-			$this->process = null;
+			$this->_process = null;
 			$this->processType = $type;
-			$this->changes['processType'] = $type;
 		}
 	}
 
@@ -101,12 +109,12 @@ class RM_Content_Field {
 	}
 
 	public function getProcessMethod() {
-		if (!($this->process instanceof RM_Content_Field_Process)) {
-			$this->process = RM_Content_Field_Process::getByType( $this->getProcessMethodType() );
+		if (!($this->_process instanceof RM_Content_Field_Process)) {
+			$this->_process = RM_Content_Field_Process::getByType( $this->getProcessMethodType() );
 		}
-		return $this->process;
+		return $this->_process;
 	}
-	
+
 	public function getInitialContent() {
 		return $this->getProcessMethod()->getInitialContent(
 			$this->getContent()
@@ -122,157 +130,72 @@ class RM_Content_Field {
 	public function setContent($content) {
 		if ($this->getInitialContent() !== $content) {
 			$content = $this->getProcessMethod()->getParsedContent($content);
-			$this->changes['fieldContent'] = $content;
 			$this->fieldContent = $content;
 		}
+	}
+
+	public function getContentLang() {
+		return RM_Content_Lang::getByContent(
+			$this->getIdContent(),
+			$this->getIdLang()
+		);
 	}
 
 	public function isEmptyContent() {
 		return ($this->getContent() === '' || is_null($this->getContent()));//TODO all empty types
 	}
 
-	public static function getByName(
-		$name,
-		$idContent,
-		$idLang
-	) {
-		$key = self::generateCacheKey($name, $idContent, $idLang);
-		if ( ($field = self::getFromCache($key, self::CACHE_NAME) ) === false) {
-			$db = Zend_Registry::get('db');
-			$select = $db->select()->from( 'fieldsContent', array(
-				'idField',
-				'processType',
-				'fieldContent'
-			));
-			$select->where( 'idContent = ?', $idContent );
-			$select->where( 'idLang = ?', $idLang );
-			$fieldName = RM_Content_Field_Name::getByName($name);
-			$select->where( 'idFieldName = ?', $fieldName->getId() );
-			$select->where( 'fieldStatus = ?', self::STATUS_SHOW);
-			$select->limit(1);
-			if ( ($data = $db->fetchRow($select)) !== false ) {
-				$field = new self(
-					$data->idField,
-					$idContent,
-					$idLang,
-					$fieldName,
-					$data->processType,
-					$data->fieldContent
-				);
-			} else {
-				$field = new self(
-					0,
-					$idContent,
-					$idLang,
-					$fieldName,
-					RM_Content_Field_Process::PROCESS_TYPE_TEXT, //TODO default process type, very hard
-					''
-				);
+	public function __refreshCache() {
+		foreach (RM_Content_Lang::getByContent(
+			$this->getIdContent(),
+	        $this->getIdLang()
+		) as $contentLang) {
+			/* @var $contentLang RM_Content_Lang */
+			$contentLang->__refreshCache();
+		}
+	}
+
+	protected function __cache() {
+		parent::__cache();
+		$this->__cacheEntity( join('_', array(
+            $this->getIdName(),
+            $this->getIdContent(),
+            $this->getIdLang()
+        )));
+	}
+
+	public static function getByName($name, $idContent, $idLang) {
+		$idFieldName = RM_Content_Field_Name::getByName( $name )->getId();
+		$key = join('_', array(
+			$idFieldName,
+		    $idContent,
+		    $idLang
+        ));
+		if (is_null($field = self::_getStorage()->getData($key))) {
+			if (is_null($field = self::__load($key))) {
+				$select = self::_getSelect();
+				$select->where('idContent = ?', $idContent);
+				$select->where('idLang = ?', $idLang);
+				$select->where('idFieldName = ?', $idFieldName);
+				$field = self::_initItem($select );
+				if (is_null($field)) {
+					$field =  new self( new RM_Compositor( array(
+		                'idContent' =>$idContent,
+		                'idLang' => $idLang,
+					    'idFieldName' => $idFieldName
+		            ) ) );
+				}
+				$field->__cache();
 			}
-			$field->cache();
+			self::_getStorage()->setData($field, $key);
 		}
 		return $field;
 	}
-	
-	public static function getList($idContent, $idLang) {
-		$key = $idContent . '_' .  $idLang;
-		if ( ($fields = self::getFromCache($key, self::CACHE_LIST_NAME) ) !== false) {
-			return $fields;
-		}
-		$db = Zend_Registry::get('db');
-		$select = $db->select()->from( 'fieldsContent', array(
-			'idField',
-			'idContent',
-			'idLang',
-			'idFieldName',
-			'processType',
-			'fieldContent'
-		));
-		$select->where( 'idContent = ?', $idContent );
-		$select->where( 'idLang = ?', $idLang );
-		$select->where( 'fieldStatus = ?', self::STATUS_SHOW);
-		$result = array();
-		if ( ($data = $db->fetchAll($select)) !== false ) {
-			foreach ($data as $row) {
-				$result[] = self::init($row);
-			}
-			$cachemanager = Zend_Registry::get('cachemanager');
-			$cache = $cachemanager->getCache('fieldList');
-			$cache->save($result, $key);
-		}
-		return $result;
-	}
-	
-	public function save() {
-		$db = Zend_Registry::get('db');
-		if ($this->getId() === 0) {
-			if (!$this->isEmptyContent()) {
-				$db->insert( 'fieldsContent', array(
-					'idContent' => $this->getIdContent(),
-					'idLang' => $this->getIdLang(),
-					'idFieldName' => $this->getFiledName()->getId(),
-					'processType' => $this->getProcessMethodType(),
-					'fieldContent' => $this->getContent(),
-					'fieldStatus' => self::STATUS_SHOW
-				) );
-				$this->idField = (int)$db->lastInsertId();
-				$this->changes = array();
-				$this->clear();
-				$this->cache();
-				return true;
-			}
-		} else {
-			if (!empty($this->changes)) {
-				$db->update( 'fieldsContent', $this->changes, 'idField = ' . $this->getId() );
-				$this->changes = array();
-				$this->clear();
-				$this->cache();
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public function remove() {
-		$db = Zend_Registry::get('db');
-		$db->update('fieldsContent', array(
-			'fieldStatus' => self::STATUS_DROP
-		), 'idField = ' . $this->getId());
-		$this->clear();
-	}
-	
-	private static function generateCacheKey($name, $idContent, $idLang) {
-		return md5($name) . '_' . $idContent . '_' . $idLang;
-	}
-	
-	private function getCacheKey() {
-		return self::generateCacheKey(
-			$this->getName(),
-			$this->getIdContent(),
-			$this->getIdLang()
-		);
-	}
-	
-	public static function getFromCache($key, $cacheName) {
-		$cachemanager = Zend_Registry::get('cachemanager');
-		$cache = $cachemanager->getCache($cacheName);
-		return (($field = $cache->load($key)) !== false) ? $field : false;
-	}
-	
-	public function clear() {
-		$cachemanager = Zend_Registry::get('cachemanager');
-		//one
-		$cache = $cachemanager->getCache(self::CACHE_NAME);
-		$cache->remove( $this->getCacheKey() );
-		//in list		
-		$cache = $cachemanager->getCache(self::CACHE_LIST_NAME);
-		$cache->remove( $this->getIdContent() . '_' . $this->getIdLang() );
-	}
 
-	public function cache() {
-		$cachemanager = Zend_Registry::get('cachemanager');
-		$cache = $cachemanager->getCache(self::CACHE_NAME);
-		$cache->save($this, $this->getCacheKey());
+	public function remove() {
+		$this->fieldStatus = self::STATUS_DELETED;
+		$this->save();
+		$this->__cleanCache();
 	}
 
 }
