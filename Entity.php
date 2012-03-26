@@ -12,6 +12,8 @@ abstract class RM_Entity {
 	 */
 	private $_dataWorker;
 
+	private $_calledClass;
+
 	/**
 	 * @var RM_Entity_Worker_Cache
 	 */
@@ -20,8 +22,8 @@ abstract class RM_Entity {
 	public function __construct($data = null) {
 		if (is_null($data))
 			$data = new stdClass();
-		$this->_dataWorker = new RM_Entity_Worker_Data( get_called_class(), $data);
-		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_called_class());
+		$this->_calledClass = get_called_class();
+		$this->_dataWorker = new RM_Entity_Worker_Data($this->_calledClass, $data);
 	}
 
 	/* Manipulation data block */
@@ -53,8 +55,35 @@ abstract class RM_Entity {
 		}
 	}
 
-	/* Cache data block */
+	/* Cache data block list */
 
+	protected static function _clearCacheList($key) {
+		static::_getStorage()
+			->getCacher(get_called_class())
+			->remove( $key );
+	}
+
+	protected static function _loadList($key) {
+		return static::_getStorage()
+			->getCacher(get_called_class())
+			->load( $key );
+	}
+
+	protected function _cacheList(array $data, $key) {
+		return static::_getStorage()
+			->getCacher(get_called_class())
+			->cache($data, $key, array());
+	}
+
+
+	/* Cache data block item */
+	public function _getCacheWorker() {
+		if (is_null($this->_cacheWorker)) {
+			$this->_cacheWorker = new RM_Entity_Worker_Cache($this->_calledClass);
+		}
+		return $this->_cacheWorker;
+	}
+	
 	public function __refreshCache() {
 		$this->__cache();
 	}
@@ -68,16 +97,16 @@ abstract class RM_Entity {
 	}
 
 	protected function __cacheEntity($key) {
-		$this->_cacheWorker->cache($this, $key, $this->__getCacheTags());
+		$this->_getCacheWorker()->cache($this, $key, $this->__getCacheTags());
 	}
-	
+
 	protected function __cache() {
 		$this->__cachePrepare();
 		$this->__cacheEntity( $this->getId() );
 	}
 
 	protected function __cleanCache() {
-		$this->_cacheWorker->clean( (string)$this->getId() );
+		$this->_getCacheWorker()->clean( (string)$this->getId() );
 	}
 
 	protected static function __load($key) {

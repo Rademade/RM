@@ -31,10 +31,9 @@ class RM_Entity_Worker_Data
 
 	private function _initProperties($className) {
 		$this->_table = $className::TABLE_NAME;
-		$this->_attributeProperties = call_user_func( array(
-            $className,
-            'getAttributesProperties'
-        ) );
+		$this->_attributeProperties = call_user_func(
+            $className . '::getAttributesProperties'
+        );
 	}
 
 	/**
@@ -42,13 +41,15 @@ class RM_Entity_Worker_Data
 	 * @throws Exception
 	 */
 	private function _initEntity($data) {
-		foreach ($this->_attributeProperties as $attributeProperty) {
-			$attribute = new RM_Entity_Attribute( $attributeProperty );//create attribute
-			if (isset( $data->{ $attribute->getFieldName() } )) {//set attribute value
-				$attribute->setValue( $data->{ $attribute->getFieldName() } );
+		$c = sizeof($this->_attributeProperties);
+		for ($i = 0; $i < $c; ++$i) {
+			$attribute = new RM_Entity_Attribute( $this->_attributeProperties[$i] );//create attribute
+			$name = $attribute->getFieldName();
+			if (isset( $data->{$name} )) {//set attribute value
+				$attribute->setValue( $data->{$name} );
 			}
 			$this->_attributes[ $attribute->getAttributeName() ] = $attribute;//set attribute to attributes array
-			if ($attributeProperty->isKey()) {//set key attribute
+			if ($this->_attributeProperties[$i]->isKey()) {//set key attribute
 				$this->_key = $attribute->getAttributeName();
 			}
 		}
@@ -124,17 +125,17 @@ class RM_Entity_Worker_Data
 		foreach ($this->_attributes as $attribute) {
 			$values[ $attribute->getAttributeName() ] = $attribute->getValue();
 		}
-		return serialize( array(
+		return json_encode( array(
             'c' => $this->_callClassName,
 			'v' => $values
 		));
 	}
 
 	public function unserialize($serializedData) {
-		$data = unserialize( $serializedData );
-		$this->_callClassName = $data['c'];
-		$this->_initProperties( $data['c'] );
-		$this->_initEntity( (object)$data['v'] );
+		$data = json_decode( $serializedData );
+		$this->_callClassName = $data->c;
+		$this->_initProperties( $data->c );
+		$this->_initEntity( $data->v );
 	}
 
 }

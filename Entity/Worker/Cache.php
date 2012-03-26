@@ -41,22 +41,25 @@ class RM_Entity_Worker_Cache
 	public function load($key) {
 		if ($this->_cache instanceof Zend_Cache_Core) {
 			$data = $this->_cache->load($key);
-			if ($data != false) {
+			if ($data !== false) {
 				return $data;
 			}
 		}
 		return null;
 	}
 
-	public function serialize() {
-		return serialize(array(
-			'c' => $this->_cacheName
-        ));
+	public function remove($key) {
+		if ($this->_cache instanceof Zend_Cache_Core) {
+			$this->_cache->remove($key);
+		}
 	}
 
-	public function unserialize($serializedData) {
-		$data = unserialize( $serializedData );
-		$this->_cacheName = $data['c'];
+	public function serialize() {
+		return $this->_cacheName;
+	}
+
+	public function unserialize($cacheName) {
+		$this->_cacheName = $cacheName;
 		$this->_initCache();
 	}
 

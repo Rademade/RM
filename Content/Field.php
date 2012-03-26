@@ -146,13 +146,10 @@ class RM_Content_Field
 	}
 
 	public function __refreshCache() {
-		foreach (RM_Content_Lang::getByContent(
+		RM_Content_Lang::getByContent(
 			$this->getIdContent(),
 	        $this->getIdLang()
-		) as $contentLang) {
-			/* @var $contentLang RM_Content_Lang */
-			$contentLang->__refreshCache();
-		}
+		)->__refreshCache();
 	}
 
 	protected function __cache() {

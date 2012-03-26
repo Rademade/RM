@@ -88,7 +88,7 @@ class RM_Entity_Storage {
 		$this->_attributeProperties = array();
 		foreach ($properties as $attribute => $property) {
 			$attributeProperties = new RM_Entity_Attribute_Properties($attribute, $property);
-			$this->_attributeProperties[ $attributeProperties->getFieldName() ] = $attributeProperties;
+			$this->_attributeProperties[] = $attributeProperties;
 		}
 	}
 

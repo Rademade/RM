@@ -23,6 +23,8 @@ class RM_User
 		RM_Interface_Hideable,
 		RM_Interface_Deletable {
 
+	const CACHE_NAME = 'users';
+
 	const TABLE_NAME = 'users';
 
 	protected static $_properties = array(

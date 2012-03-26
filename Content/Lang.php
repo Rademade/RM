@@ -174,6 +174,12 @@ class RM_Content_Lang
 		$this->__cacheEntity( $this->getIdContent()  . '_' . $this->getIdLang() );
 	}
 
+	/**
+	 * @static
+	 * @param $idContent
+	 * @param $idLang
+	 * @return RM_Content_Lang
+	 */
 	public static function getByContent($idContent, $idLang) {
 		$key = $idContent . '_' . $idLang;
 		if (is_null($contentLang = self::_getStorage()->getData($key))) {

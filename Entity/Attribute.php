@@ -7,19 +7,12 @@ class RM_Entity_Attribute {
 	private $_attributeProperties;
 	private $_value;
 
-	public function __construct(RM_Entity_Attribute_Properties &$properties) {
+	public function __construct(RM_Entity_Attribute_Properties $properties) {
 		$this->_attributeProperties = $properties;
 	}
 
-	/**
-	 * @return RM_Entity_Attribute_Properties
-	 */
-	private function _getProperties() {
-		return $this->_attributeProperties;
-	}
-
 	protected function _parseValue($value) {
-		switch ($this->_getProperties()->getType()) {
+		switch ($this->_attributeProperties->getType()) {
 			case 'int':
 				return (int)$value;
 			case 'string':
@@ -28,16 +21,16 @@ class RM_Entity_Attribute {
 			case 'float':
 				return $value - 0.0;
 			default:
-				throw new Exception("Unknow '{$this->_getProperties()->getFieldName()}' value type");
+				throw new Exception("Unknow '{$this->_attributeProperties->getFieldName()}' value type");
 		}
 	}
 
 	public function getAttributeName() {
-		return $this->_getProperties()->getName();
+		return $this->_attributeProperties->getName();
 	}
 
 	public function getFieldName() {
-		return $this->_getProperties()->getFieldName();
+		return $this->_attributeProperties->getFieldName();
 	}
 
 	public function setValue($value) {
@@ -46,7 +39,7 @@ class RM_Entity_Attribute {
 
 	public function getValue() {
 		if (is_null($this->_value)) {
-			$this->setValue( $this->_getProperties()->getDefault() );
+			$this->setValue( $this->_attributeProperties->getDefault() );
 		}
 		return $this->_value;
 	}

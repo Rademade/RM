@@ -26,6 +26,8 @@ class RM_Block
 	 */
 	private $_content = null;
 
+	const CACHE_NAME = 'block';
+
 	const TABLE_NAME = 'blocks';
 
 	protected static $_properties = array(
