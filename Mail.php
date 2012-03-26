@@ -25,6 +25,7 @@ abstract class RM_Mail {
 	protected function getView() {
 		$view = new Zend_View();
 		$view->setScriptPath($this->cnf['mail']['viewPath']);
+		$view->setHelperPath($this->cnf['view']['helperPath']);
 		return $view;
 	}
 	

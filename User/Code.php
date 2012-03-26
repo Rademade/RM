@@ -69,9 +69,7 @@ abstract class RM_User_Code
 	}
 
 	public function save() {
-		if ($this->_entityWorker->save()) {
-			$this->__refreshCache();
-		}
+		if ($this->_entityWorker->save());
 	}
 
 	public function getId() {
@@ -138,7 +136,6 @@ abstract class RM_User_Code
 	public function remove() {
 		$this->setStatus( self::STATUS_DROPED );
 		$this->save();
-		$this->__cleanCache();
 	}
 
 	protected static function __generate($length) {

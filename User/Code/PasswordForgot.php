@@ -75,9 +75,7 @@ class RM_User_Code_PasswordForgot
 	public function save() {
 		parent::save();
 		$this->idCode = parent::getId();
-		if ($this->_entityWorker->save()) {
-			$this->__refreshCache();
-		}
+		$this->_entityWorker->save();
 	}
 
 }

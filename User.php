@@ -442,8 +442,10 @@ class RM_User
 
 
 	public function getPurchasesAmount() {
-		//TODO
-		return 0;
+		$where = new RM_Query_Where();
+		$where->add('idUser', RM_Query_Where::EXACTLY, $this->getId());
+		$where->add('orderStatus', RM_Query_Where::EXACTLY, Application_Model_Order::STATUS_DONE);
+		return Application_Model_Order::getPurseSum($where);
 	}
 
 	public function getDiscount() {
