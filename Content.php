@@ -67,7 +67,9 @@ class RM_Content
 	}
 
 	public static function create() {
-		$content = new self(0, RM_Lang::getCurrent()->getId());
+		$content = new self( new RM_Compositor( array(
+            'idLang' => RM_Lang::getCurrent()->getId()
+        ) ) );
 		$content->addContentLang( RM_Lang::getCurrent() );
 		return $content;
 	}
