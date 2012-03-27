@@ -59,6 +59,10 @@ class RM_Gallery_Photo
 			parent::__set($name, $value);
 		}
 	}
+
+	public function getIdPhoto() {
+		return $this->idPhoto;
+	}
 	
 	public static function createGalleryPhoto(
 		$idGallery,
@@ -144,6 +148,7 @@ class RM_Gallery_Photo
 		parent::save();
 		$this->idPhoto = $this->getIdPhoto();
 		$this->_dataWorker->save();
+		$this->getGallery()->__refreshCache();
 	}
 
 }

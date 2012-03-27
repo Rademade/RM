@@ -63,6 +63,7 @@ class RM_Gallery
 			($this->getMaxPosition() + 1),
 			$photo
 		);
+		$this->__refreshCache();
 	}
 	
 	/**
@@ -136,6 +137,7 @@ class RM_Gallery
 			$photos[ $i ] = $photo;
 			++$i;
 		}
+		$this->__refreshCache();
 	}
 
 	public function __cachePrepare() {
