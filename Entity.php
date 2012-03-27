@@ -122,11 +122,11 @@ abstract class RM_Entity {
 	 * @return RM_Entity_Attribute_Properties[]
 	 */
 	public static function getAttributesProperties() {
-		return static::_getStorage()->getAttributeProperties();
+		return static::_getStorage()->getProperties();
 	}
 
 	protected static function &_getKeyAttributeProperties() {
-		return static::_getStorage()->getKeyAttributeProperties();
+		return static::_getStorage()->getKeyProperties();
 	}
 
 	public static function _getDbAttributes() {
@@ -222,7 +222,7 @@ abstract class RM_Entity {
 
 	protected static function _getStorage() {
 		$storage = RM_Entity_Storage::getInstance( get_called_class() );
-		if (!is_array($storage->getAttributeProperties())) {
+		if (!is_array($storage->getProperties())) {
 			$storage->parse( static::$_properties );
 		}
 		return $storage;

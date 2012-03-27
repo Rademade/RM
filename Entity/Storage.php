@@ -6,11 +6,11 @@ class RM_Entity_Storage {
 	/**
 	 * @var RM_Entity_Attribute_Properties[]
 	 */
-	private $_attributeProperties;
+	private $_properties;
 	/**
 	 * @var RM_Entity_Attribute_Properties
 	 */
-	private $_keyAttributeProperties;
+	private $_keyProperties;
 
 	private $_fields;
 
@@ -19,8 +19,6 @@ class RM_Entity_Storage {
 	 * @var RM_Entity_Worker_Cache
 	 */
 	private $_cacher;
-
-	private function __construct() {}
 
 	/**
 	 * @static
@@ -37,28 +35,25 @@ class RM_Entity_Storage {
 	/**
 	 * @return RM_Entity_Attribute_Properties[]
 	 */
-	public function &getAttributeProperties() {
-		return $this->_attributeProperties;
+	public function getProperties() {
+		return $this->_properties;
 	}
 
-	public function &getKeyAttributeProperties() {
-		if (!($this->_keyAttributeProperties instanceof RM_Entity_Attribute_Properties)) {
-			foreach ($this->getAttributeProperties() as $attributeProperties) {
+	public function &getKeyProperties() {
+		if (!($this->_keyProperties instanceof RM_Entity_Attribute_Properties)) {
+			foreach ($this->_properties as $attributeProperties) {
 				if ($attributeProperties->isKey()) {
-					$this->_keyAttributeProperties = $attributeProperties;
+					$this->_keyProperties = $attributeProperties;
 				}
 			}
-			if (!($this->_keyAttributeProperties instanceof RM_Entity_Attribute_Properties)) {
-				throw new Exception('Key attribute undefined');
-			}
 		}
-		return $this->_keyAttributeProperties;
+		return $this->_keyProperties;
 	}
 
-	public function &getFieldNames() {
+	public function getFieldNames() {
 		if (!is_array($this->_fields)) {
 			$this->_fields = array();
-			foreach ($this->getAttributeProperties() as $attribute) {
+			foreach ($this->_properties as $attribute) {
 				array_push($this->_fields, $attribute->getFieldName());
 			}
 		}
@@ -85,10 +80,12 @@ class RM_Entity_Storage {
 	}
 
 	public function parse($properties) {
-		$this->_attributeProperties = array();
+		$this->_properties = array();
 		foreach ($properties as $attribute => $property) {
-			$attributeProperties = new RM_Entity_Attribute_Properties($attribute, $property);
-			$this->_attributeProperties[] = $attributeProperties;
+			$this->_properties[] = new RM_Entity_Attribute_Properties(
+				$attribute,
+				$property
+			);
 		}
 	}
 
