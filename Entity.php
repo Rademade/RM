@@ -220,7 +220,7 @@ abstract class RM_Entity {
 
 	/* Entity storage data block */
 
-	protected static function _getStorage() {
+	protected static function &_getStorage() {
 		$storage = RM_Entity_Storage::getInstance( get_called_class() );
 		if (!is_array($storage->getProperties())) {
 			$storage->parse( static::$_properties );

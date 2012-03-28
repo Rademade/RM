@@ -70,8 +70,6 @@ class RM_Entity_Worker_Data
 	public function getValue($name) {
 		if ($this->_isExistAttribute( $name )) {
 			return $this->_attributes[ $name ]->getValue();
-		} else {
-			return null;
 		}
 	}
 
@@ -85,8 +83,6 @@ class RM_Entity_Worker_Data
 				return true;
 			}
 			return false;
-		} else {
-			return null;
 		}
 	}
 
@@ -126,17 +122,17 @@ class RM_Entity_Worker_Data
 		foreach ($this->_attributes as $attribute) {
 			$values[ $attribute->getName() ] = $attribute->getValue();
 		}
-		return json_encode( array(
+		return serialize( array(
             'c' => $this->_callClassName,
 			'v' => $values
-		));
+		) );
 	}
 
 	public function unserialize($serializedData) {
-		$data = json_decode( $serializedData );
-		$this->_callClassName = $data->c;
-		$this->_initProperties( $data->c );
-		$this->_initEntity( $data->v );
+		$data = unserialize( $serializedData );
+		$this->_callClassName = $data['c'];
+		$this->_initProperties( $data['c'] );
+		$this->_initEntity( (object)$data['v'] );
 	}
 
 }

@@ -22,7 +22,6 @@ class RM_Entity_Attribute {
 		} else {
 			throw new Exception("Unknow '{$this->_properties->getFieldName()}' value type");
 		}
-		unset($type);
 	}
 
 	public function getName() {

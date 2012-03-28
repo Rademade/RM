@@ -35,7 +35,7 @@ class RM_Entity_Storage {
 	/**
 	 * @return RM_Entity_Attribute_Properties[]
 	 */
-	public function getProperties() {
+	public function &getProperties() {
 		return $this->_properties;
 	}
 
@@ -50,7 +50,7 @@ class RM_Entity_Storage {
 		return $this->_keyProperties;
 	}
 
-	public function getFieldNames() {
+	public function &getFieldNames() {
 		if (!is_array($this->_fields)) {
 			$this->_fields = array();
 			foreach ($this->_properties as $attribute) {
@@ -72,7 +72,7 @@ class RM_Entity_Storage {
 	 * @param $className
 	 * @return RM_Entity_Worker_Cache
 	 */
-	public function getCacher($className) {
+	public function &getCacher($className) {
 		if (!($this->_cacher instanceof RM_Entity_Worker_Cache)) {
 			$this->_cacher = new RM_Entity_Worker_Cache( $className );
 		}

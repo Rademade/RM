@@ -16,10 +16,9 @@ class RM_Entity_Worker_Cache
 	}
 
 	private function _initCache() {
-		$cm = Zend_Registry::get('cachemanager');
 		/* @var $cm Zend_Cache_Manager */
 		if (!is_null($this->_cacheName)) {
-			$this->_cache = $cm->getCache( $this->_cacheName );
+			$this->_cache = Zend_Registry::get('cachemanager')->getCache( $this->_cacheName );
 		}
 	}
 
