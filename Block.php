@@ -139,6 +139,7 @@ class RM_Block
 		$this->blockStatus = (int)$status;
 	}
 
+
 	public function show() {
 		if ($this->getStatus() !== self::STATUS_SHOW) {
 			$this->setStatus(self::STATUS_SHOW);
@@ -151,6 +152,11 @@ class RM_Block
 			$this->setStatus(self::STATUS_HIDE);
 			$this->save();
 		}
+	}
+
+	public function save() {
+		$this->idContent = $this->getContentManager()->save()->getId();
+		parent::save();
 	}
 	
 	public function remove() {
