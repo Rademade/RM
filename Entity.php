@@ -174,9 +174,7 @@ abstract class RM_Entity {
 					static::TABLE_NAME . '.' .static::_getKeyAttributeProperties()->getFieldName() . ' = ' . $id
 				);
 				$item = static::_initItem($select);
-				if (!is_null($item)) {
-					$item->__cache();
-				}
+				$item->__cache();
 			}
 			static::_getStorage()->setData($item, $id);
 		}
