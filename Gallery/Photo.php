@@ -44,9 +44,9 @@ class RM_Gallery_Photo
 	protected $_cacheWorker;
 
 	public function __construct($data) {
+		parent::__construct($data);
 		$this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
 		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
-		parent::__construct($data);
 	}
 
 	public function __get($name) {

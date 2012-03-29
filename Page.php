@@ -1,6 +1,6 @@
 <?php
 /**
- * @property int id
+ * @property int idPage
  * @property int idRoute
  * @property int idContent
  * @property int pageStatus
@@ -19,9 +19,8 @@ class RM_Page
 	const TABLE_NAME = 'pages';
 
 	protected static $_properties = array(
-		'id' => array(
+		'idPage' => array(
 			'id' => true,
-			'field' => 'idPage',
 			'type' => 'int'
 		),
 		'idRoute' => array(
@@ -113,7 +112,7 @@ class RM_Page
 	}
 
 	public function getIdPage() {
-		return $this->id;
+		return $this->idPage;
 	}
 
 	public function getIdContent() {

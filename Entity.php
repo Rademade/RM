@@ -77,7 +77,7 @@ abstract class RM_Entity {
 
 
 	/* Cache data block item */
-	public function _getCacheWorker() {
+	protected function _getCacheWorker() {
 		if (is_null($this->_cacheWorker)) {
 			$this->_cacheWorker = new RM_Entity_Worker_Cache($this->_calledClass);
 		}
