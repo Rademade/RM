@@ -138,7 +138,7 @@ abstract class RM_User_Code
 		$this->save();
 	}
 
-	protected static function __generate($length) {
+	public static function __generate($length) {
 		$key = '';
 		$characters = '0123456789abcdefghijklmnopqrstuvwxyz';
 		for ($p = 0; $p < $length; $p++) {

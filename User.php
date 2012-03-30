@@ -124,11 +124,11 @@ class RM_User
 
 	public function __construct(stdClass $data) {
 		parent::__construct($data);
-		$this->_phone = new RM_Phone( $data->phoneNumber );
+        $this->_phone = new RM_Phone( $data->phoneNumber );
 	}
 
 	public static function create($mail, $password) {
-		$user = new self( new stdClass() );
+		$user = new self( new RM_Compositor() );
 		$user->setEmail($mail, false);
 		$user->setPassword($password);
 		return $user;
@@ -509,6 +509,15 @@ class RM_User
 		$this->setStatus(self::STATUS_DELETED);
 		$this->save();
 		$this->__cleanCache();
+	}
+
+	public function getAccounts() {
+		$where = new RM_Query_Where();
+		$where->add('idUser', RM_Query_Where::EXACTLY, $this->getId());
+		return Application_Model_User_Account::getList(
+			$where,
+			new RM_Query_Limits(2)
+		);
 	}
 
 	private function _getLineProcessor() {
