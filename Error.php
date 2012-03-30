@@ -30,7 +30,7 @@ class RM_Error
 			'type' => 'int'
 		),
 		'errorTime' => array(
-			'type' => 'int'
+			'type' => 'string'
 		),
 		'errorText' => array(
 			'type' => 'string'
