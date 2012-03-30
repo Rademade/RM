@@ -45,6 +45,7 @@ class RM_Error
 			'type' => 'string'
 		),
 		'errorStatus' => array(
+			'default' => self::STATUS_NEW,
 			'type' => 'int'
 		)
 	);
@@ -117,16 +118,14 @@ class RM_Error
 	}
 	
 	public static function addLogRow($name, $error) {
-		$error = new self(
-			null,
-			RM_Error_Category::getByLog($name)->getId(),
-			date('Y-m-d H:i:s'),
-			(!is_string($error)) ? serialize($error) : $error,
-			json_encode($_SERVER),
-			json_encode($_REQUEST),
-			isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'php-cli',
-			self::STATUS_NEW
-		);
+		$error = new self( new RM_Compositor( array(
+			'idLog' => RM_Error_Category::getByLog($name)->getId(),
+			'errorTime' => date('Y-m-d H:i:s'),
+			'errorText' => !is_string($error) ? serialize($error) : $error,
+			'errorServer' => json_encode($_SERVER),
+			'errorRequestData' => json_encode($_REQUEST),
+			'errorUrl' => isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'php-cli'
+		) ) );
 		$error->save();
 		return $error;
 	}
