@@ -342,6 +342,10 @@ class RM_User
 		}
 	}
 
+	public function setIdCity($idCity) {
+		$this->idCity = $idCity;
+	}
+	
 	public function setCity($name) {
 		$this->_city = Application_Model_City::getByName( $name );
 		$this->idCity = $this->_city->getId();
