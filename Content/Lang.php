@@ -162,6 +162,7 @@ class RM_Content_Lang
 	}
 
 	public function __refreshCache() {
+		parent::__refreshCache();
 		$this->getContentManager()->__refreshCache();
 	}
 
