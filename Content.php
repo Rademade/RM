@@ -194,7 +194,14 @@ class RM_Content
 		}
 	}
 
+	private function _clearContents() {
+		$this->_loadedContentLangs = false;
+		$this->_contentLangs = array();
+		$this->_settedLangs = array();
+	}
+
 	public function __cachePrepare() {
+		$this->_clearContents();
 		foreach ($this->getAllContentLangs() as $contentLang) {
 			$contentLang->loadFields();
 		}

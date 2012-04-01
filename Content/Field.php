@@ -149,7 +149,7 @@ class RM_Content_Field
 		RM_Content_Lang::getByContent(
 			$this->getIdContent(),
 	        $this->getIdLang()
-		)->__refreshCache();
+		)->__cleanCache();
 	}
 
 	protected function __cache() {

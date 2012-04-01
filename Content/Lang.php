@@ -161,18 +161,8 @@ class RM_Content_Lang
 		}
 	}
 
-	public function __refreshCache() {
-		parent::__refreshCache();
-		$this->getContentManager()->__refreshCache();
-	}
-
 	public function __cachePrepare() {
 		$this->loadFields();
-	}
-
-	protected function __cache() {
-		parent::__cache();
-		$this->__cacheEntity( $this->getIdContent()  . '_' . $this->getIdLang() );
 	}
 
 	/**
@@ -182,22 +172,15 @@ class RM_Content_Lang
 	 * @return RM_Content_Lang
 	 */
 	public static function getByContent($idContent, $idLang) {
-		$key = $idContent . '_' . $idLang;
-		if (is_null($contentLang = self::_getStorage()->getData($key))) {
-			if (is_null($contentLang = self::__load($key))) {
-				$select = self::_getSelect();
-				$select->where('idContent = ?', $idContent);
-				$select->where('idLang = ?', $idLang);
-				$contentLang = self::_initItem($select );
-				if (!($contentLang instanceof self)) {
-					$contentLang =  new self( new RM_Compositor( array(
-		                'idContent' => $idContent,
-		                'idLang' => $idLang,
-		            ) ) );
-				}
-				$contentLang->__cache();
-			}
-			self::_getStorage()->setData($contentLang, $key);
+		$select = self::_getSelect();
+		$select->where('idContent = ?', $idContent);
+		$select->where('idLang = ?', $idLang);
+		$contentLang = self::_initItem($select );
+		if (!($contentLang instanceof self)) {
+			$contentLang = new self( new RM_Compositor( array(
+                'idContent' => $idContent,
+                'idLang' => $idLang,
+            ) ) );
 		}
 		return $contentLang;
 	}
@@ -205,7 +188,10 @@ class RM_Content_Lang
 	public function save() {
 		parent::save();
 		$this->_saveFields();
+		$this->__refreshCache();
+		$this->getContentManager()->__refreshCache();
 	}
+
 
 	public function remove() {
 		$this->contentLangStatus = self::STATUS_DELETED;
