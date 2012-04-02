@@ -121,7 +121,7 @@ class RM_Gallery
 		return $this->_poster;
 	}
 	
-	public function reload() {
+	private function _reload() {
 		$this->_isPhotosLoaded = false;
 		$this->getPhotos();
 	}
@@ -141,8 +141,8 @@ class RM_Gallery
 	}
 
 	public function __cachePrepare() {
+		$this->_reload();
 		$this->getPosterPhoto();
-		$this->getPhotos();
 	}
 
 	public function isShow() {
