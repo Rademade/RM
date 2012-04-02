@@ -151,4 +151,8 @@ class RM_Gallery_Photo
 		$this->getGallery()->__refreshCache();
 	}
 
+	public function _toJSON() {
+		return parent::_toJSON();
+	}
+
 }

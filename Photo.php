@@ -188,17 +188,21 @@ class RM_Photo
 	public static function _setSelectRules(Zend_Db_Select $select) {
 		$select->where(RM_Photo::TABLE_NAME . '.photoStatus != ?', RM_Interface_Deletable::STATUS_DELETED);
 	}
-	
+
+	private function _getPath() {
+		return self::SAVE_PATH . $this->getPhotoPath();
+	}
+
 	public function getPath(
 		$width = null,
 		$height = null,
 		$proportion = true
 	) {
 		if (is_null($width) && is_null($height)) {//original
-			return self::SAVE_PATH . $this->getPhotoPath(); 
+			return $this->_getPath();
 		} else {
 			if ($proportion) //resize with proportion
-				return self::getProportionPath($width, $height) . self::SAVE_PATH . $this->getPhotoPath();
+				return self::getProportionPath($width, $height) . $this->_getPath();
 			else
 				return false;
 		}
@@ -262,4 +266,12 @@ class RM_Photo
 			throw new Exception('Access photo error');
 		}
 	}
+
+	public function _toJSON() {
+		return array(
+			'id' => $this->getId(),
+			'photoPath' => $this->_getPath()
+		);
+	}
+
 }
