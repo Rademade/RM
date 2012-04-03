@@ -14,7 +14,7 @@ class RM_View_Top {
 	 */
 	private $_request;
 	/**
-	 * @var Application_Model_System_Breadcrumbs
+	 * @var RM_System_Breadcrumbs
 	 */
 	private $_breadcrumbs;
 	private $_title = '';
@@ -41,7 +41,7 @@ class RM_View_Top {
 	public function _init() {
 		$this->_view = Zend_Layout::getMvcInstance()->getView();
 		$this->_request = Zend_Controller_Front::getInstance()->getRequest();
-		$this->_breadcrumbs = new Application_Model_System_Breadcrumbs();
+		$this->_breadcrumbs = new RM_System_Breadcrumbs();
 	}
 	
 	public function getBreadcrumbs() {
