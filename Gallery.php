@@ -123,6 +123,7 @@ class RM_Gallery
 	
 	public function _reload() {
 		$this->_isPhotosLoaded = false;
+		$this->_poster = null;
 		$this->getPhotos();
 	}
 
