@@ -24,7 +24,7 @@ class RM_Entity_Worker_Cache
 
 	public function clean($tag) {
 		if ($this->_cache instanceof Zend_Cache_Core) {
-			$this->_cache ->clean(
+			$this->_cache ->remove(
 			    Zend_Cache::CLEANING_MODE_MATCHING_TAG,
 				(is_array($tag)) ? $tag : array($tag)
 			);

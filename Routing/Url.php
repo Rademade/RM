@@ -18,7 +18,7 @@ class RM_Routing_Url {
 		$this->url = str_replace(array(
 			"'", '"', '&', ',', '.', '?', '+', '!', '(', ')', '»', '«',
 			'$', "\\", ';', '[', ']', '—', '#', '=', '↑', '*',
-			'…', '%', '{', '}', '”'
+			'…', '%', '{', '}', '”', ';'
 		), '', $this->url);
 		$this->url = $this->stripLastSlashes($this->url);
 		$translit = new RM_Routing_Url_Translite($this->url);

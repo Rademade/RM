@@ -10,6 +10,7 @@ class RM_Content
 		RM_Interface_Deletable {
 
 	const CACHE_NAME = 'content';
+	const AUTO_CACHE = false;
 
 	const TABLE_NAME = 'contents';
 
@@ -194,14 +195,7 @@ class RM_Content
 		}
 	}
 
-	private function _clearContents() {
-		$this->_loadedContentLangs = false;
-		$this->_contentLangs = array();
-		$this->_settedLangs = array();
-	}
-
 	public function __cachePrepare() {
-		$this->_clearContents();
 		foreach ($this->getAllContentLangs() as $contentLang) {
 			$contentLang->loadFields();
 		}
@@ -210,6 +204,7 @@ class RM_Content
 	public function save() {
 		parent::save();
 		$this->_saveContent();
+		$this->__refreshCache();
 		return $this;
 	}
 

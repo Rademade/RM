@@ -13,6 +13,7 @@ class RM_Content_Lang
 
 	private $loaded = false;
 
+	const AUTO_CACHE = false;
 	const CACHE_NAME = 'fields';
 
 	const TABLE_NAME = 'contentLangs';
@@ -189,7 +190,7 @@ class RM_Content_Lang
 		parent::save();
 		$this->_saveFields();
 		$this->__refreshCache();
-		$this->getContentManager()->__refreshCache();
+		$this->getContentManager()->__cleanCache();
 	}
 
 

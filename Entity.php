@@ -4,6 +4,7 @@ abstract class RM_Entity {
 	const TABLE_NAME = null;
 
 	const CACHE_NAME = null;
+	const AUTO_CACHE = true;
 
 	protected static $_properties = array();
 
@@ -51,7 +52,9 @@ abstract class RM_Entity {
 
 	public function save() {
 		if ($this->_dataWorker->save()) {
-			$this->__refreshCache();
+			if (static::AUTO_CACHE) {
+				$this->__refreshCache();
+			}
 		}
 	}
 
@@ -106,7 +109,7 @@ abstract class RM_Entity {
 	}
 
 	protected function __cleanCache() {
-		$this->_getCacheWorker()->clean( (string)$this->getId() );
+		$this->_getCacheWorker()->remove( (string)$this->getId() );
 	}
 
 	protected static function __load($key) {
