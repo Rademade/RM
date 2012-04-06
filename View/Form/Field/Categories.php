@@ -4,17 +4,14 @@ class RM_View_Form_Field_Categories
 
 	const TPL = 'categories.phtml';
 
-	private $_idRoot;
 	private $_defaultValues;
 
 	public function __construct(
 		$desc,
 		$name,
-		$idRoot,
 		array $default
 	) {
 		$this->_defaultValues = $default;
-		$this->_idRoot = (int)$idRoot;
 		parent::__construct($name, $desc, '');
 	}
 
@@ -26,10 +23,6 @@ class RM_View_Form_Field_Categories
 		$this->_defaultValues = $values;
 	}
 
-	public function getIdRoot() {
-		return $this->_idRoot;
-	}
-
 	public function render($idLang) {
 		$row = new RM_View_Form_Row();
 		$row->setDesc( $this->getDesc() );
@@ -38,7 +31,6 @@ class RM_View_Form_Field_Categories
 			$this->addFieldData(
 				$idLang,
 				array(
-				     'idRoot' => $this->getIdRoot(),
 				     'defaultValues' => $this->getDefaultValues()
 				)
 			)

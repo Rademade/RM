@@ -19,8 +19,9 @@ class RM_Page
 	const TABLE_NAME = 'pages';
 
 	protected static $_properties = array(
-		'idPage' => array(
+		'id' => array(
 			'id' => true,
+			'field' => 'idPage',
 			'type' => 'int'
 		),
 		'idRoute' => array(
@@ -112,7 +113,7 @@ class RM_Page
 	}
 
 	public function getIdPage() {
-		return $this->idPage;
+		return $this->id;
 	}
 
 	public function getIdContent() {
