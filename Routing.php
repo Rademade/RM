@@ -38,6 +38,8 @@ class RM_Routing
 	
 	const ROUTE_CACHE = 'ALL';
 
+	const TMP_ROUTE_NAME = '~tmp';
+
 	public function __construct(
 		$idRoute,
 		$type,

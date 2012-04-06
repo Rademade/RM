@@ -80,7 +80,7 @@ class RM_Page
 	}
 
 	protected function __setPageData( $controller, $action, $url) {
-		$route = RM_Routing::create('~tmp', $controller, $action, $url);
+		$route = RM_Routing::create(RM_Routing::TMP_ROUTE_NAME, $controller, $action, $url);
 		$this->setRoute( $route );
 		$this->setContentManager( RM_Content::create() );
 	}
@@ -96,8 +96,10 @@ class RM_Page
 	}
 
 	public function saveRoteDate() {
-		if (intval($this->getRoute()->idPage) !== $this->getIdPage()) {
-			$this->getRoute()->setName( $this->getIdPage() );
+		if (intval($this->getRoute()->idPage) != $this->getIdPage()) {
+			if ($this->getRoute()->getName() === RM_Routing::TMP_ROUTE_NAME) {
+				$this->getRoute()->setName( $this->getIdPage() );
+			}
 			$this->getRoute()->idPage = $this->getIdPage();
 			$this->getRoute()->save();
 		}
