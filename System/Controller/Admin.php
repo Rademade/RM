@@ -74,7 +74,7 @@ abstract class RM_System_Controller_Admin
 		$this->__disableView();
 		$data = (object)array_merge($this->getRequest()->getPost(), $_GET);
 		$this->_ajaxResponse = new stdClass();
-		switch ( intval($data->type) ) {
+		if (isset($data->type)) switch ( intval($data->type) ) {
 			case RM_Interface_Deletable::ACTION_DELETE:
 				$item = call_user_func(
 					array( $this->_itemClassName, 'getById' ),

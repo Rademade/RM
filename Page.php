@@ -80,7 +80,12 @@ class RM_Page
 	}
 
 	protected function __setPageData( $controller, $action, $url) {
-		$route = RM_Routing::create(RM_Routing::TMP_ROUTE_NAME, $controller, $action, $url);
+		$route = RM_Routing::create(
+			RM_Routing::TMP_ROUTE_NAME,
+			$controller,
+			$action,
+			$url
+		);
 		$this->setRoute( $route );
 		$this->setContentManager( RM_Content::create() );
 	}
