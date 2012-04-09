@@ -24,6 +24,7 @@ class RM_Content_Field_Process_Html
 		'img',
 		'table',
 		'tr',
+		'th',
 		'td',
 		'thead',
 		'tbody',
