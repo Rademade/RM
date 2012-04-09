@@ -6,25 +6,21 @@ class RM_View_Form_Field_Categories
 
 	private $_defaultValues;
 
-	private $_idRootCategory;
+	private $_options;
 
 	public function __construct(
 		$desc,
 		$name,
-		$idRootCategory,
-		array $default
+		array $default,
+		array $options = array()
 	) {
-		$this->_idRootCategory = $idRootCategory;
+		$this->_options = $options;
 		$this->_defaultValues = $default;
 		parent::__construct($name, $desc, '');
 	}
 
 	public function getDefaultValues() {
 		return $this->_defaultValues;
-	}
-
-	public function getIdRootCategory() {
-		return $this->_idRootCategory;
 	}
 
 	public function setDefaultValues(array $values) {
@@ -38,9 +34,11 @@ class RM_View_Form_Field_Categories
 			self::BASE_PATH . self::TPL,
 			$this->addFieldData(
 				$idLang,
-				array(
-				     'idRoot' => $this->getIdRootCategory(),
-				     'defaultValues' => $this->getDefaultValues()
+				array_merge(
+					$this->_options,
+					array(
+				        'defaultValues' => $this->getDefaultValues()
+					)
 				)
 			)
 		));
