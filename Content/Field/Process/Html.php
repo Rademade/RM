@@ -57,7 +57,7 @@ class RM_Content_Field_Process_Html
 	private function stripWrongHtml($html) {
 		return strip_tags(
 			$html,
-			'<' . join('><', $this->allowedTags) . '>'
+			'<' . join( '><', $this->allowedTags ) . '>'
 		);
 	}
 
