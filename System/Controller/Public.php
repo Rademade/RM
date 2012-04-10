@@ -39,7 +39,9 @@ abstract class RM_System_Controller_Public
 		$this->_idPage = (int)$this->_getParam('idPage');
 		if ($this->_idPage !== 0) {
 			$this->_page = RM_Page::getById( $this->_idPage );
-			$this->_initMeta( $this->_page);
+            if ($this->_page instanceof RM_Interface_Contentable) {
+    			$this->_initMeta( $this->_page);
+            }
 		}
 	}
 
