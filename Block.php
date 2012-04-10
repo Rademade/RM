@@ -63,6 +63,10 @@ class RM_Block
 		return $block;
 	}
 
+	public static function _setSelectRules(Zend_Db_Select $select) {
+		$select->where('blockStatus != ?', self::STATUS_DELETED);
+	}
+
 	public function validate() {
 		if ($this->getName() === '') {
 			throw new Exception('Enter block name');

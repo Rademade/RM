@@ -28,13 +28,13 @@ class RM_Lang
 			'type' => 'int'
 		),
 		'isoName' => array(
-			'type' => 'int'
+			'type' => 'string'
 		),
 		'langName' => array(
 			'type' => 'string'
 		),
 		'langUrl' => array(
-			'type' => 'int'
+			'type' => 'string'
 		),
 		'defaultStatus' => array(
 			'type' => 'int'
@@ -87,7 +87,7 @@ class RM_Lang
 	 * @param Zend_Db_Select
 	 */
 	public static function _setSelectRules(Zend_Db_Select $select) {
-		$select->where('defaultStatus != ?', self::STATUS_DELETED);
+		$select->where('langStatus != ?', self::STATUS_DELETED);
 	}
 
 	public function __getCacheTags() {
@@ -258,3 +258,4 @@ class RM_Lang
 	}
 
 }
+

@@ -5,11 +5,13 @@
  * @property int idContent
  * @property int pageStatus
  * @property int pageType
+ * @property int systemStatus
  */
 class RM_Page
 	extends
 		RM_Entity
 	implements
+		RM_Interface_Switcher,
 		RM_Interface_Hideable,
 		RM_Interface_Deletable,
 		RM_Interface_Contentable {
@@ -32,6 +34,10 @@ class RM_Page
 		),
 		'pageStatus' => array(
 			'default' => self::STATUS_HIDE,
+			'type' => 'int'
+		),
+		'systemStatus' => array(
+			'default' => self::TURN_OFF,
 			'type' => 'int'
 		),
 		'pageType' => array(
@@ -194,6 +200,9 @@ class RM_Page
 	}
 
 	public function hide() {
+		if ($this->isSystem()) {
+			throw new Exception('Can not hide system page');
+		}
 		if ($this->getStatus() !== self::STATUS_HIDE) {
 			$this->setStatus(self::STATUS_HIDE);
 			$this->save();
@@ -201,11 +210,27 @@ class RM_Page
 	}
 
 	public function remove() {
+		if ($this->isSystem()) {
+			throw new Exception('Can not delete system page');
+		}
 		$this->setStatus(self::STATUS_DELETED);
 		$this->save();
 		$this->getContentManager()->remove();
 		$this->getRoute()->remove();
 		$this->__cleanCache();
+	}
+
+
+	public function setSystem($status) {
+		if ($status) {
+			$this->systemStatus = self::TURN_ON;
+		} else {
+			$this->systemStatus = self::TURN_OFF;
+		}
+	}
+
+	public function isSystem() {
+		return $this->systemStatus === self::TURN_ON;
 	}
 
 	/**
