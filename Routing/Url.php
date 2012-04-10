@@ -27,14 +27,16 @@ class RM_Routing_Url {
 
 	public function checkUnique($excludedId = null) {
 		$db = Zend_Registry::get('db');
-		$select = $db->select()
-			->from('routing',array(
-				'count'=>'COUNT(idRoute)'
-			))
-			->where('url = ? ',$this->url);
+		/* @var $db Zend_Db_Adapter_Abstract*/
+		$select = $db->select();
+		/* @var $select Zend_Db_Select */
+		$select->from('routing',array(
+			'count'=>'COUNT(idRoute)'
+		))->where('url = ? ',$this->url);
 		if (!is_null($excludedId)) {
 			$select->where('idRoute != ? ',$excludedId);
 		}
+		$select->where('routeStatus != ? ', RM_Interface_Deletable::STATUS_DELETED);
 		$res = $db->fetchRow($select);
 		return intval($res->count) === 0;
 	}
