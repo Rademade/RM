@@ -67,7 +67,7 @@ class RM_Content_Field_Name
 				$filedName = self::_initItem($select);
 				if (is_null($filedName) && $create) {
 					$filedName = self::create($name);
-				} else {
+				} elseif ($filedName instanceof self) {
 					$filedName->__cache();
 				}
 			}
