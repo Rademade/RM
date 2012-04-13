@@ -34,7 +34,6 @@ class RM_Content_Field_Process_Html
 	
 	private $allowedAttr = array(
 		'src',
-		'class',
 		'style',
 		'href',
 		'alt',
