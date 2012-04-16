@@ -171,12 +171,11 @@ class RM_Photo
 	}
 
 	private static function getProportionPath($width, $height) {
-		$proportions = intval($width/$height*100)/100;
 		return join('', array(
 			'/image.php?',
-			"width={$width}&amp;",
-			"height={$height}&amp;",
-			"cropratio=$proportions:1&amp;",
+			"width={$width}&",
+			"height={$height}&",
+			"crop&",
 			'image='
 		)); 
 	}
