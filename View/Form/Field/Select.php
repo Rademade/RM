@@ -6,7 +6,7 @@ class RM_View_Form_Field_Select
 
 	const TPL = 'select.phtml';
 	
-	public function __construct($desc, $name, $data, $value) {
+	public function __construct($desc, $name, $data, $value = null) {
 		parent::__construct($name, $desc, $value);
 		$this->setData($data);
 	}
