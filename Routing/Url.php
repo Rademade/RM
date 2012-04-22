@@ -42,14 +42,7 @@ class RM_Routing_Url {
 	}
 
 	public function stripLastSlashes($url) {
-    	if (substr($url, -1) === '/' && $url !== '/') {
-    		$url = substr($url, 0, -1);
-    		return (substr($url, -1) === '/') ? 
-    			$this->stripLastSlashes($url) :
-    			$url;
-    	} else {
-    		return $url;
-    	}
+    	return rtrim($url, "/");
 	}
 	
 	public function checkFormat(array $params ) {
