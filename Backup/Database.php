@@ -27,8 +27,7 @@ class RM_Backup_Database {
 	}
 
 	public function _formatPath($path) {
-		$path = realpath( $path );
-
+		$path = rtrim($path, "/");
 		return $this->_formatCliData( $path );
 	}
 
