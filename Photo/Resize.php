@@ -144,7 +144,9 @@ class Resize {
 
 	private function _createImage() {
 		($this->isCrop()) ? $this->_cropImage() : $this->_resizeImage();
-		mkdir($this->_getThumbPathDir(), 0777, true);
+		if (!file_exists($this->_getThumbPathDir())) {
+			mkdir($this->_getThumbPathDir(), 0777, true);
+		}
 		$this->getImagick()->writeImage( $this->_getThumbPath() );
 		$this->getImagick()->clear();
 		$this->getImagick()->destroy();
