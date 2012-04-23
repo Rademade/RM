@@ -142,11 +142,22 @@ class Resize {
 		);
 	}
 
+	private function _createDir() {
+		$dir = join('', array(
+            $this->_dirPath,
+            self::SAVE_PATH
+        ));
+		foreach (explode('/', $this->_getHashDir()) as $segment) {
+			$dir .= ($segment . '/');
+			if (!is_dir($dir)) {
+				mkdir($dir, 0777);
+			}
+		}
+	}
+	
 	private function _createImage() {
 		($this->isCrop()) ? $this->_cropImage() : $this->_resizeImage();
-		if (!file_exists($this->_getThumbPathDir())) {
-			mkdir($this->_getThumbPathDir(), 0777, true);
-		}
+		$this->_createDir();
 		$this->getImagick()->writeImage( $this->_getThumbPath() );
 		$this->getImagick()->clear();
 		$this->getImagick()->destroy();
