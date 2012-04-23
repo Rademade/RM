@@ -25,12 +25,12 @@ class RM_View_Message
 	}
 
 	private function _formatMessage( $message ) {
-		if ( is_array($message) )
+		if ( is_array($message) ) {
 			$this->_formatArray( $message );
-		else {
-			if (is_string( $message ))
+		} else {
+			if (is_string( $message )) {
 				$this->_formatString( $message );
-			else {
+			} else {
 				if ($message instanceof RM_Exception) {
 					$this->_formatArray($message->getMessages());
 				} else {
@@ -41,10 +41,12 @@ class RM_View_Message
 	}
 
 	private function _formatString($message) {
-		array_push(
-			$this->_messages,
-			$message
-		);
+		foreach ($this->getMessages() as $mes) {
+			if ($message === $mes) {
+				return;
+			}
+		}
+		array_push($this->_messages, $message);
 	}
 
 	private function _formatArray($messages) {
