@@ -138,7 +138,7 @@ class RM_Gallery_Photo
 		$this->getGallery()->__refreshCache();
 	}
 	
-	public function remove(RM_User $user) {
+	public function remove(RM_User_Interface $user) {
 		$this->setStatus( RM_Interface_Deletable::STATUS_DELETED );
 		$this->save();
 		$this->getGallery()->__refreshCache();

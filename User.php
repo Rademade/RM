@@ -20,6 +20,7 @@ class RM_User
 	extends
 		RM_Entity
 	implements
+		RM_User_Interface,
 		RM_Interface_Hideable,
 		RM_Interface_Deletable {
 

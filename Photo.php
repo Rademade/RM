@@ -84,7 +84,7 @@ class RM_Photo
 		}
 	}
 
-	public static function create(RM_User $user) {
+	public static function create(RM_User_Interface $user) {
 		$photo = new self(new stdClass());
 		$photo->idUser = $user->getId();
 		return $photo;
@@ -254,7 +254,7 @@ class RM_Photo
 		$this->save();
 	}
 
-	public function remove(RM_User $user) {
+	public function remove(RM_User_Interface $user) {
 		if ($user->getId() === $this->getIdUser() || 
 			$user->getRole()->isAdmin()
 		) {
