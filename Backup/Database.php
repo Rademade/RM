@@ -16,7 +16,7 @@ class RM_Backup_Database {
 	}
 
 	public function save($to) {
-		exec(join(' ', array(
+		shell_exec(join(' ', array(
 			'mysqldump',
 			'-u' . $this->_userName,
 			'-p' . $this->_password,
