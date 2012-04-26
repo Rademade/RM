@@ -92,6 +92,7 @@ class RM_Photo
 
 	public function save() {
 		$this->_dataWorker->save();
+		$this->__cache();
 	}
 
 	public static function getEmpty() {
