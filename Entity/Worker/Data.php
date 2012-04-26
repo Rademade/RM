@@ -44,7 +44,7 @@ class RM_Entity_Worker_Data
 		$c = sizeof($this->_properties);
 		for ($i = 0; $i < $c; ++$i) {
 			$attr = new RM_Entity_Attribute( $this->_properties[$i] );//create attribute
-			$name = $attr->getName();
+			$name = $attr->getFieldName();
 			if (isset( $data->$name )) {//set attribute value
 				$attr->setValue( $data->$name );
 			}
@@ -120,7 +120,7 @@ class RM_Entity_Worker_Data
 	public function serialize() {
 		$values = array();
 		foreach ($this->_attributes as $attribute) {
-			$values[ $attribute->getName() ] = $attribute->getValue();
+			$values[ $attribute->getFieldName() ] = $attribute->getValue();
 		}
 		return serialize( array(
             'c' => $this->_callClassName,
