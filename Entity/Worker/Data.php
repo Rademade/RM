@@ -44,7 +44,7 @@ class RM_Entity_Worker_Data
 		$c = sizeof($this->_properties);
 		for ($i = 0; $i < $c; ++$i) {
 			$attr = new RM_Entity_Attribute( $this->_properties[$i] );//create attribute
-			$name = $attr->getFieldName();
+			$name = $attr->getName();
 			if (isset( $data->$name )) {//set attribute value
 				$attr->setValue( $data->$name );
 			}
