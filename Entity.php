@@ -73,7 +73,7 @@ abstract class RM_Entity {
 	}
 
 	protected function _cacheList(array $data, $key) {
-		return static::_getStorage()
+		static::_getStorage()
 			->getCacher(get_called_class())
 			->cache($data, $key, array());
 	}
