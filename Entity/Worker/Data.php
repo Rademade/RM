@@ -75,7 +75,7 @@ class RM_Entity_Worker_Data
 
 	public function setValue($name, $value) {
 		if ($this->_isExistAttribute( $name )) {
-			if ($this->_attributes{$name} !== $value) {
+			if ($this->_attributes[$name] !== $value) {
 				$this->_changes[
 					$this->_attributes[ $name ]->getFieldName()
 				] = $value;

@@ -148,10 +148,11 @@ abstract class RM_Entity {
 
 	public static function _setSelectRules(Zend_Db_Select $select) {}
 
-	/**
-	 * @static
-	 * @return Zend_Db_Select
-	 */
+    /**
+     * @static
+     * @throws Exception
+     * @return Zend_Db_Select
+     */
 	public static function _getSelect() {
 		if (is_null(static::TABLE_NAME)) {
 			throw new Exception('Table name not setted');
@@ -205,11 +206,15 @@ abstract class RM_Entity {
 	public static function getCount(RM_Query_Where $where) {
 		$select = self::getDb()->select();
 		$select->from(static::TABLE_NAME, array(
-            'count' => 'COUNT(' . static::_getKeyAttributeProperties()->getFieldName() . ')'
+            'count' => 'COUNT(' . join('.', array(
+                static::TABLE_NAME,
+                static::_getKeyAttributeProperties()->getFieldName()
+            )) . ')'
 		));
 		static::_setSelectRules( $select );
-		$where->improveQuery($select);
-		return (int)self::getDb()->fetchRow( $select )->count;
+        $where->improveQuery($select);
+        $select->limit(1);
+        return (int)self::getDb()->fetchRow( $select )->count;
 	}
 
 	public static function _initList(

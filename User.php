@@ -381,7 +381,8 @@ class RM_User
 	 */
 	public static function _setSelectRules(Zend_Db_Select $select) {
 		$select->where('users.userStatus != ?', self::STATUS_DELETED);
-	}
+        $select->join('roles', 'users.idRole = roles.idRole');
+    }
 
 	public static function getByMail($mail) {
 		$mail = mb_strtolower($mail, 'utf-8');
@@ -465,12 +466,6 @@ class RM_User
 			return $this->getDiscount()->getDiscountPercent();
 		}
 		return 0;
-	}
-
-	public static function getList() {
-		$select = self::_getSelect();
-		$select->join('roles', 'users.idRole = roles.idRole');
-		return self::_initList($select, func_get_args());
 	}
 
 	public function validate() {

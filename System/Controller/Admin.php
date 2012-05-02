@@ -27,15 +27,23 @@ abstract class RM_System_Controller_Admin
 	protected $_itemClassName;
 	protected $_itemName;
 
-	protected $_ajaxResponse;
+    protected $_ajaxRoute;
+    protected $_ajaxUrl;
+    protected $_ajaxResponse;
 
 	public function preDispatch() {
-		$this->__onlyAdmin();
+        $this->__initParams();
+        $this->__onlyAdmin();
 		$this->view->assign('page', !is_null($this->_getParam('page')) ? (int)$this->_getParam('page') : 1);
 		$this->__buildCrumbs();
 		$this->__setTitle( $this->_itemName );
 	}
 
+    private function __initParams() {
+        if ($this->_ajaxRoute)
+            $this->_ajaxUrl = $this->view->url(array(), $this->_ajaxRoute);
+    }
+    
 	public function listAction() {
 		$this->view->headTitle()->append( $this->_listTitle );
 		if ($this->_addButton) {
@@ -121,6 +129,7 @@ abstract class RM_System_Controller_Admin
 
 	public function postDispatch(){
 		$this->view->user = $this->_user;
+        $this->__setViewParams();
 		if ($this->_ajaxResponse instanceof stdClass) { //set ajax response
 			$response = $this->getResponse();
 			$output = Zend_Json::encode( $this->_ajaxResponse );
@@ -128,6 +137,12 @@ abstract class RM_System_Controller_Admin
 			$response->setHeader('content-type', 'application/json', true);
 		}
 	}
+
+    protected function __setViewParams() {
+        $this->view->assign(array(
+            'ajaxUrl' => $this->_ajaxUrl
+        ));
+    }
 
 	protected function __initSession() {
 		if (!($this->_session instanceof RM_User_Session)) {
