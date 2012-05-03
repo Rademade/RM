@@ -29,18 +29,40 @@ class RM_System_Breadcrumbs implements Iterator, Countable {
 		return $params;
 	}
 
-	public function add($name, array $routeData, $routeName) {
-		array_push($this->_breadcrumbs, array(
-			'name' => $name,
-			'url' => $this->getView()->url(
-				$this->_compleateParams( $routeData ),
-				$routeName
-			)
-		));
-		return $this;
-	}
-	
-	public function getBack() {
+    public function add() {
+        $args = func_get_args();
+        if (func_num_args() == 2 && gettype($args[1]) == 'string') {
+            return $this->_addWithUrl($args[0], $args[1]);
+        } else {
+            return call_user_func_array(array($this, '_addWithRouteName'), $args);
+        }
+
+        return $this;
+    }
+
+    private function _addWithUrl($name, $url) {
+        array_push($this->_breadcrumbs, array(
+            'name' => $name,
+            'url' => $url
+        ));
+
+        return $this;
+    }
+
+    private function _addWithRouteName($name, array $routeData, $routeName) {
+        array_push($this->_breadcrumbs, array(
+            'name' => $name,
+            'url' => $this->getView()->url(
+                $this->_compleateParams( $routeData ),
+                $routeName
+            )
+        ));
+
+        return $this;
+    }
+
+
+    public function getBack() {
 		return $this->_breadcrumbs[sizeof($this->_breadcrumbs)-2]['url'];
 	}
 	
