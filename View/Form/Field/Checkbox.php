@@ -4,7 +4,7 @@ class RM_View_Form_Field_Checkbox
 	
 	const TPL = 'checkbox.phtml';
 		
-	public function __construct($desc, $name, $value) {
+	public function __construct($desc, $name, $value = null) {
 		parent::__construct($name, $desc, $value);
 	}
 
