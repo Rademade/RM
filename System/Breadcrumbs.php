@@ -29,6 +29,12 @@ class RM_System_Breadcrumbs implements Iterator, Countable {
 		return $params;
 	}
 
+    /**
+     * @internal param string $name Breadcrumb name
+     * @internal param array|string $url |$routeData Url or route data
+     * @internal param null|string $routeName If second argument is array, third parameter must be route name
+     * @return RM_System_Breadcrumbs
+     */
     public function add() {
         $args = func_get_args();
         if (func_num_args() == 2 && gettype($args[1]) == 'string') {
@@ -36,8 +42,6 @@ class RM_System_Breadcrumbs implements Iterator, Countable {
         } else {
             return call_user_func_array(array($this, '_addWithRoute'), $args);
         }
-
-        return $this;
     }
 
     private function _addWithUrl($name, $url) {
