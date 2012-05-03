@@ -13,6 +13,7 @@ class RM_View_Table_Row {
 	private $_editRoute;
 	private $_tds = array();
 	private $_showUrl;
+    private $_manualPosition;
 	private $_isDeleteble = false;
 	private $_isHideble = false;
 	private $_isStockable = false;
@@ -158,6 +159,30 @@ class RM_View_Table_Row {
 		$this->_stockStatus = (int)$status;
 		return $this;
 	}
+
+    public function isManualSortable() {
+        return $this->_manualPosition instanceof stdClass;
+    }
+
+    public function getManualPositionMax() {
+        return $this->_manualPosition->max;
+    }
+
+    public function getManualPositionMin() {
+        return $this->_manualPosition->min;
+    }
+
+    public function getManualPosition() {
+        return $this->_manualPosition->position;
+    }
+
+    public function addManualPosition($position, $min, $max) {
+        $this->_manualPosition = new stdClass();
+        $this->_manualPosition->position = $position;
+        $this->_manualPosition->min = $min;
+        $this->_manualPosition->max = $max;
+        return $this;
+    }
 
 	public function getStockStatus() {
 		return $this->_stockStatus;

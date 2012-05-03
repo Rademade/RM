@@ -14,4 +14,6 @@ interface RM_Interface_Element {
 	const STATUS_HIDE = 2;
 	const STATUS_BLOCKED = 3;
 
+    const ACTION_POSITION = 8;
+
 }

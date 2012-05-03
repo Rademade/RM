@@ -124,6 +124,17 @@ abstract class RM_System_Controller_Admin
 				}
 				$this->_ajaxResponse->status = 1;
 				break;
+            case RM_Interface_Element::ACTION_POSITION:
+                $item = call_user_func(
+                    array( $this->_itemClassName, 'getById' ),
+                    $data->id
+                );
+                if ($item instanceof RM_Interface_Sortable) {
+                    $item->setPosition( $data->position );
+                    $item->save();
+                }
+                $this->_ajaxResponse->status = 1;
+                break;
 		}
 	}
 
