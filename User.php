@@ -469,18 +469,20 @@ class RM_User
 	}
 
 	public function validate() {
-		$e = new RM_Exception();
+        $e = new RM_Exception();
 		$this->_validateEmail($this->getEmail(), $e, false);
 		$this->_validateLogin($this->getLogin(), $e, false);
-		if (!$this->getPhone()->isEmpty())
+        if (!$this->getPhone()->isEmpty())
 			$this->getPhone()->validate();
-		if ($this->getFullName() == '') {
+
+        if ($this->getFullName() == '') {
 			$e[] = 'User name not setted';
 		}
-		if (!($this->getCity() instanceof Application_Model_City)) {
+
+        if (!($this->getCity() instanceof Application_Model_City)) {
 			$e[] = 'User city not defined';
 		}
-		if ((bool)$e->current())
+        if ((bool)$e->current())
 			throw $e;
 		else
 			return true;
