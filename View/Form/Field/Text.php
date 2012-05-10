@@ -6,7 +6,7 @@ class RM_View_Form_Field_Text
 	
 	const TPL = 'text.phtml';
 		
-	public function __construct($desc, $name, $value) {
+	public function __construct($desc, $name, $value = null) {
 		parent::__construct($name, $desc, $value);
 	}
 
@@ -23,7 +23,7 @@ class RM_View_Form_Field_Text
 		$row = new RM_View_Form_Row();
 		$row->setDesc( $this->getDesc() );
 		$row->setHTML( $this->getView()->partial(
-			self::BASE_PATH . self::TPL,
+			static::BASE_PATH . static::TPL,
 			$this->addFieldData($idLang, array(
 				'type' => $this->getType()
 			) )
