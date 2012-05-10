@@ -29,7 +29,8 @@ class RM_Content_Field_Process_Html
 		'thead',
 		'tbody',
 		'tfoot',
-		'br'
+		'br',
+        'iframe'
 	);
 	
 	private $allowedAttr = array(
@@ -39,7 +40,9 @@ class RM_Content_Field_Process_Html
 		'alt',
 		'height',
 		'width',
-		'align'
+		'align',
+        'frameborder',
+        'allowfullscreen'
 	);
 
 	private static $_self;

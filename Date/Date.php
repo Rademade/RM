@@ -108,7 +108,7 @@ class RM_Date_Date {
 	private static function _getParseDatePreg($format) {
 		$day = '([0-3]?[0-9]{1})';
 		$month = '([0-1]?[0-9]{1})';
-		$year = '([1-2]{1}[0-9]{3})';
+		$year = '([0-9]{4})';
 		switch ($format) {
 			case self::ISO_DATE:
 				return '/^' . $year . '\-' . $month . '\-' . $day . '$/';
