@@ -18,8 +18,12 @@ abstract class RM_Yandex_Market_Item_Offer_Processor_Item_Abstract {
      */
     abstract public function add($offer, SimpleXMLElement $element);
 
-    private function _br2nl($string) {
-        return preg_replace('#<br\s*?/?>#i', "\n", $string);
+    private function _replaceWrongChars($str) {
+        $str = str_replace(array(
+            chr(13),
+            "\n"
+        ), '', $str);
+        return $str;
     }
 
     /**
@@ -38,13 +42,7 @@ abstract class RM_Yandex_Market_Item_Offer_Processor_Item_Abstract {
                 return $val;
                 break;
             case 'string':
-                return trim(
-                    htmlspecialchars(
-                        strip_tags(
-                            $this->_br2nl($val)
-                        )
-                    )
-                );
+                return trim( $this->_replaceWrongChars( htmlspecialchars( strip_tags($val) ) ) );
                 break;
             default:
                 throw new Exception('Wrong type given');
