@@ -13,4 +13,13 @@ interface RM_Yandex_Market_Item_Offer_Type_Simple {
      */
     public function getName();
 
+    /**
+     * Описание товарного предложения
+     *
+     * @abstract
+     * @tag description
+     * @return string
+     */
+    public function getDescription();
+
 }

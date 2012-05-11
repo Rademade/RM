@@ -112,14 +112,6 @@ interface RM_Yandex_Market_Item_Offer {
      */
     public function isPickup();
 
-    /**
-     * Описание товарного предложения
-     *
-     * @abstract
-     * @tag description
-     * @return string
-     */
-    public function getDescription();
 
     /**
      * Элемент предназначен для обозначения товара, который можно скачать.
