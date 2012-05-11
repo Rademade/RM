@@ -2,7 +2,7 @@
 /**
  * @yandexMarketInterface
  */
-interface RM_Yandex_Market_Item_Offer_Option_Params {
+interface RM_Yandex_Market_Item_Offer_Options_Params {
 
     /**
      * Характеристики товара.

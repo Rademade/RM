@@ -2,7 +2,7 @@
 /**
  * @yandexMarketInterface
  */
-interface RM_Yandex_Market_Item_Offer_Option_Vendor {
+interface RM_Yandex_Market_Item_Offer_Options_Vendor {
 
     /**
      * Производитель

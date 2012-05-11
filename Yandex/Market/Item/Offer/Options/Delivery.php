@@ -2,7 +2,7 @@
 /**
  * @yandexMarketInterface
  */
-interface RM_Yandex_Market_Item_Offer_Option_Delivery {
+interface RM_Yandex_Market_Item_Offer_Options_Delivery {
 
     /**
      * Элемент, обозначающий возможность доставить соответствующий товар. "false" данный товар не может быть доставлен.
