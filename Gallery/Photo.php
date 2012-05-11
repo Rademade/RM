@@ -89,6 +89,9 @@ class RM_Gallery_Photo
 		return $this->idGallery;
 	}
 
+    /**
+     * @return RM_Gallery
+     */
 	public function getGallery() {
 		return RM_Gallery::getById( $this->getIdGallery() );
 	}

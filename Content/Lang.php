@@ -109,7 +109,11 @@ class RM_Content_Lang
 		$field->setContent($value);
 		return $field;
 	}
-	
+
+    /**
+     * @param $name
+     * @return RM_Content_Field
+     */
 	public function getField($name) {
 		$this->checkField($name);
 		return $this->fields[ $name ];
