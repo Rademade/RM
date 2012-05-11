@@ -129,15 +129,4 @@ interface RM_Yandex_Market_Item_Offer {
      */
     public function getNote();
 
-    /**
-     * Характеристики товара.
-     *
-     * @abstract
-     * @tag param
-     * @return array
-     */
-    public function getParams();
-
-
-
 }
