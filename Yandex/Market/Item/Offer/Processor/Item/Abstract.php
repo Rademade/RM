@@ -34,7 +34,7 @@ abstract class RM_Yandex_Market_Item_Offer_Processor_Item_Abstract {
                 return $val;
                 break;
             case 'string':
-                return htmlspecialchars($val);
+                return htmlspecialchars(strip_tags(nl2br($val)));
                 break;
             default:
                 throw new Exception('Wrong type given');
