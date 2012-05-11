@@ -38,15 +38,10 @@ abstract class RM_Yandex_Market_Item_Offer_Processor_Item_Abstract {
                 return $val;
                 break;
             case 'string':
-                return str_replace(
-                    '&#13;',
-                    '',
-                    trim(
-                        htmlspecialchars(
-                            strip_tags(
-                                $this->_br2nl($val
-                                )
-                            )
+                return trim(
+                    htmlspecialchars(
+                        strip_tags(
+                            $this->_br2nl($val)
                         )
                     )
                 );

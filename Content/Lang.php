@@ -115,12 +115,13 @@ class RM_Content_Lang
      * @return RM_Content_Field
      */
 	public function getField($name) {
+        $name = mb_strtolower($name, 'utf-8');
 		$this->checkField($name);
 		return $this->fields[ $name ];
 	}
 
 	public function getFieldContent($name) {
-		$name = mb_strtolower($name);
+        $name = mb_strtolower($name, 'utf-8');
 		$this->checkField($name);
 		return $this->fields[ $name ]->getContent();
 	}
