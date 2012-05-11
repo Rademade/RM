@@ -61,6 +61,10 @@ class RM_Yandex_Market_Document {
         }
     }
 
+    public function setDeliveryPrice($price) {
+        $this->_shop->addChild('local_delivery_cost', $price);
+    }
+
     /**
      * @param RM_Yandex_Market_Item_Offer[] $offers
      */
@@ -68,8 +72,11 @@ class RM_Yandex_Market_Document {
         $offerProcessor = new RM_Yandex_Market_Item_Offer_Processor(get_class($offers[0]));
         $offersElement = $this->_shop->addChild('offers');
         foreach ($offers as $offer) {
-            $offerElement = $offersElement->addChild('offer');
-            $offerProcessor->setParams($offer, $offerElement);
+            /* @var RM_Yandex_Market_Item_Offer $offer */
+            if ($offer instanceof RM_Yandex_Market_Item_Offer && $offer->getIdCategory()) {
+                $offerElement = $offersElement->addChild('offer');
+                $offerProcessor->setParams($offer, $offerElement);
+            }
         }
     }
 

@@ -112,6 +112,41 @@ interface RM_Yandex_Market_Item_Offer {
      */
     public function isPickup();
 
+    /**
+     * Элемент позволяет указать возможность доставки соответствующего товара.
+     *
+     * @abstract
+     * @tag delivery
+     * @return bool
+     */
+    public function isDelivery();
+
+    /**
+     * Стоимость доставки данного товара в своем регионе.
+     *
+     * @abstract
+     * @tag local_delivery_cost
+     * @return float
+     */
+    public function getDeliveryPrice();
+
+    /**
+     * Наименование товарного предложения
+     *
+     * @abstract
+     * @tag name
+     * @return string
+     */
+    public function getName();
+
+    /**
+     * Описание товарного предложения
+     *
+     * @abstract
+     * @tag description
+     * @return string
+     */
+    public function getDescription();
 
     /**
      * Элемент предназначен для обозначения товара, который можно скачать.
