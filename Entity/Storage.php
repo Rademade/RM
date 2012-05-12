@@ -20,6 +20,16 @@ class RM_Entity_Storage {
 	 */
 	private $_cacher;
 
+    private $_className;
+
+    private function __construct($className) {
+        $this->_className = $className;
+    }
+
+    private function getClassName() {
+        return $this->_className;
+    }
+
 	/**
 	 * @static
 	 * @param $className
@@ -27,7 +37,7 @@ class RM_Entity_Storage {
 	 */
 	public static function &getInstance($className) {
 		if (!isset(self::$_self[ $className ])) {
-			self::$_self[ $className ] = new self();
+			self::$_self[ $className ] = new self($className);
 		}
 		return self::$_self[ $className ];
 	}
@@ -69,12 +79,11 @@ class RM_Entity_Storage {
 	}
 
 	/**
-	 * @param $className
 	 * @return RM_Entity_Worker_Cache
 	 */
-	public function &getCacher($className) {
+	public function &getCacher() {
 		if (!($this->_cacher instanceof RM_Entity_Worker_Cache)) {
-			$this->_cacher = new RM_Entity_Worker_Cache( $className );
+			$this->_cacher = new RM_Entity_Worker_Cache( $this->getClassName() );
 		}
 		return $this->_cacher;
 	}

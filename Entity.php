@@ -61,23 +61,16 @@ abstract class RM_Entity {
 	/* Cache data block list */
 
 	protected static function _clearCacheList($key) {
-		static::_getStorage()
-			->getCacher(get_called_class())
-			->remove( $key );
+		static::_getStorage()->getCacher()->remove( $key );
 	}
 
 	protected static function _loadList($key) {
-		return static::_getStorage()
-			->getCacher(get_called_class())
-			->load( $key );
+		return static::_getStorage()->getCacher()->load( $key );
 	}
 
 	protected function _cacheList(array $data, $key) {
-		static::_getStorage()
-			->getCacher(get_called_class())
-			->cache($data, $key, array());
+		static::_getStorage()->getCacher()->cache($data, $key, array());
 	}
-
 
 	/* Cache data block item */
 	protected function _getCacheWorker() {
@@ -113,9 +106,7 @@ abstract class RM_Entity {
 	}
 
 	protected static function __load($key) {
-		return static::_getStorage()
-			->getCacher(get_called_class())
-			->load( $key );
+		return static::_getStorage()->getCacher()->load( $key );
 	}
 
 	/* Attribute process block */
@@ -234,7 +225,7 @@ abstract class RM_Entity {
 
 	/* Entity storage data block */
 
-	protected static function &_getStorage() {
+	public static function &_getStorage() {
 		$storage = RM_Entity_Storage::getInstance( get_called_class() );
 		if (!is_array($storage->getProperties())) {
 			$storage->parse( static::$_properties );
