@@ -197,15 +197,22 @@ class RM_Photo
 		if (is_null($width) && is_null($height)) {//original
 			return $this->_getPath();
 		} else {
-		    $width = is_null($width) ? $height / $this->getHeight() * $this->getWidth() : $width;
-            $height = is_null($height) ? $width / $this->getWidth() * $this->getHeight() : $height;
+            if (is_null($width) && $this->getHeight() !== 0) {
+    		    $width = $height / $this->getHeight() * $this->getWidth();
+            }
+            if (is_null($height) && $this->getWidth() !== 0) {
+                $height = $width / $this->getWidth() * $this->getHeight();
+            }
             return self::getProportionPath($width, $height) . $this->_getPath();
         }
 	}
 	
 	private function getImageInfo() {
 		if (is_null($this->_imageInfo)) {
-			$this->_imageInfo = getimagesize($this->getFullPhotoPath());
+			$this->_imageInfo = @getimagesize($this->getFullPhotoPath());
+            if (!is_array($this->_imageInfo)) {
+                $this->_imageInfo = array(0, 0);
+            }
 		}
 		return $this->_imageInfo;
 	}
