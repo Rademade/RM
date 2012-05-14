@@ -193,19 +193,14 @@ class RM_Photo
 		return self::SAVE_PATH . $this->getPhotoPath();
 	}
 
-	public function getPath(
-		$width = null,
-		$height = null,
-		$proportion = true
-	) {
+	public function getPath($width = null, $height = null) {
 		if (is_null($width) && is_null($height)) {//original
 			return $this->_getPath();
 		} else {
-			if ($proportion) //resize with proportion
-				return self::getProportionPath($width, $height) . $this->_getPath();
-			else
-				return false;
-		}
+		    $width = is_null($width) ? $height / $this->getHeight() * $this->getWidth() : $width;
+            $height = is_null($height) ? $width / $this->getWidth() * $this->getHeight() : $height;
+            return self::getProportionPath($width, $height) . $this->_getPath();
+        }
 	}
 	
 	private function getImageInfo() {
