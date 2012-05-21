@@ -51,6 +51,11 @@ abstract class RM_System_Controller_Public
 		$this->view->headMeta()->appendName('description', $page->getContent()->getPageDesc());
 	}
 
+    protected function __disableView() {
+        $this->_helper->layout()->disableLayout(true);
+        $this->_helper->viewRenderer->setNoRender(true);
+    }
+
 	public function postDispatch() {
 		$this->view->assign(array(
 			'user' => $this->_user,

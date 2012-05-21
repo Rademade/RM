@@ -31,9 +31,13 @@ abstract class RM_System_Controller_Ajax
 		$this->_result = new stdClass();
 	}
 
-	public function preDispatch() {
-		$this->_helper->layout()->disableLayout(true);
+    protected function __disableView() {
+        $this->_helper->layout()->disableLayout(true);
         $this->_helper->viewRenderer->setNoRender(true);
+    }
+
+	public function preDispatch() {
+        $this->__disableView();
 		$this->_userSession = RM_User_Session::getInstance();
 		$this->_user = $this->_userSession->getUser();
 		$this->_idUser = $this->_user instanceof RM_User ? $this->_user->getId() : 0;
