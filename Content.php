@@ -110,7 +110,7 @@ class RM_Content
 	public function getCurrentContentLang() {
 		$currentLangId = RM_Lang::getCurrent()->getId();
 		$contentLang = $this->getContentLangByLangId( $currentLangId );
-		if ( $contentLang->getId() === 0 ) {
+		if ( !$contentLang instanceof RM_Content_Lang || $contentLang->getId() === 0 ) {
 			$contentLang = $this->getDefaultContentLang();
 		}
 		return $contentLang;
@@ -142,9 +142,10 @@ class RM_Content
 		unset( $this->_contentLangs[ $idLang ] );
 	}
 
-	/**
-	 * @return RM_Content_Lang
-	 */
+    /**
+     * @param $idLang
+     * @return RM_Content_Lang
+     */
 	private function getContentLangByLangId($idLang) {
 		if ( isset( $this->_contentLangs[ $idLang ] ) ) {
 			return $this->_contentLangs[ $idLang ];

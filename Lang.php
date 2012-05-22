@@ -107,7 +107,13 @@ class RM_Lang
 		}
 		return self::$default;
 	}
-	
+
+    public static function getByUrl($url) {
+        $select = self::_getSelect();
+        $select->where('langUrl = ?', $url);
+        return self::_initItem($select);
+    }
+
 	public function setAsCurrent() {
 		self::$current = $this;
 	}
