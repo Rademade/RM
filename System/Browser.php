@@ -11,7 +11,7 @@ class RM_System_Browser {
 	public function __construct() {
 		$this->_curl = curl_init();
 		curl_setopt($this->_curl, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($this->_curl, CURLOPT_VERBOSE, true);
+		curl_setopt($this->_curl, CURLOPT_VERBOSE, false);
 		curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->_curl, CURLOPT_MUTE, true);
 	}
