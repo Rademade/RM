@@ -2,7 +2,12 @@
 class RM_System_Browser {
 
 	private $_curl;
-	
+
+    /**
+     * @var RM_System_Browser_DownloadStrategy
+     */
+    private $_downloadStrategy;
+
 	public function __construct() {
 		$this->_curl = curl_init();
 		curl_setopt($this->_curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -21,20 +26,30 @@ class RM_System_Browser {
 			"HTTP_X_FORWARDED_FOR: $ip"
 		));
 	}
-	
-	public function _getProxyUrl($url) {
-		return 'http://proxy2974.my-addr.net/myaddrproxy.php/' . str_replace('://', '/', $url);
-	}
-	
-	public function download($url, $proxy = false) {
-		if ($proxy) {
-			$url = $this->_getProxyUrl( $url );
-		}
-		$curl = curl_copy_handle( $this->_curl );
-		curl_setopt($curl, CURLOPT_URL, $url);
-		$buffer = curl_exec($curl);
-		curl_close($curl);
-		return $buffer;
-	}
+
+    public function setDownloadStrategy(RM_System_Browser_DownloadStrategy $downloadStrategy) {
+        $this->_downloadStrategy = $downloadStrategy;
+    }
+
+    /**
+     * @return RM_System_Browser_DownloadStrategy
+     */
+    public function getDownloadStrategy() {
+        if (!$this->_downloadStrategy instanceof RM_System_Browser_DownloadStrategy) {
+            $this->_downloadStrategy = new RM_System_Browser_DownloadStrategy_Simple();
+        }
+        return $this->_downloadStrategy;
+    }
+
+	public function download($url) {
+        if (filter_var($url, FILTER_VALIDATE_URL)) {
+            return $this->getDownloadStrategy()->download(
+                $this->_curl,
+                $url
+            );
+        } else {
+            throw new Exception('Wrong url given');
+        }
+    }
 	
 }
