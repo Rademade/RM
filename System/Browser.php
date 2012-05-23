@@ -13,12 +13,13 @@ class RM_System_Browser {
 		curl_setopt($this->_curl, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($this->_curl, CURLOPT_VERBOSE, false);
         curl_setopt($this->_curl, CURLOPT_HEADER, false);
+        curl_setopt($this->_curl, CURLOPT_NOSIGNAL, false);
         curl_setopt($this->_curl, CURLINFO_HEADER_OUT, false);
-        curl_setopt($this->_curl, CURLOPT_NOBODY, true);
         curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->_curl, CURLOPT_NOPROGRESS, true);
+        curl_setopt($this->_curl, CURLOPT_FOLLOWLOCATION, true);
     }
-	
+
 	public function likeBrowser() {
 		curl_setopt($this->_curl, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)");
 		curl_setopt($this->_curl, CURLOPT_REFERER, "http://google.com");
