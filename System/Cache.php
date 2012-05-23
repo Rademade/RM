@@ -25,31 +25,50 @@ class RM_System_Cache {
 			);
 		}
 	}
-	
+
+    private function _getOptions() {
+        return new Zend_Config( array(), true );
+    }
+
+    /**
+     * @param $config
+     * @param $key
+     * @return array
+     */
+    private function _mergeOptions($config, $key) {
+        /* @var Zend_Config $config*/
+        $config = isset($config->{$key}) ? $config->{$key} : self::_getOptions();
+        $data = array_merge(
+            $this->cfg->front,
+            $config->toArray()
+        );
+        return $data;
+    }
+
+    private function _setBaseOptions($options, $key) {
+        if (!isset($options->{$key}))
+            $options->{$key} = self::_getOptions();
+        if (!isset($options->{$key}->lifetime) || !$options->{$key}->lifetime)
+            $options->{$key}->lifetime = NULL;
+        return $options;
+    }
+
 	private function getFrontOptions($options) {
-		$front = (array)(isset($options->front) ? $options->front : array());
-		$front = array_merge(
-			(array)$this->cfg->front,
-			$front
-		);
-		$front['caching'] = $this->isCached;
-		$front['cache_id_prefix'] = $this->cfg->prefix . $options->cacheName;
-		return $front;
+        $frontConfig = self::_mergeOptions($options, 'front');
+        $frontConfig['caching'] = $this->isCached;
+        $frontConfig['cache_id_prefix'] = $this->cfg->prefix . $options->cacheName;
+		return $frontConfig;
 	}
 	
 	private function getBackOptions($options) {
-		$back = (array)(isset($options->back) ? $options->back : array());
-		$back = array_merge(
-			(array)$this->cfg->back,
-			$back
-		);
-		$back['cache_id_prefix'] = $this->cfg->prefix;
-		return $back;
+        $backConfig = self::_mergeOptions($options, 'back');
+        $backConfig['cache_id_prefix'] = $this->cfg->prefix;
+        return $backConfig;
 	}
 	
 	private function getFront($options) {
 		return array(
-			'name' => 'Core',
+			'name' => !is_null($options->type) ? $options->type :'Core' ,
 			'options' => $this->getFrontOptions($options)
 		);
 	}
@@ -62,18 +81,8 @@ class RM_System_Cache {
 	}
 	
 	private function prepareParams($options) {
-		if (!isset($options->front)) {
-			$options->front = new Zend_Config(array(), true);
-		}
-		if (!isset($options->back)) {
-			$options->back = new Zend_Config(array(), true);
-		}
-		if (!isset($options->front->lifetime) || !$options->front->lifetime) {
-			$options->front->lifetime = NULL;
-		}
-		if (!isset($options->back->lifetime) || !$options->back->lifetime) {
-			$options->back->lifetime = NULL;
-		}
+        $this->_setBaseOptions($options, 'front');
+        $this->_setBaseOptions($options, 'back');
 	}
 	
 	private function _parse($fileName) {
