@@ -19,6 +19,8 @@ class RM_Lang
 
 	const TABLE_NAME = 'langs';
 
+    const REX_LANG_URL = '([a-z]{2,4})';
+
 	protected static $_properties = array(
 		'idLang' => array(
 			'id' => true,
@@ -176,9 +178,16 @@ class RM_Lang
 	}
 
 	public function setUrl($url) {
-		if ($this->getUrl() !== $url) {
-			$this->langUrl = stripslashes(trim($url));
-		}
+		$url = $this->langUrl = stripslashes(trim($url));
+        if (preg_match(
+            '/^' . self::REX_LANG_URL . '$/',
+            $url,
+            $data
+        )) {
+            $this->langUrl = $url;
+        } else {
+            throw new Exception('');
+        }
 	}
 
 	public function getUrl() {
