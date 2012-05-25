@@ -3,63 +3,98 @@
  * @property int idPage
  * @property int idCategory
  * @property int page
- * @property mixed idContentPage
+ * @property int idContentPage
+ * @property int routeStatus
+ * @property int idRoute
+ * @property int type
+ * @property string name
+ * @property string action
+ * @property string url
+ * @property string controller
+ * @property string module
+ * @property string defaultParams
  */
 class RM_Routing
+    extends
+        RM_Entity
 	implements
 		RM_Interface_Deletable {
-	
-	private $_idRoute;
-	private $_type;
-	private $_name;
-	private $_module;
-	private $_controller;
-	private $_action;
+
+    const TABLE_NAME = 'routing';
+
+    const CACHE_NAME = 'routing';
+
+    const AUTO_CACHE = true;
+
+    protected static $_properties = array(
+        'idRoute' => array(
+            'id' => 'true',
+            'type' => 'int'
+        ),
+        'type' => array(
+            'default' => self::TYPE_ROUTE,
+            'type' => 'int'
+        ),
+        'name' => array(
+            'type' => 'string'
+        ),
+        'module' => array(
+            'default' => 'public',
+            'type' => 'string'
+        ),
+        'controller' => array(
+            'type' => 'string'
+        ),
+        'action' => array(
+            'type' => 'string'
+        ),
+        'url' => array(
+            'type' => 'string'
+        ),
+        'defaultParams' => array(
+            'default' => '{}',
+            'type' => 'string'
+        ),
+        'routeStatus' => array(
+            'default' => self::STATUS_UNDELETED,
+            'type' => 'int'
+        )
+    );
+
 	/**
 	 * @var RM_Routing_Url
 	 */
 	private $_url;
-	private $_routeStatus;
 	/**
 	 * @var RM_Routing_DefaultParams
 	 */
 	private $_defaultParams;
-	
-	private $_changes = array();
-	
+    /**
+     * @var RM_Entity_Worker_Data
+     */
+    private $_dataWorker;
+
+    private $_calledClass;
+
 	const TYPE_ROUTE  = 1;
 	const TYPE_STATIC = 2;
 	const TYPE_REGEX = 3;
 	
 	const ERROR_INVALID_ROUTE_ID = 'Invalid route id';
-	const ERROR_INVALID_ROUTE_TYPE = 'Invalid route type';
 	const ERROR_ALIAS = 'Wrong format of page alias';
 	const ERROR_ALIAS_EXISTS = 'Such alias already exists';
+    const ERROR_INVALID_ROUTE_TYPE = 'Invalid route type';
 	
 	const ROUTE_CACHE = 'ALL';
 
 	const TMP_ROUTE_NAME = '~tmp';
 
-	public function __construct(
-		$idRoute,
-		$type,
-		$name,
-		$module,
-		$controller,
-		$action,
-		RM_Routing_Url $url,
-		RM_Routing_DefaultParams $defaultParams,
-		$routeStatus
-	) {
-		$this->_idRoute = (int)$idRoute;
-		$this->_type = (int)$type;
-		$this->_name = $name;
-		$this->_module = $module;
-		$this->_controller = $controller;
-		$this->_action = $action;
-		$this->_url = $url;
-		$this->_defaultParams = $defaultParams;
-		$this->_routeStatus = (int)$routeStatus;	
+	public function __construct(stdClass $data) {
+        parent::__construct($data);
+        $this->_url = new RM_Routing_Url( $data->url );
+        $this->_defaultParams = new RM_Routing_DefaultParams($data->defaultParams);
+        $this->_calledClass = get_called_class();
+        $this->_dataWorker = new RM_Entity_Worker_Data($this->_calledClass, $data);
 	}
 	
 	public static function create(
@@ -69,101 +104,45 @@ class RM_Routing
 		$routeUrl
 	) {
 		$url = new RM_Routing_Url($routeUrl);
-		$url->format();
-		$params = new RM_Routing_DefaultParams();
-		$route = new self(
-			0,
-			self::TYPE_ROUTE,
-			$routeName,
-			'public',
-			$routeController,
-			$routeAction,
-			$url,
-			$params,
-			self::STATUS_UNDELETED
-		);
+		$route = new self( new RM_Compositor( array(
+            'name' => $routeName,
+            'controller' => $routeController,
+            'action' => $routeAction,
+            'url' => $url->format()->getInitialUrl()
+        ) ) );
 		return $route;
 	}
 
-	private static function init($data) {
-		return new self(
-			$data->idRoute,
-			$data->type,
-			$data->name,
-			$data->module,
-			$data->controller,
-			$data->action,
-			new RM_Routing_Url($data->url),
-			new RM_Routing_DefaultParams($data->defaultParams),
-			$data->routeStatus
-		);
-	}
-	
-	private static function _getSelectWrapper($field, $value) {
-		$db = Zend_Registry::get('db');
-		/* @var $db Zend_Db_Adapter_Abstract */
-		$select = $db->select()->from('routing');
-		/* @var $select Zend_Db_Select */
-		$select->where("routing.$field = ?", $value);
-		$select->where('routing.routeStatus != ?', self::STATUS_DELETED);
-		$select->limit(1);
-		if (false !== ($data = $db->fetchRow($select))) {
-			return self::init($data);
-		} else {
-			throw new Exception(self::ERROR_INVALID_ROUTE_ID);
-		}
-	}
-	
-	public static function getById($idRoute) {
-		$idRoute = intval($idRoute);
-		$cachemanager = Zend_Registry::get('cachemanager');
-		$cache = $cachemanager->getCache('routing');
-		if (($route = $cache->load($idRoute)) !== false) {
-			return $route;
-		} else {
-			$route = self::_getSelectWrapper('idRoute', $idRoute);
-			$cache->save($route);
-			return $route;
-		}
-	}
-	
 	public static function getByUrl($url) {
 		$url = trim($url);
-		$key = md5($url);
-		$cachemanager = Zend_Registry::get('cachemanager');
-		$cache = $cachemanager->getCache('routing');
-		if (($route = $cache->load($key)) !== false) {
-			return $route;
-		} else {
-			$route = self::_getSelectWrapper('url', $url);
-			$cache->save($route);
-			return $route;
-		}
+        $select = self::_getSelect();
+        $select->where( 'url = ?', $url);
+        return self::_initItem( $select );
 	}
 
 	public function validate(RM_Exception $e) {
 		if (!$this->getRoutingUrl()->checkFormat( $this->getParams() )) {
 			$e[] = self::ERROR_ALIAS;
 		}
-		if (!$this->getRoutingUrl()->checkUnique($this->_idRoute)) {
+		if (!$this->getRoutingUrl()->checkUnique( $this->getId() )) {
 			$e[] = self::ERROR_ALIAS_EXISTS;
 		}
 	}
 	
 	public function getId() {
-		return $this->_idRoute;
+		return $this->idRoute;
 	}
 	
 	public function getType() {
-		return $this->_type;	
+		return $this->type;
 	}
 	
 	public function getName() {
-		return $this->_name;
+		return $this->name;
 	}
 	
 	public function getStatus() {
-		return $this->_routeStatus;
+		return $this->routeStatus;
 	}
 	
 	/**
@@ -177,36 +156,31 @@ class RM_Routing
 			self::STATUS_DELETED,
 			self::STATUS_UNDELETED,
 		))) {
-			if ($this->getStatus() !== $status) {
-				$this->_routeStatus = $status;
-				$this->_changes['routeStatus'] = $status;
-			}
-		} else
+            $this->routeStatus = $status;
+		} else {
 			throw new Exception('WRONG STATUS GIVEN');
+        }
 		return $this;
 	}
 	
 	public function setName($name) {
-		if ($this->getName() !== $name) {
-			$this->_name = $name;
-			$this->_changes['name'] = $name;
-		}
+        $this->name = $name;
 	}
 	
 	public function getAction() {
-		return $this->_action;
+		return $this->action;
 	}
 	
 	public function setAction($actionName) {
-		if ($this->getAction() !== $actionName) {
-			if ($actionName === '') {
-				throw new Exception('Empty action name given');
-			}
-			$this->_action = $actionName;
-			$this->_changes['action'] = $actionName;
-		}
+        if ($actionName === '') {
+            throw new Exception('Empty action name given');
+        }
+        $this->action = $actionName;
 	}
-	
+
+    /**
+     * @return RM_Routing_Url
+     */
 	public function getRoutingUrl() {
 		return $this->_url;
 	}
@@ -221,57 +195,50 @@ class RM_Routing
 			$urlObject = new RM_Routing_Url($url);
 			$urlObject->format();
 			$this->_url = $urlObject;
-			$this->_changes['url'] = $urlObject->getInitialUrl();
-		}
-	}
-	
-	public function __set($param, $val) {
-		if ($this->__get($param) !== $val) {
-			$this->_defaultParams->__set($param, $val);
-			$this->_changes['defaultParams'] = $this->_defaultParams->__toString();
+			$this->url = $urlObject->getInitialUrl();
 		}
 	}
 
-	public function __get($param) {
-		return $this->_defaultParams->__get($param);
-	}
+    public function __get($name) {
+        $val = $this->_dataWorker->getValue($name);
+        if (is_null($val)) {
+            return $this->_defaultParams->__get($name);
+        } else {
+            return $val;
+        }
+    }
+
+    public function __set($name, $value) {
+        if (is_null($this->_dataWorker->setValue($name, $value))) {
+            $this->_defaultParams->__set($name, $value);
+            $this->defaultParams = $this->_defaultParams->__toString();
+        }
+    }
+
+    public function save() {
+        if ($this->_dataWorker->save()) {
+            static::clearCache();
+            if (static::AUTO_CACHE) {
+                $this->__refreshCache();
+            }
+        }
+    }
 
 	public function getParams() {
 		return array_merge(array(
-			'controller' => $this->_controller,
-			'action' => $this->_action,
-			'module' => $this->_module,
-			'idRoute' => $this->_idRoute
+			'controller' => $this->controller,
+			'action' => $this->action,
+			'module' => $this->module,
+			'idRoute' => $this->idRoute
 		), $this->_defaultParams->getParams());
 	}
-		
-	public function save() {
-		$db = Zend_Registry::get('db');
-        /* @var $db Zend_Db_Adapter_Abstract */
-		if ($this->getId() === 0) {
-			$db->insert('routing', array(
-				'type' => $this->getType(),
-				'name' => $this->getName(),
-				'module' => $this->_module,
-				'controller' => $this->_controller,
-				'action' => $this->_action,
-				'url' => $this->getRoutingUrl()->getInitialUrl(),
-				'defaultParams' => $this->_defaultParams->__toString(),
-				'routeStatus' => $this->getStatus()
-			));
-			$this->_idRoute = (int)$db->lastInsertId();
-			$this->_changes = array();
-			self::clearCache();
-		} else {
-			if (!empty($this->_changes)) {
-				$db->update('routing', $this->_changes, 'idRoute = ' . $this->getId());
-				self::clearCache();
-				$this->_changes = array();
-				$this->clear();
-			}
-		}
-		return $this;
-	}
+
+    /**
+     * @deprecated
+     */
+    public function delete() {
+        $this->remove();
+    }
 
 	public function remove(){
 		$this->setStatus( self::STATUS_DELETED );
@@ -279,71 +246,32 @@ class RM_Routing
 		$this->clear();
 	}
 
+    public function clear() {
+        $cm = Zend_Registry::get('cachemanager');
+        /* @var Zend_Cache_Manager $cm */
+        $cache = $cm->getCache('routing');
+        /* @var Zend_Cache_Core $cache */
+        $cache->remove( $this->getId() );
+    }
+
 	/**
 	 * @static
+     * @deprecated
 	 * @return RM_Routing[]
 	 */
 	public static function getRoutingList() {
-		$db = Zend_Registry::get('db');
-        /* @var $db Zend_Db_Adapter_Abstract */
-		$select = $db->select()->from('routing');
-		$select->where('routing.routeStatus != ?', self::STATUS_DELETED);
-		$list = array();
-		if (($result = $db->fetchAll($select)) !== false) {
-			foreach ($result as $data) {
-				$list[] = self::init($data);
-			}
-		}
-		return $list;
-	}
-	
-	public function clear() {
-		Zend_Registry::get('cachemanager')
-			->getCache('routing')
-			->remove($this->getId());
+        return self::getList();
 	}
 
+    public static function _setSelectRules(Zend_Db_Select $select) {
+        $select->where('routeStatus != ?', self::STATUS_DELETED);
+    }
+
+    /**
+     * @deprecated
+     */
 	public static function clearCache() {
-		Zend_Registry::get('cachemanager')
-			->getCache('routing')
-			->remove(self::ROUTE_CACHE);
-	}
-	
-	public static function installRouter(Zend_Controller_Router_Rewrite $router) {
-		$cache = Zend_Registry::get('cachemanager')->getCache('routing');
-		if (($list = $cache->load(self::ROUTE_CACHE)) !== false) {
-			$router->addRoutes($list);
-		} else {
-			$dir = APPLICATION_PATH . '/configs/routes/';
-			$handle = opendir($dir);
-		 	while ( false !== ($file = readdir($handle)) ) {
-		 		if (preg_match('/\.ini/', $file)) {
-		 			$config = new Zend_Config_Ini($dir . $file, APPLICATION_ENV);
-		 			$router->addConfig($config);
-		 		}
-		 	}			
-			foreach (self::getRoutingList() as $route) {
-				self::setRoute($router, $route);
-			}
-			$cache->save($router->getRoutes());
-		}
-	}
-	
-	private static function setRoute(
-		Zend_Controller_Router_Rewrite $router,
-		RM_Routing $route
-	) {
-		switch($route->getType()) {
-			case self::TYPE_ROUTE:
-				$router->addRoute(
-					$route->getName(),
-					new Zend_Controller_Router_Route($route->getRoutingUrl()->getInitialUrl(), $route->getParams())
-				);
-			break;
-			default:
-				throw new Exception(self::ERROR_INVALID_ROUTE_TYPE);
-			break;
-		}
+        RM_Routing_Installer::getInstance()->clear();
 	}
 
 }

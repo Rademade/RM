@@ -23,6 +23,7 @@ class RM_Routing_Url {
 		$this->url = $this->stripLastSlashes($this->url);
 		$translit = new RM_Routing_Url_Translite($this->url);
 		$this->url = $translit->__toString();
+        return $this;
 	}
 
 	public function checkUnique($excludedId = null) {
