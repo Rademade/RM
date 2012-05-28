@@ -108,7 +108,8 @@ class RM_Routing
             'name' => $routeName,
             'controller' => $routeController,
             'action' => $routeAction,
-            'url' => $url->format()->getInitialUrl()
+            'url' => $url->format()->getInitialUrl(),
+            'defaultParams' => '{}'
         ) ) );
 		return $route;
 	}
@@ -222,6 +223,7 @@ class RM_Routing
                 $this->__refreshCache();
             }
         }
+        return $this;
     }
 
 	public function getParams() {

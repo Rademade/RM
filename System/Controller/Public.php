@@ -1,4 +1,7 @@
 <?php
+/**
+ * @deprecated
+ */
 abstract class RM_System_Controller_Public
 	extends Zend_Controller_Action {
 

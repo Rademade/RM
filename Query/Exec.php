@@ -19,7 +19,7 @@ class RM_Query_Exec {
 	/**
 	 * @static
 	 * @param Zend_Db_Select $select
-	 * @param array $arguments
+	 * @param RM_Query_Interface_ImproveSelect[] $arguments
 	 * @return array
 	 */
 	public static function select(
@@ -28,12 +28,8 @@ class RM_Query_Exec {
 	) {
 		$limits = null;
 		foreach ($arguments as $argument) {
-			if ($argument instanceof RM_Query_Where) {
-				/* @var $argument RM_Query_Where */
-				$argument->improveQuery( $select );
-			}
-			if ($argument instanceof RM_Query_Order) {
-				/* @var $argument RM_Query_Order */
+			if ($argument instanceof RM_Query_Interface_ImproveSelect) {
+                /* @var RM_Query_Interface_ImproveSelect $argument */
 				$argument->improveQuery( $select );
 			}
 			if ($argument instanceof RM_Query_Limits) {

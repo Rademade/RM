@@ -126,7 +126,7 @@ class RM_Page
 	}
 
 	public function getIdPage() {
-		return $this->id;
+		return $this->_dataWorker->getValue('id');
 	}
 
 	public function getIdContent() {
