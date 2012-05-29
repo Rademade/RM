@@ -42,4 +42,15 @@ class RM_Query_Exec {
 		return $limits->getResult( $select );
 	}
 
+    public static function getRowCount(Zend_Db_Select $select, $idFieldName) {
+        $db = Zend_Registry::get('db');
+        /* @var  Zend_Db_Adapter_Abstract $db */
+        $sqlQuery = preg_replace(
+            '/^(SELECT)(.*)(FROM)/i',
+            '$1 COUNT(' . $idFieldName . ') as count $3',
+            $select->assemble()
+        );
+        return (int)$db->fetchRow( $sqlQuery )->count;
+    }
+
 }

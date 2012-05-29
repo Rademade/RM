@@ -8,7 +8,7 @@ class RM_Query_Where
 	 * @var array
 	 */
 	private $_conditions = array();
-	
+
 	const EXACTLY = 1;
 	const MORE = 2;
 	const LESS = 3;
@@ -26,7 +26,7 @@ class RM_Query_Where
 		$condition->type = $type;
 		return $condition;
 	}
-	
+
 	public function add($field, $conditionType, $value) {
 		$this->_conditions[] = $this->_createConditionStdClass(
 			$field,
@@ -36,7 +36,7 @@ class RM_Query_Where
 		);
 		return $this;
 	}
-	
+
 	public function addOr($field, $conditionType, $value) {
 		$this->_conditions[] = $this->_createConditionStdClass(
 			$field,
@@ -45,11 +45,11 @@ class RM_Query_Where
 			self::SQL_OR
 		);
 	}
-	
+
 	public function addSub(RM_Query_Where $subConditions) {
 		$this->_conditions[] = $subConditions;
 	}
-	
+
 	private function _checkCondition($type) {
 		$type = (int)$type;
 		if (in_array($type, array(
@@ -64,7 +64,7 @@ class RM_Query_Where
 			throw new Exception('WRONG CONDITION TYPE GIVEN');
 		}
 	}
-	
+
 	private function _convertCondition($type, $value) {
 		if (is_array($value)) {
 			if ($type === self::EXACTLY) {
@@ -91,14 +91,14 @@ class RM_Query_Where
 	public function isHashable(){
 		return true;
 	}
-	
+
 	public function getHash() {
 		return '_' . md5(
 			$this->getConditionString()
 		);
 	}
 
-	
+
     protected function _quote($value) {
         if (is_int($value)) {
             return $value;
@@ -107,7 +107,7 @@ class RM_Query_Where
         }
         return "'" . addcslashes($value, "\000\n\r\\'\"\032") . "'";
     }
-    
+
     public function quote($value, $type = null) {
         if ($value instanceof Zend_Db_Select) {
 	        /* @var $value Zend_Db_Select */
@@ -120,14 +120,14 @@ class RM_Query_Where
             foreach ($value as &$val) {
                 $val = $this->quote($val, $type);
             }
-            return implode(', ', $value);
+            return '(' . implode(', ', $value) . ')';
         }
 	    if (is_null($value)) {
 			return NULL;
 	    }
         return $this->_quote($value);
     }
-	
+
 	private function _formatValue($value) {
 		if (is_null($value)) {
 			return 'NULL';
@@ -139,7 +139,7 @@ class RM_Query_Where
 	private function _isEmptyArray($value) {
 		return is_array($value) && empty($value);
 	}
-	
+
 	private function _getConditionType($type) {
 		switch ($type) {
 			case self::SQL_AND:
@@ -157,7 +157,7 @@ class RM_Query_Where
 		}
 		return '';
 	}
-	
+
 	public function getConditionString() {
 		$i = 0;
 		$sql = '(';

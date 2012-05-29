@@ -198,18 +198,20 @@ abstract class RM_Entity {
 		);
 	}
 
-	public static function getCount(RM_Query_Where $where) {
+	public static function getCount(RM_Query_Where $where = null) {
 		$select = self::getDb()->select();
-		$select->from(static::TABLE_NAME, array(
-            'count' => 'COUNT(' . join('.', array(
-                static::TABLE_NAME,
-                static::_getKeyAttributeProperties()->getFieldName()
-            )) . ')'
-		));
-		static::_setSelectRules( $select );
-        $where->improveQuery($select);
+        static::_setSelectRules( $select );
+        if ($where instanceof RM_Query_Where) {
+            $where->improveQuery($select);
+        }
         $select->limit(1);
-        return (int)self::getDb()->fetchRow( $select )->count;
+        return RM_Query_Exec::getRowCount(
+            $select,
+            join('.', array(
+                static::TABLE_NAME,
+                static::getKeyAttributeField()
+            ))
+        );
 	}
 
 	public static function _initList(
@@ -217,7 +219,7 @@ abstract class RM_Entity {
 		array $queryComponents
 	) {
 		$list = RM_Query_Exec::select($select, $queryComponents);
-		foreach ($list as &$item) {
+        foreach ($list as &$item) {
 			$item = new static($item);
 		}
 		return $list;

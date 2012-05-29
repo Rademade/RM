@@ -3,6 +3,9 @@ class RM_Entity_Worker_Data
 	implements
 		Serializable {
 
+    /**
+     * @var RM_Entity
+     */
 	private $_callClassName;
 
 	private $_table;
@@ -31,7 +34,7 @@ class RM_Entity_Worker_Data
 
 	private function _initProperties($className) {
 		$this->_table = $className::TABLE_NAME;
-		$this->_properties = call_user_func(
+		$this->_properties = call_user_func(//TODO refactor
             $className . '::getAttributesProperties'
         );
 	}
@@ -59,7 +62,7 @@ class RM_Entity_Worker_Data
 		}
 	}
 
-	private function &_getKey() {
+	public function &_getKey() {
 		return $this->_attributes[ $this->_key ];
 	}
 
@@ -68,9 +71,10 @@ class RM_Entity_Worker_Data
 	}
 
 	public function getValue($name) {
-		if ($this->_isExistAttribute( $name )) {
+        if ($this->_isExistAttribute( $name )) {
 			return $this->_attributes[ $name ]->getValue();
 		}
+        return null;
 	}
 
 	public function setValue($name, $value) {
@@ -84,15 +88,30 @@ class RM_Entity_Worker_Data
 			}
 			return false;
 		}
-	}
+        return null;
+    }
+
+    public function isInserted() {
+        $inserted = ($this->_getKey()->getValue() !== 0);
+        if ($inserted && !$this->_getKey()->isAutoIncrement()) {
+            $entity = call_user_func(//TODO refactor
+                $this->_callClassName . '::getById',
+                $this->_getKey()->getValue()
+            );
+            $inserted = ($entity instanceof RM_Entity);
+        }
+        return $inserted;
+    }
 
 	public function save() {
-		if ($this->_getKey()->getValue() == 0) {
+		if (!$this->isInserted()) {
 			RM_Entity::getDb()->insert(
 				$this->_table,
 				$this->_getInsertData()
 			);
-			$this->_getKey()->setValue( RM_Entity::getDb()->lastInsertId() );
+            if ($this->_getKey()->isAutoIncrement()) {
+    			$this->_getKey()->setValue( RM_Entity::getDb()->lastInsertId() );
+            }
 			$this->_changes = array();
 			return true;
 		} else {

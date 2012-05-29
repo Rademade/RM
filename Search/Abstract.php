@@ -13,6 +13,9 @@ abstract class RM_Search_Abstract {
      */
     protected $_db;
 
+    /**
+     * @var RM_Entity
+     */
     const SEARCH_MODEL = null;
 
     public function __construct() {
@@ -35,19 +38,28 @@ abstract class RM_Search_Abstract {
     }
 
     public function setId($id) {
-        $this->_select->where('idOrder = ?', (int)$id);
+        $model = static::SEARCH_MODEL;
+        $this->_select->where($model::getKeyAttributeField() . ' = ?', (int)$id);
+    }
+
+    function __clone() {
+        $this->_select = clone $this->_select;
     }
 
     public function getResults() {
-        $list = RM_Query_Exec::select(
-            $this->_select,
-            func_get_args()
-        );
         $model = static::SEARCH_MODEL;
-        foreach ($list as &$order) {
-            $order = new $model($order);
-        }
-        return $list;
+        return $model::_initList( $this->_select, func_get_args() );
+    }
+
+    public function getCount() {
+        $model = static::SEARCH_MODEL;
+        return RM_Query_Exec::getRowCount(
+            $this->_select,
+            join('.', array(
+                $model::TABLE_NAME,
+                $model::getKeyAttributeField()
+            ))
+        );
     }
 
 }

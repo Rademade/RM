@@ -32,7 +32,11 @@ class RM_Entity_Attribute {
 		return $this->_properties->getFieldName();
 	}
 
-	public function setValue($value) {
+    public function isAutoIncrement() {
+        return $this->_properties->isAutoIncrement();
+    }
+
+    public function setValue($value) {
 		$this->_value  = $this->_parseValue( $value );
 	}
 

@@ -3,6 +3,7 @@ class RM_Entity_Attribute_Properties {
 
 	private $_name;
 	private $_id;
+    private $_ai;
 	private $_field;
 	private $_isColumn;
 	private $_type;
@@ -15,6 +16,7 @@ class RM_Entity_Attribute_Properties {
 		$this->_field = isset($settings[ 'field' ]) ? $settings['field'] : $name;
 		$this->_isColumn = !(isset($settings[ 'column' ]) && $settings[ 'column' ] === false);
 		$this->_default = isset($settings['default']) ? $settings['default'] : '';
+        $this->_ai = isset($settings['ai']) ? $settings['ai'] : ($this->_id ? true : false);
 	}
 
 	public function getName() {
@@ -36,6 +38,10 @@ class RM_Entity_Attribute_Properties {
 	public function isKey() {
 		return $this->_id === true;
 	}
+
+    public function isAutoIncrement() {
+        return $this->_ai;
+    }
 
 	public function getDefault(){
 		return $this->_default;
