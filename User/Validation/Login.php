@@ -19,8 +19,9 @@ class RM_User_Validation_Login
 
 	public function isUnique( $excludedId = 0 ) {
 		if ($this->isValid()) {
-			$user = RM_User::getByLogin( $this->getLogin() );
-			if ($user instanceof RM_User) {
+            $profileClass = RM_Dependencies::getInstance()->userProfile;
+			$user = $profileClass::getByLogin( $this->getLogin() );
+			if ($user instanceof $profileClass) {
 				if ($user->getId() !== $excludedId) {
 					return false;
 				}
@@ -30,7 +31,6 @@ class RM_User_Validation_Login
 			return false;
 		}
 	}
-
 
 	public function format() {
 		$this->_login = $this->_getLineProcessor()->getParsedContent( $this->getLogin() );

@@ -64,6 +64,7 @@ class RM_Page
 
 	const TYPE_PAGE = 1;
 	const TYPE_CATEGORY = 2;
+    const TYPE_COUNTRY = 3;
 
 	public function __construct($data) {
 		$this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);

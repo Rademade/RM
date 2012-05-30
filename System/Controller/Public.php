@@ -3,7 +3,8 @@
  * @deprecated
  */
 abstract class RM_System_Controller_Public
-	extends Zend_Controller_Action {
+	extends
+        Zend_Controller_Action {
 
 	/**
 	 * @var RM_User

@@ -7,14 +7,14 @@ class RM_User_Session {
 	private $session;
 
 	/**
-	 * @var RM_User
+	 * @var RM_User_Interface
 	 */
 	private $_user;
 
 	private static $_self;
-	
+
 	const REMEMBER_TIME = 8000000;
-	
+
 	private function __construct() {
 		$this->session = new Zend_Session_Namespace ("User");
 	}
@@ -29,26 +29,33 @@ class RM_User_Session {
 		}
 		return self::$_self;
 	}
-	
+
 	private function _setIdUser($idUser) {
 		$idUser = intval($idUser);
 		$this->session->idUser = $idUser;
 	}
-	
+
 	public function getIdUser() {
 		return (int)$this->session->idUser;
 	}
 
-	public function create(RM_User &$user){
+	public function create(RM_User_Interface $user){
 		$this->_setIdUser( $user->getId() );
 	}
-	
+
 	public function getMyIp() {
 		return getenv('REMOTE_ADDR');
 	}
 
+    public function remember() {
+        Zend_Session::rememberMe(self::REMEMBER_TIME);
+    }
+
+    /**
+     * @deprecated
+     */
 	public function remeber() {
-		Zend_Session::rememberMe(self::REMEMBER_TIME);
+        $this->remember();
 	}
 
 	public function logout() {
@@ -56,24 +63,25 @@ class RM_User_Session {
 	}
 
 	/**
-	 * @return RM_User
+	 * @return RM_User_Interface|null
 	 */
 	public function getUser() {
 		if ($this->getIdUser() !== 0) {
-			$this->_user = RM_User::getById($this->getIdUser());
-			if ($this->_user instanceof RM_User && $this->_user->isShow()) {
+            $userClass = RM_Dependencies::getInstance()->userClass;
+            /* @var RM_Entity $userClass */
+            $this->_user = $userClass::getById($this->getIdUser());
+			if ($this->_user instanceof $userClass && $this->_user->isShow()) {
 				return $this->_user;
 			} else {
 				$this->logout();
-				return false;
 			}
-		} else {
-			return false;
 		}
+        return null;
 	}
 
 	public function isLogin() {
-		return $this->getUser() instanceof RM_User;
+        $userClass = RM_Dependencies::getInstance()->userClass;
+		return $this->getUser() instanceof $userClass;
 	}
-	
+
 }

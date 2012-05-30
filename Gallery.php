@@ -106,7 +106,7 @@ class RM_Gallery
 	}
 
 	/**
-	 * @return RM_Gallery_Photo
+	 * @return RM_Gallery_Photo|null
 	 */
 	public function getPosterPhoto() {
 		if (!($this->_poster instanceof RM_Photo)) {
@@ -126,6 +126,12 @@ class RM_Gallery
 		$this->_poster = null;
 		$this->getPhotos();
 	}
+
+
+    public function save() {
+        parent::save();
+        return $this;
+    }
 
 	public function updatePositions() {
 		$photos = array();

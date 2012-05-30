@@ -1,6 +1,7 @@
 <?php
 /**
  * @class RM_User
+ * @deprecated
  * @property int idUser
  * @property int idAvatar
  * @property int failLogins
@@ -21,8 +22,7 @@ class RM_User
 		RM_Entity
 	implements
 		RM_User_Interface,
-		RM_Interface_Hideable,
-		RM_Interface_Deletable {
+        RM_User_Profile_Interface {
 
 	const CACHE_NAME = 'users';
 
@@ -536,4 +536,10 @@ class RM_User
 		return $this->_textProcessor;
 	}
 
+    /**
+     * @return RM_User_Interface
+     */
+    public function getUser() {
+        return $this;
+    }
 }

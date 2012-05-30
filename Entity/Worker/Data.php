@@ -37,6 +37,9 @@ class RM_Entity_Worker_Data
 		$this->_properties = call_user_func(//TODO refactor
             $className . '::getAttributesProperties'
         );
+        if (empty($this->_properties)) {
+            throw new Exception('Entity properties not defined');
+        }
 	}
 
 	/**
@@ -79,12 +82,12 @@ class RM_Entity_Worker_Data
 
 	public function setValue($name, $value) {
 		if ($this->_isExistAttribute( $name )) {
-			if ($this->_attributes[$name] !== $value) {
-				$this->_changes[
+            if ($this->_attributes[$name] !== $value) {
+                $this->_changes[
 					$this->_attributes[ $name ]->getFieldName()
 				] = $value;
 	 			$this->_attributes[ $name ]->setValue( $value );
-				return true;
+                return true;
 			}
 			return false;
 		}

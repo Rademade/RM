@@ -8,6 +8,10 @@ class RM_Content_Field_Process_Line
 		parent::__construct();
 	}
 
+    /**
+     * @static
+     * @return RM_Content_Field_Process_Line
+     */
 	public static function init() {
 		if (!(self::$_self instanceof self)) {
 			self::$_self = new self();
