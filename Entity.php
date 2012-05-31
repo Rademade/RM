@@ -200,7 +200,6 @@ abstract class RM_Entity {
 
 	public static function getCount(RM_Query_Where $where = null) {
 		$select = static::_getSelect();
-        static::_setSelectRules( $select );
         if ($where instanceof RM_Query_Where) {
             $where->improveQuery($select);
         }
