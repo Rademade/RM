@@ -29,7 +29,7 @@ abstract class RM_Search_Abstract {
     public function setMatch($matchText) {
         $this->_searchWorld = $matchText;
         $conditions = $this->_getSearchConditions();
-        if (!empty($conditions)) {
+        if (!empty($conditions) && strlen(trim($this->_searchWorld)) > 1) {
             $this->_select->where( $this->_db->quoteInto(
                 join(' OR ', $conditions),
                 trim( '%' . $this->_searchWorld . '%' )
