@@ -245,7 +245,7 @@ class RM_User_Profile
     }
 
     private function _generatePasswordHash($password) {
-        return sha1( md5( $password ) . self::PASSWORD_SALT);
+        return sha1( md5( $password ) . static::PASSWORD_SALT);
     }
 
     public function checkPassword($password) {
