@@ -112,7 +112,6 @@ class RM_Routing_Installer {
                     break;
             }
         }
-        $this->__getCacheCore()->save( $this->getRouter()->getRoutes() );
     }
 
     /**
@@ -139,6 +138,7 @@ class RM_Routing_Installer {
         } else {
             $this->__installFileRouter();
             $this->__installDbRouter();
+            $this->__getCacheCore()->save( $this->getRouter()->getRoutes() );
         }
     }
 
