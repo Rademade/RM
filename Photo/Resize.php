@@ -24,7 +24,8 @@ class Resize {
 
 	public function __construct($dirPath, $path) {
 		$this->_dirPath = $dirPath;
-		$this->_imagePath =  $this->_dirPath . $path;
+        $urlParams = parse_url($path);
+		$this->_imagePath =  $this->_dirPath . $urlParams['path'];
 		if (!is_file($this->_imagePath)) {
 			throw new Exception('Wrong image path given');
 		} else {
