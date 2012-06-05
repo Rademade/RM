@@ -5,7 +5,6 @@ interface RM_User_Profile_Interface
         RM_Interface_Deletable {
 
 
-    public function getId();
     /**
      * @return RM_User_Interface
      */
