@@ -1,6 +1,7 @@
 <?php
 class RM_View_Form_Field_Text
-	extends RM_View_Form_Field {
+	extends
+        RM_View_Form_Field {
 	
 	private $type = 'text';
 	

@@ -147,6 +147,10 @@ class RM_User_Profile
         }
     }
 
+    public function __cachePrepare() {
+        $this->_user = null;
+    }
+
     public function save() {
         $this->validate();
         $this->_createUser();
@@ -289,6 +293,7 @@ class RM_User_Profile
         $this->getUser()->remove();
         $this->setStatus( self::STATUS_DELETED );
         $this->save();
+        $this->__cleanCache();
     }
 
     /**
@@ -296,6 +301,15 @@ class RM_User_Profile
      */
     private function _getLineProcessor() {
         return RM_Content_Field_Process_Line::init();
+    }
+
+    public function __toArray() {
+        return array(
+            'idUser' => $this->getId(),
+            'profileName' => $this->getName(),
+            'profileLastname' => $this->getLastname(),
+            'profileEmail' => $this->getEmail()
+        );
     }
 
 }

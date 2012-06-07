@@ -21,6 +21,7 @@ class RM_View_Element_Icon
 	const ICON_NEW = 14;
 	const ICON_COMMENTS = 15;
 	const ICON_RECOMMEND = 16;
+    const ICON_ANSWER = 17;
 	
 	public function __construct(
 		$routeName,
@@ -83,6 +84,8 @@ class RM_View_Element_Icon
 				return 'comments.png';
 			case self::ICON_RECOMMEND:
 				return 'recommend.png';
+            case self::ICON_ANSWER:
+                return 'answer.png';
 		}
 	}
 	
