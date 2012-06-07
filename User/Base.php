@@ -1,5 +1,6 @@
 <?php
 /**
+ * @property int idUser
  * @property int userStatus
  * @property int idRole
  */

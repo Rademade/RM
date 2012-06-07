@@ -88,10 +88,10 @@ abstract class RM_User_Code
 		return $this->idUser;
 	}
 	
-	public static function create(RM_User $user) {
+	public static function create(RM_User_Profile_Interface $user) {
 		return new static( new RM_Compositor( array(
 			'idUser' => $user->getId(),
-		    'activationCode' =>self::_generateCode(),
+		    'activationCode' => self::_generateCode(),
 			'codeType' => static::getMyType(),
 			'makeDate' => time()
         ) ) );

@@ -191,7 +191,10 @@ class RM_Content
 		foreach ($this->getAllContentLangs() as $lang) {
 			/* @var $lang RM_Lang */
 			if ( !in_array($lang->getId(), $this->_settedLangs) ) {
-				$this->removeContentLang( RM_Lang::getById( $lang->getId() ) );
+                $rmLang = RM_Lang::getById( $lang->getId() );
+                if ($rmLang instanceof RM_Lang) {
+                    $this->removeContentLang( $rmLang );;
+                }
 			}
 		}
 	}

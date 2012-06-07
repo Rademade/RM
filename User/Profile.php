@@ -123,6 +123,9 @@ class RM_User_Profile
         if (!$this->_user instanceof RM_User_Interface) {
             $model = RM_Dependencies::getInstance()->userClass;
             /** @var $_user RM_User_Base */
+            if ($this->getIdUser() === 0) {
+                $this->_createUser();
+            }
             $this->_user = $model::getById( $this->getIdUser() );
         }
         return $this->_user;
@@ -166,8 +169,9 @@ class RM_User_Profile
         RM_Exception $e = null,
         $isThrow
     ) {
-        if (is_null($e))
+        if (is_null($e)) {
             $e = new RM_Exception();
+        }
         $validator = new RM_User_Validation_Email( $email );
         $validator->format();
         if (!$validator->isValid()) {
@@ -177,15 +181,16 @@ class RM_User_Profile
                 $e[] = 'Such email already exists';
             }
         }
-        if ($isThrow && (bool)$e->current())
+        if ($isThrow && (bool)$e->current()) {
             throw $e;
+        }
         return $validator->getEmail();
     }
 
     public function setEmail($email) {
         if ($this->getEmail() !== $email) {
             $email = $this->_validateEmail($email, null, true );
-            $this->profileEmail = $email;
+            $this->profileEmail = mb_strtolower($email, 'UTF-8');
         }
     }
 
