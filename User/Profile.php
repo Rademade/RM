@@ -65,7 +65,7 @@ class RM_User_Profile
     }
 
     public function getId() {
-        return $this->__get(
+        return $this->_dataWorker->getValue(
             static::_getKeyAttributeProperties()->getName()
         );
     }
@@ -111,7 +111,7 @@ class RM_User_Profile
         return $this->getId();
     }
 
-    protected function __setUser(RM_User_Base $user) {
+    protected function __setUser(RM_User_Interface $user) {
         $this->idUser = $user->getId();
         $this->_user = $user;
     }
@@ -122,7 +122,7 @@ class RM_User_Profile
     public function getUser() {
         if (!$this->_user instanceof RM_User_Interface) {
             $model = RM_Dependencies::getInstance()->userClass;
-            /** @var $_user RM_User_Base */
+            /** @var $_user RM_User_Interface */
             if ($this->getIdUser() === 0) {
                 $this->_createUser();
             }
@@ -159,6 +159,7 @@ class RM_User_Profile
         $this->_createUser();
         $this->getUser()->save();
         $this->_dataWorker->setValue('idUser', $this->getUser()->getId());
+        $this->getId();
         if ($this->_dataWorker->save()) {
             $this->__refreshCache();
         }
