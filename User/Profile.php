@@ -18,6 +18,8 @@ class RM_User_Profile
 
     const CACHE_NAME = 'rmProfiles';
 
+    const AUTO_CACHE = true;
+
     const PASSWORD_SALT = 'rmPasswd->Super.Salt';
 
     /**
@@ -159,8 +161,7 @@ class RM_User_Profile
         $this->_createUser();
         $this->getUser()->save();
         $this->_dataWorker->setValue('idUser', $this->getUser()->getId());
-        $this->getId();
-        if ($this->_dataWorker->save()) {
+        if ($this->_dataWorker->save() && static::AUTO_CACHE) {
             $this->__refreshCache();
         }
     }

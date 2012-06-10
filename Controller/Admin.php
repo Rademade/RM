@@ -67,7 +67,9 @@ abstract class RM_Controller_Admin
     public function editAction() {
         $action = 'Edit ' . $this->_getAddName();
         $this->view->headTitle()->append( $action );
-        $this->__getCrumbs()->add($action, array(), $this->_editRoute);
+        $this->__getCrumbs()->add($action, array(
+            'id' => 0
+        ), $this->_editRoute);
         $this->view->tabs = array(
             RM_Lang::getDefault()
         );
