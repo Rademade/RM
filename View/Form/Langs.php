@@ -119,11 +119,10 @@ class RM_View_Form_Langs {
 	private function _collectLangs() {
 		if (isset($_POST['lang'])) {
 			foreach ($_POST['lang'] as $idLang => $fields) {
-				try {
-					$this->addLang( RM_Lang::getById( $idLang ) );
-				} catch (Exception $e) {
-					//TODO need clear
-				}
+                $lang = RM_Lang::getById( $idLang );
+                if ($lang instanceof RM_Lang) {
+                    $this->addLang( $lang );
+                }
 			}
 		}
 	}

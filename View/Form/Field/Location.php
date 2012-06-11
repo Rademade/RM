@@ -20,7 +20,7 @@ class RM_View_Form_Field_Location
 		$height
 	) {
 		parent::__construct($name, $desc, '');
-		$this->getView()->HeadDecorator()->addJS('map');
+        Head::getInstance()->getJS()->add('map');
 		$this->lat = $lat;
 		$this->lng = $lng;
 		$this->zoom = (int)$zoom;
