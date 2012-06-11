@@ -131,6 +131,16 @@ abstract class RM_Entity {
 		return static::_getStorage()->getFieldNames();
 	}
 
+    public static function _getSecondaryDbAttributes() {
+        $fields = static::_getDbAttributes();
+        foreach ($fields as $key => $field) {
+            if ($field === static::_getKeyAttributeProperties()->getName()) {
+                unset($fields[ $key ]);
+            }
+        }
+        return $fields;
+    }
+
 	/* Load entities block */
 
 	/**

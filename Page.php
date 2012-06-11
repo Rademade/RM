@@ -178,7 +178,7 @@ class RM_Page
 	}
 
 	public function isShow() {
-		return $this->getStatus() === self::STATUS_SHOW;
+		return $this->getStatus() === self::STATUS_SHOW || $this->isSystem();
 	}
 
 	public function getStatus() {
