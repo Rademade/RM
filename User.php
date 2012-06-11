@@ -384,17 +384,27 @@ class RM_User
         $select->join('roles', 'users.idRole = roles.idRole');
     }
 
+    public static function getByEmail($mail) {
+        $mail = mb_strtolower($mail, 'utf-8');
+        $db = Zend_Registry::get('db');
+        /* @var $db Zend_Db_Adapter_Abstract */
+        $select = self::_getSelect();
+        $select->where('users.userMail = ?', $mail)->limit(1);
+        if (($row = $db->fetchRow ( $select )) !== false) {
+            return new self($row);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @static
+     * @deprecated
+     * @param $mail
+     * @return null|RM_User
+     */
 	public static function getByMail($mail) {
-		$mail = mb_strtolower($mail, 'utf-8');
-		$db = Zend_Registry::get('db');
-		/* @var $db Zend_Db_Adapter_Abstract */
-		$select = self::_getSelect();
-		$select->where('users.userMail = ?', $mail)->limit(1);
-		if (($row = $db->fetchRow ( $select )) !== false) {
-			return new self($row);
-		} else {
-			return null;
-		}
+        return static::getByEmail($mail);
 	}
 
 	public static function getByLogin($login) {
