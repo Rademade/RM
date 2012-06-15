@@ -51,6 +51,11 @@ abstract class RM_Search_Abstract {
         return $model::_initList( $this->_select, func_get_args() );
     }
 
+    public function getFirst() {
+        $model = static::SEARCH_MODEL;
+        return $model::_initItem( $this->_select, func_get_args() );
+    }
+
     public function getCount() {
         $model = static::SEARCH_MODEL;
         return RM_Query_Exec::getRowCount(
