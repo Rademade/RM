@@ -22,6 +22,9 @@ class RM_View_Element_Icon
 	const ICON_COMMENTS = 15;
 	const ICON_RECOMMEND = 16;
     const ICON_ANSWER = 17;
+    const ICON_RIGHT_BLOCK = 18;
+    const ICON_TEXT_BLOCK = 19;
+    const ICON_TEXT_FIELD = 20;
 	
 	public function __construct(
 		$routeName,
@@ -86,6 +89,12 @@ class RM_View_Element_Icon
 				return 'recommend.png';
             case self::ICON_ANSWER:
                 return 'answer.png';
+            case self::ICON_RIGHT_BLOCK:
+                return 'right-block.png';
+            case self::ICON_TEXT_BLOCK:
+                return 'text-block.png';
+            case self::ICON_TEXT_FIELD:
+                return 'text-field.png';
 		}
 	}
 	

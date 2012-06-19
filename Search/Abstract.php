@@ -67,4 +67,9 @@ abstract class RM_Search_Abstract {
         );
     }
 
+    public function sortLastAdded() {
+        $model = static::SEARCH_MODEL;
+        $this->_select->order($model::TABLE_NAME . '.' . $model::getKeyAttributeField(). ' DESC');
+    }
+
 }

@@ -186,6 +186,7 @@ class RM_Page
 	}
 
 	public function setStatus($status) {
+        //TODO check status type
 		$this->pageStatus = (int)$status;
 	}
 

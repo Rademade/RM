@@ -146,7 +146,7 @@ abstract class RM_Controller_Admin
     public function postDispatch() {
         parent::postDispatch();
         $this->__setViewParams();
-        if ($this->_ajaxResponse instanceof stdClass) { //set ajax response
+        if (!is_null($this->_ajaxResponse)) { //set ajax response
             $response = $this->getResponse();
             $output = Zend_Json::encode( $this->_ajaxResponse );
             $response->setBody($output);

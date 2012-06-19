@@ -8,7 +8,7 @@ class RM_View_Form_Field_Geo
 
 	public function __construct($desc, $name, $value, $queryToUrl) {
 		parent::__construct($name, $desc, $value);
-		$this->getView()->HeadDecorator()->addJS('geo')->addJS('map');
+        Head::getInstance()->getJS()->add('map')->add('geo');
 		$this->setQueryUrl($queryToUrl);
 	}
 	
