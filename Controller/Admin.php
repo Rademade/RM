@@ -38,7 +38,7 @@ abstract class RM_Controller_Admin
     private function __initParams() {
         if ($this->_ajaxRoute) {
             $this->_ajaxUrl = $this->view->url(
-                array(),
+                $this->getAllParams(),
                 $this->_ajaxRoute
             );
         }
@@ -146,7 +146,7 @@ abstract class RM_Controller_Admin
     public function postDispatch() {
         parent::postDispatch();
         $this->__setViewParams();
-        if (!is_null($this->_ajaxResponse)) { //set ajax response
+        if ($this->_ajaxResponse instanceof stdClass || is_array($this->_ajaxResponse)) { //set ajax response
             $response = $this->getResponse();
             $output = Zend_Json::encode( $this->_ajaxResponse );
             $response->setBody($output);

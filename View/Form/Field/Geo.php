@@ -2,22 +2,11 @@
 class RM_View_Form_Field_Geo
 	extends RM_View_Form_Field {
 
-	private $queryToUrl;
-	
 	const TPL = 'geo.phtml';
 
-	public function __construct($desc, $name, $value, $queryToUrl) {
+	public function __construct($desc, $name, $value) {
 		parent::__construct($name, $desc, $value);
-        Head::getInstance()->getJS()->add('map')->add('geo');
-		$this->setQueryUrl($queryToUrl);
-	}
-	
-	public function getQueryUrl() {
-		return $this->queryToUrl;
-	}
-	
-	public function setQueryUrl($url) {
-		$this->queryToUrl = $url;
+		Head::getInstance()->getJS()->add('geo')->add('map');
 	}
 
 	public function render($idLang) {
@@ -25,9 +14,7 @@ class RM_View_Form_Field_Geo
 		$row->setDesc( $this->getDesc() );
 		$row->setHTML( $this->getView()->partial(
 			self::BASE_PATH . self::TPL,
-			$this->addFieldData($idLang, array(
-				'url' => $this->getQueryUrl()
-			) )
+			$this->addFieldData($idLang, array() )
 		));
 		return $this->renderRow($row);
 	}

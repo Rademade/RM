@@ -1,13 +1,21 @@
 <?php
 class RM_Content_Field_Process_Text
-	extends RM_Content_Field_Process {
+	extends
+        RM_Content_Field_Process {
 
+    /**
+     * @var RM_Content_Field_Process_Text
+     */
 	private static $_self;
 
 	protected function __construct(){
 		parent::__construct();
 	}
-	
+
+    /**
+     * @static
+     * @return RM_Content_Field_Process_Text
+     */
 	public static function init() {
 		if (!(self::$_self instanceof self)) {
 			self::$_self = new self();

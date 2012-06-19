@@ -14,6 +14,11 @@ abstract class RM_Search_Abstract {
     protected $_db;
 
     /**
+     * @var string
+     */
+    protected $_table;
+
+    /**
      * @var RM_Entity
      */
     const SEARCH_MODEL = null;
@@ -22,6 +27,7 @@ abstract class RM_Search_Abstract {
         $model = static::SEARCH_MODEL;
         $this->_select =  $model::_getSelect();
         $this->_db = Zend_Registry::get('db');
+        $this->_table = $model::TABLE_NAME;
     }
 
     abstract protected function _getSearchConditions();
