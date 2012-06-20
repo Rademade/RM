@@ -62,7 +62,7 @@ abstract class RM_Entity_Search_Abstract_Condition
     protected function __setConditionToQuery(Zend_Db_Select $select) {
         $where = new RM_Query_Where();
         foreach ($this->_getMatchedConditions() as $condition) {
-            $condition->setSearchJoins( $select );
+            $condition->setSearchJoins( $select );//TODO RM_JOINS
             $condition->setSearchConditions( $where );
         }
         $where->improveQuery( $select );

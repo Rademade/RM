@@ -17,6 +17,7 @@ abstract class RM_Entity_Search_Condition
     abstract public function setSearchConditions(RM_Query_Where &$where);
 
     /**
+     * TODO update to RM_Query_Join
      * @abstract
      * @param Zend_Db_Select $select
      * @return void
