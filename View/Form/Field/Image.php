@@ -7,8 +7,8 @@ class RM_View_Form_Field_Image
 	
 	const TPL = 'image.phtml';
 		
-	public function __construct($desc, $name, $idPage, $width, $height) {
-		parent::__construct($name, $desc, $idPage);
+	public function __construct($desc, $name, $idPhoto, $width, $height) {
+		parent::__construct($name, $desc, $idPhoto);
 		Head::getInstance()->getJS()->add('upload');
 		$this->setWidth($width);
 		$this->setHeight($height);

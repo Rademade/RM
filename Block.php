@@ -1,12 +1,4 @@
 <?php
-/**
-* @property int idBlock
-* @property int idPage
-* @property int idContent
-* @property int blockType
-* @property int searchType
-* @property int blockStatus
-*/
 class RM_Block
 	extends
 		RM_Entity
@@ -20,11 +12,6 @@ class RM_Block
 	
 	const SEARCH_TYPE_OPTION = 1;
 	const SEARCH_TYPE_BLOCK = 2;
-
-	/**
-	 * @var RM_Content
-	 */
-	private $_content = null;
 
 	const CACHE_NAME = 'block';
 
@@ -53,6 +40,31 @@ class RM_Block
 		)
 	);
 
+    /**
+     * @var RM_Entity_Worker_Data
+     */
+    private $_dataWorker;
+
+    /**
+     * @var RM_Entity_Worker_Cache
+     */
+    protected $_cacheWorker;
+
+    /**
+     * @var RM_Content
+     */
+    private $_content = null;
+
+
+    public function __construct(stdClass $data) {
+        $this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
+        $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
+    }
+
+    public function getId() {
+        return $this->_dataWorker->_getKey()->getValue();
+    }
+
 	public static function create($blockType, $idPage, $searchType) {
 		$block = new self( new RM_Compositor( array(
             'idPage' => $idPage,
@@ -67,26 +79,35 @@ class RM_Block
 		$select->where('blockStatus != ?', self::STATUS_DELETED);
 	}
 
-	public function validate() {
-		if ($this->getName() === '') {
-			throw new Exception('Enter block name');
-		}
-	}
+    public function validate(RM_Exception $e = null, $throw = true) {
+        if (is_null($e)) {
+            $e = new RM_Exception();
+        }
+        foreach ($this->getContentManager()->getAllContentLangs() as $contentLang) {
+            if ($contentLang->getName() == '') {
+                $lang = RM_Lang::getById($contentLang->getIdLang());
+                $e[] = 'Block name on ' . $lang->getName() . ' language not defined';
+            }
+        }
+        if ($throw && (bool)$e->current()) {
+            throw $e;
+        }
+    }
 
 	public function getIdPage() {
-		return $this->idPage;
+		return $this->_dataWorker->getValue('idPage');
 	}
 	
 	public function getType() {
-		return $this->blockType;
+		return $this->_dataWorker->getValue('blockType');
 	}
 	
 	public function getSearchType() {
-		return $this->searchType;
+		return $this->_dataWorker->getValue('searchType');
 	}
 
 	public function getIdContent() {
-		return $this->idContent;
+		return $this->_dataWorker->getValue('idContent');
 	}
 	
 	public function getName() {
@@ -111,7 +132,7 @@ class RM_Block
 
 	public function setContentManager(RM_Content $contentManager) {
 		if ($this->getIdContent() !== $contentManager->getId()) {
-			$this->idContent = $contentManager->getId();
+            $this->_dataWorker->setValue('idContent', $contentManager->getId());
 		}
 		$this->_content = $contentManager;
 	}
@@ -136,11 +157,11 @@ class RM_Block
 	}
 
 	public function getStatus() {
-		return $this->blockStatus;
+		return $this->_dataWorker->getValue('blockStatus');
 	}
 	
 	public function setStatus($status) {
-		$this->blockStatus = (int)$status;
+        $this->_dataWorker->setValue('blockStatus', $status);
 	}
 
 
@@ -159,8 +180,12 @@ class RM_Block
 	}
 
 	public function save() {
-		$this->idContent = $this->getContentManager()->save()->getId();
-		parent::save();
+        $this->_dataWorker->setValue(
+            'idContent',
+            $this->getContentManager()->save()->getId()
+        );
+        $this->_dataWorker->save();
+        $this->__refreshCache();
 	}
 	
 	public function remove() {
