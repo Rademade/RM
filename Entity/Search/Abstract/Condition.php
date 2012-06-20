@@ -9,6 +9,25 @@ abstract class RM_Entity_Search_Abstract_Condition
     private $_searchConditions;
 
     /**
+     * @var string
+     */
+    private $_searchConditionType;
+
+    /**
+     * @param string $type
+     */
+    public function setConditionType($type) {
+        $this->_searchConditionType = trim( (string)$type );
+    }
+
+    /**
+     * @return string
+     */
+    public function getConditionType() {
+        return $this->_searchConditionType;
+    }
+
+    /**
      * @return RM_Entity_Search_Condition[]
      */
     public function getConditions() {
@@ -29,7 +48,7 @@ abstract class RM_Entity_Search_Abstract_Condition
         $conditions = array();
         foreach ($this->getConditions() as $condition) {
             $condition->setPhrase( $this->getPhrase() );
-            if ($condition->isMatch()) {
+            if ($condition->isMatch() && $this->_typeIsMatch( $condition )) {
                 $condition->__copyFrom( $this );
                 $conditions[] = $condition;
             }
@@ -37,10 +56,16 @@ abstract class RM_Entity_Search_Abstract_Condition
         return $conditions;
     }
 
-    public function __setConditionToQuery(Zend_Db_Select $select) {
+    /**
+     * @param Zend_Db_Select $select
+     */
+    protected function __setConditionToQuery(Zend_Db_Select $select) {
+        $where = new RM_Query_Where();
         foreach ($this->_getMatchedConditions() as $condition) {
-            $condition->setSearchCondition( $select );
+            $condition->setSearchJoins( $select );
+            $condition->setSearchConditions( $where );
         }
+        $where->improveQuery( $select );
     }
 
     /**
@@ -50,10 +75,19 @@ abstract class RM_Entity_Search_Abstract_Condition
     public function __copyFrom($search) {
         if ($search instanceof RM_Entity_Search_Abstract_Condition) {
             parent::__copyFrom( $search );
+            $this->setConditionType( $search->getConditionType() );
             $this->setCondition( $search->getConditions() );
         } else {
             throw new Exception('$search must be instance of RM_Entity_Search_Abstract_Condition');
         }
+    }
+
+    /**
+     * @param RM_Entity_Search_Condition $condition
+     * @return bool
+     */
+    private function _typeIsMatch(RM_Entity_Search_Condition $condition) {
+        return $this->getConditionType() === '' || $this->getConditionType() === $condition->getConditionType();
     }
 
 }

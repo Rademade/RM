@@ -8,6 +8,15 @@ abstract class RM_Entity_Search_Abstract_Rules {
 
     private $_searchPhrase;
 
+    /**
+     * @abstract
+     * @return array
+     */
+    abstract public function getResults();
+
+    /**
+     * @param RM_Entity_Search_Rules $rules
+     */
     public function setRules(RM_Entity_Search_Rules $rules) {
         $this->_searchRules = $rules;
     }
@@ -20,7 +29,7 @@ abstract class RM_Entity_Search_Abstract_Rules {
     }
 
     public function setPhrase($searchPhrase) {
-        //TODO formating
+        $searchPhrase = urldecode( trim( $searchPhrase) );
         $this->_searchPhrase = $searchPhrase;
     }
 
@@ -33,12 +42,6 @@ abstract class RM_Entity_Search_Abstract_Rules {
             $this->getRules()->improveSelect( $select );
         }
     }
-
-    /**
-     * @abstract
-     * @return array
-     */
-    abstract public function getResults();
 
     /**
      * @param RM_Entity_Search_Abstract_Rules $search

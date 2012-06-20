@@ -1,5 +1,5 @@
 <?php
-abstract class RM_Entity_Search
+class RM_Entity_Search
     extends
         RM_Entity_Search_Abstract_Condition {
 
@@ -12,6 +12,13 @@ abstract class RM_Entity_Search
      * @var RM_Entity_Search_Autocomplete
      */
     private $_autocomplete;
+
+    /**
+     * @param string $entityName
+     */
+    public function setEntityName($entityName) {
+        $this->_entityName = $entityName;
+    }
 
     /**
      * @return Zend_Db_Select
@@ -63,7 +70,7 @@ abstract class RM_Entity_Search
         );
     }
 
-    public function getAutocomplete() {
+    public final function getAutocomplete() {
         if (!$this->_autocomplete instanceof RM_Entity_Search_Autocomplete) {
             $this->_autocomplete = new RM_Entity_Search_Autocomplete();
             $this->_autocomplete->__copyFrom( $this );

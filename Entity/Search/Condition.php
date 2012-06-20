@@ -11,53 +11,40 @@ abstract class RM_Entity_Search_Condition
 
     /**
      * @abstract
-     * @param stdClass $data
-     * @return RM_Entity_Search_Autocomplete_Result
+     * @param RM_Query_Where $where
+     * @return void
      */
-    abstract protected function __initResultModel(stdClass $data);
-
-    /**
-     * @abstract
-     * @return Zend_Db_Select
-     */
-    abstract protected function __getSelect();
-
+    abstract public function setSearchConditions(RM_Query_Where &$where);
 
     /**
      * @abstract
      * @param Zend_Db_Select $select
      * @return void
      */
-    abstract public function setSearchCondition(Zend_Db_Select $select);
+    abstract public function setSearchJoins(Zend_Db_Select $select);
 
     /**
      * @abstract
-     * @param Zend_Db_Select $select
-     * @return void
+     * @return string
      */
-    abstract public function setAutocompleteCondition(Zend_Db_Select $select);
+    abstract public function getConditionType();
 
     /**
-     * @return RM_Entity_Search_Autocomplete_Result[]
+     * @return string
      */
-    public final function getResults() {
-        $select = $this->__getSelect();
-        $this->__setRulesToQuery( $select );
-        $this->setAutocompleteCondition( $select );
-        $select->limit(5);
-        return $this->__fetchResults( $select );
+    public function getConditionDescription() {
+        return $this->getConditionType();
     }
 
     /**
-     * @param Zend_Db_Select $select
-     * @return RM_Entity_Search_Autocomplete_Result[]
+     * @param stdClass $data
+     * @return RM_Entity_Search_Autocomplete_Result
      */
-    protected final function __fetchResults(Zend_Db_Select $select) {
-        $data = RM_Entity::getDb()->fetchAll( $select );
-        foreach ($data as &$row) {
-            $row = $this->__initResultModel( $row );
-        }
-        return $data;
+    protected function __initResultModel(stdClass $data) {
+        $result = new RM_Entity_Search_Autocomplete_Result($data);
+        $result->setDescription( $this->getConditionDescription() );
+        $result->setType( $this->getConditionType() );
+        return $result;
     }
 
 }
