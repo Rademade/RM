@@ -83,10 +83,15 @@ class RM_Block
         if (is_null($e)) {
             $e = new RM_Exception();
         }
-        foreach ($this->getContentManager()->getAllContentLangs() as $contentLang) {
-            if ($contentLang->getName() == '') {
-                $lang = RM_Lang::getById($contentLang->getIdLang());
-                $e[] = 'Block name on ' . $lang->getName() . ' language not defined';
+        if ($this->getName() === '') {
+            $e[] = 'Enter block default name';
+        }
+        if ($this->getType() === self::TYPE_MULTI_NAME) {
+            foreach ($this->getContentManager()->getAllContentLangs() as $contentLang) {
+                if ($contentLang->getName() == '') {
+                    $lang = RM_Lang::getById($contentLang->getIdLang());
+                    $e[] = 'Enter block name on ' . $lang->getName() . ' language not defined';
+                }
             }
         }
         if ($throw && (bool)$e->current()) {

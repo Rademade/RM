@@ -8,9 +8,6 @@ class RM_Controller_Public
      */
     protected $_userSession;
 
-    /**
-     * @var RM_Page
-     */
     protected $_page;
 
     /**
@@ -22,7 +19,8 @@ class RM_Controller_Public
         parent::preDispatch();
         $this->_idPage = (int)$this->_getParam('idPage');
         if ($this->_idPage !== 0) {
-            $this->_page = RM_Page::getById( $this->_idPage );
+            $pageModel = RM_Dependencies::getInstance()->pageClass;
+            $this->_page = $pageModel::getById( $this->_idPage );
             if (!$this->_page->isShow()) {
                 $this->redirect('/');
             }

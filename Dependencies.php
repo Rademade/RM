@@ -5,7 +5,8 @@ class RM_Dependencies {
 
     private $_default = array(
         'userClass' => 'RM_User',
-        'userProfile' => 'RM_User'
+        'userProfile' => 'RM_User',
+        'pageClass' => 'RM_Page'
     );
 
     /**
