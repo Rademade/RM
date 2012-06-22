@@ -12,6 +12,8 @@ class RM_Block
 	
 	const SEARCH_TYPE_OPTION = 1;
 	const SEARCH_TYPE_BLOCK = 2;
+    //...
+    const SEARCH_TYPE_RIGHT_BLOCK = 7;
 
 	const CACHE_NAME = 'block';
 

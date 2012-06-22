@@ -49,18 +49,26 @@ class RM_Page
 	 * @var RM_Entity_Worker_Data
 	 */
 	private $_dataWorker;
+
 	/**
 	 * @var RM_Entity_Worker_Cache
 	 */
 	protected $_cacheWorker;
-	/**
+
+    /**
 	 * @var RM_Content
 	 */
 	private $_content;
-	/**
+
+    /**
 	 * @var RM_Routing
 	 */
 	private $_route;
+
+    /**
+     * @var Application_Model_System_Block[]
+     */
+    private $_rightBlock;
 
 	const TYPE_PAGE = 1;
 	const TYPE_CATEGORY = 2;
@@ -120,7 +128,7 @@ class RM_Page
 	public function save() {
 		$this->idContent = $this->getContentManager()->save()->getId();
 		$this->idRoute = $this->getRoute()->save()->getId();
-		if ($this->_dataWorker->save()) {
+		if ($this->_dataWorker->save() && static::AUTO_CACHE) {
 			$this->__refreshCache();
 		}
 		$this->saveRoteDate();
@@ -242,5 +250,16 @@ class RM_Page
 	public static function _setSelectRules(Zend_Db_Select $select) {
 		$select->where('pages.pageStatus != ?', self::STATUS_DELETED);
 	}
+
+
+    public function getRightBlock() {
+        if ( !is_array($this->_rightBlock) ) {
+            $this->_rightBlock = RM_Block_Repository::getShowedBlocks(
+                $this->getIdPage(),
+                RM_Block::SEARCH_TYPE_RIGHT_BLOCK
+            );
+        }
+        return $this->_rightBlock;
+    }
 
 }
