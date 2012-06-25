@@ -4,14 +4,14 @@ class RM_User_Session {
 	/**
 	 * @var Zend_Session_Namespace
 	 */
-	private $session;
+	protected $session;
 
 	/**
 	 * @var RM_User_Interface
 	 */
-	private $_user;
+	protected  $_user;
 
-	private static $_self;
+	protected static $_self;
 
 	const REMEMBER_TIME = 8000000;
 
@@ -24,10 +24,10 @@ class RM_User_Session {
 	 * @return RM_User_Session
 	 */
 	public static function getInstance() {
-		if (!(self::$_self instanceof self)) {
-			self::$_self = new self();
+		if (!(static::$_self instanceof static)) {
+            static::$_self = new static();
 		}
-		return self::$_self;
+		return static::$_self;
 	}
 
 	private function _setIdUser($idUser) {
@@ -43,7 +43,7 @@ class RM_User_Session {
 		$this->_setIdUser( $user->getId() );
 	}
 
-	public function getMyIp() {
+	public static function getMyIp() {
 		return getenv('REMOTE_ADDR');
 	}
 

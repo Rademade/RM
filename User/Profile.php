@@ -149,6 +149,7 @@ class RM_User_Profile
         if ($this->getIdUser() === 0) {
             $userModel = RM_Dependencies::getInstance()->userClass;
             $this->__setUser( new $userModel() );
+            $this->getUser()->setStatus(RM_User_Base::STATUS_SHOW);
         }
     }
 
@@ -297,9 +298,9 @@ class RM_User_Profile
     }
 
     public function remove() {
-        $this->getUser()->remove();
         $this->setStatus( self::STATUS_DELETED );
         $this->save();
+        $this->getUser()->remove();
         $this->__cleanCache();
     }
 
