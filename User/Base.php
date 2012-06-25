@@ -29,7 +29,7 @@ class RM_User_Base
             'type' => 'int'
         ),
         'userStatus' => array(
-            'default' => self::STATUS_HIDE,
+            'default' => self::STATUS_SHOW,
             'type' => 'int'
         )
     );
