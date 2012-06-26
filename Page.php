@@ -82,6 +82,10 @@ class RM_Page
 		$this->setContentManager( RM_Content::create() );
 	}
 
+    public function getId() {
+        return $this->_dataWorker->_getKey()->getValue();
+    }
+
     public function __get($name) {
         $val = $this->_dataWorker->getValue($name);
         if (is_null($val)) {
