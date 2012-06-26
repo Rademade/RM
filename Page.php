@@ -1,12 +1,4 @@
 <?php
-/**
- * @property int idPage
- * @property int idRoute
- * @property int idContent
- * @property int pageStatus
- * @property int pageType
- * @property int systemStatus
- */
 class RM_Page
 	extends
 		RM_Entity
@@ -79,21 +71,6 @@ class RM_Page
 		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
 	}
 
-	public function __get($name) {
-		$val = $this->_dataWorker->getValue($name);
-		if (is_null($val)) {
-			throw new Exception("Try to get unexpected attribute {$name}");
-		} else {
-			return $val;
-		}
-	}
-
-	public function __set($name, $value) {
-		if (is_null($this->_dataWorker->setValue($name, $value))) {
-			throw new Exception("Try to set unexpected attribute {$name}");
-		}
-	}
-
 	protected function __setPageData( $controller, $action, $url) {
 		$route = RM_Routing::create(
 			RM_Routing::TMP_ROUTE_NAME,
@@ -104,6 +81,10 @@ class RM_Page
 		$this->setRoute( $route );
 		$this->setContentManager( RM_Content::create() );
 	}
+
+    public function getId() {
+        return $this->_dataWorker->_getKey()->getValue();
+    }
 
 	public function validate(RM_Exception $e = null, $throw = true) {
 		if (is_null($e)) {
@@ -126,8 +107,8 @@ class RM_Page
 	}
 
 	public function save() {
-		$this->idContent = $this->getContentManager()->save()->getId();
-		$this->idRoute = $this->getRoute()->save()->getId();
+        $this->_dataWorker->setValue('idContent', $this->getContentManager()->save()->getId());
+        $this->_dataWorker->setValue('idRoute', $this->getRoute()->save()->getId());
 		if ($this->_dataWorker->save() && static::AUTO_CACHE) {
 			$this->__refreshCache();
 		}
@@ -139,12 +120,12 @@ class RM_Page
 	}
 
 	public function getIdContent() {
-		return $this->idContent;
+		return $this->_dataWorker->getValue('idContent');
 	}
 
 	public function setContentManager(RM_Content $contentManager) {
 		if ($this->getIdContent() !== $contentManager->getId()) {
-			$this->idContent = $contentManager->getId();
+            $this->_dataWorker->setValue('idContent', $contentManager->getId());
 		}
 		$this->_content = $contentManager;
 	}
@@ -165,12 +146,12 @@ class RM_Page
 	}
 
 	public function getIdRoute() {
-		return $this->idRoute;
+        return $this->_dataWorker->getValue('idRoute');
 	}
 
 	public function setRoute(RM_Routing $route) {
 		if ($this->getIdRoute() !== $route->getId()) {
-			$this->idRoute = $route->getId();
+            $this->_dataWorker->setValue('idRoute', $route->getId());
 		}
 		$this->_route = $route;
 	}
@@ -190,16 +171,24 @@ class RM_Page
 	}
 
 	public function getStatus() {
-		return $this->pageStatus;
+        return $this->_dataWorker->getValue('pageStatus');
 	}
 
 	public function setStatus($status) {
-        //TODO check status type
-		$this->pageStatus = (int)$status;
+        $status = (int)$status;
+        if (in_array($status, array(
+            self::STATUS_SHOW,
+            self::STATUS_HIDE,
+            self::STATUS_DELETED
+        ))) {
+            $this->_dataWorker->setValue('pageStatus', $status);
+        } else {
+            throw new Exception('Wrong status given');
+        }
 	}
 
 	public function getType() {
-		return $this->pageType;
+        return $this->_dataWorker->getValue('pageType');
 	}
 
 	public function show() {
@@ -232,15 +221,11 @@ class RM_Page
 
 
 	public function setSystem($status) {
-		if ($status) {
-			$this->systemStatus = self::TURN_ON;
-		} else {
-			$this->systemStatus = self::TURN_OFF;
-		}
+        $this->_dataWorker->setValue('systemStatus', $status ? self::TURN_ON : self::TURN_OFF);
 	}
 
 	public function isSystem() {
-		return $this->systemStatus === self::TURN_ON;
+		return $this->_dataWorker->getValue('systemStatus') === self::TURN_ON;
 	}
 
 	/**
