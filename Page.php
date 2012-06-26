@@ -82,8 +82,19 @@ class RM_Page
 		$this->setContentManager( RM_Content::create() );
 	}
 
-    public function getId() {
-        return $this->_dataWorker->_getKey()->getValue();
+    public function __get($name) {
+        $val = $this->_dataWorker->getValue($name);
+        if (is_null($val)) {
+            throw new Exception("Try to get unexpected attribute {$name}");
+        } else {
+            return $val;
+        }
+    }
+
+    public function __set($name, $value) {
+        if (is_null($this->_dataWorker->setValue($name, $value))) {
+            throw new Exception("Try to set unexpected attribute {$name}");
+        }
     }
 
 	public function validate(RM_Exception $e = null, $throw = true) {
