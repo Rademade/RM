@@ -43,6 +43,10 @@ class RM_User_Login {
         }
     }
 
+    public function socialLogin() {
+        $this->createSession();
+    }
+
     public static function logout() {
         RM_User_Session::getInstance()->logout();
     }

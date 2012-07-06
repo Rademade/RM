@@ -38,6 +38,7 @@ class RM_Content_Field_Process_Html
 		'href',
 		'alt',
 		'height',
+        'target',
 		'width',
 		'align',
         'frameborder',

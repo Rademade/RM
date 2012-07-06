@@ -242,6 +242,7 @@ class RM_User_Profile
         if ($length > 150) {
             throw new Exception('Overlong full name');
         }
+        $this->profileName = '';
         $this->profileLastname = $fullName;
     }
 
