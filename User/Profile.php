@@ -234,7 +234,21 @@ class RM_User_Profile
         return $this->profileLastname;
     }
 
+    public function setFullName($fullName) {
+        $length = strlen($fullName);
+        if ($length < 1) {
+            throw new Exception('Very short full name');
+        }
+        if ($length > 150) {
+            throw new Exception('Overlong full name');
+        }
+        $this->profileLastname = $fullName;
+    }
+
     public function getFullName() {
+        if ($this->getName() === "") {
+            return $this->getLastname();
+        }
         return $this->getName() . ' ' . $this->getLastname();
     }
 
