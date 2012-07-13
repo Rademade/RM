@@ -1,4 +1,10 @@
 <?php
+/**
+ * TODO 1) move caching to other class
+ * TODO 2) move attribute storage to other class
+ * TODO 3) make wise caching and cache cleaning
+ * TODO 4) make attribute validation
+ */
 abstract class RM_Entity {
 
 	const TABLE_NAME = null;
@@ -21,8 +27,9 @@ abstract class RM_Entity {
 	protected $_cacheWorker;
 
 	public function __construct($data = null) {
-		if (is_null($data))
+		if (is_null($data)) {
 			$data = new stdClass();
+        }
 		$this->_calledClass = get_called_class();
 		$this->_dataWorker = new RM_Entity_Worker_Data($this->_calledClass, $data);
 	}
@@ -192,6 +199,43 @@ abstract class RM_Entity {
 		return $item;
 	}
 
+    /**
+     * TODO cache
+     * @param array $conditions
+     * @param int $limit
+     * @return RM_Entity[]
+     */
+    public static function find(array $conditions = array(), $limit = 0) {
+        $select = static::_getSelect();
+        foreach ($conditions as $field => $value) {
+            $select->where($field . ' = ?', $value);
+        }
+        if ($limit === 0) {
+            $select->limit( $limit );
+        }
+        return static::_initList( $select, array() );
+    }
+
+    /**
+     * TODO cache
+     * @param array $conditions
+     * @return RM_Entity[]
+     */
+    public static function findOne(array $conditions) {
+        $select = static::_getSelect();
+        foreach ($conditions as $field => $value) {
+            $select->where($field . ' = ?', $value);
+        }
+        return static::_initItem( $select );
+    }
+
+    public static function getList() {
+        return static::_initList(
+            static::_getSelect(),
+            func_get_args()
+        );
+    }
+
 	public static function _initItem(Zend_Db_Select $select) {
 		$select->limit(1);
 		if (($data = self::getDb()->fetchRow($select)) !== false) {
@@ -199,13 +243,6 @@ abstract class RM_Entity {
 		} else {
 			return null;
 		}
-	}
-
-	public static function getList() {
-		return static::_initList(
-			static::_getSelect(),
-			func_get_args()
-		);
 	}
 
 	public static function getCount(RM_Query_Where $where = null) {
