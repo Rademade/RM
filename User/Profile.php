@@ -73,7 +73,7 @@ class RM_User_Profile
     }
 
     public static function _setSelectRules(Zend_Db_Select $select) {
-        $select->where('profileStatus != ?', self::STATUS_DELETED);
+        $select->where('rmProfiles.profileStatus != ?', self::STATUS_DELETED);
         $select->join(
             RM_User_Base::TABLE_NAME,
             join(' = ', array(

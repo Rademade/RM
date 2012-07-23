@@ -49,17 +49,9 @@ class RM_Content_Lang
 			$this->loaded = true;
 			$this->fields = array();
 			$where = new RM_Query_Where();
-			$where->add(
-				'idContent',
-				RM_Query_Where::EXACTLY,
-				$this->getIdContent()
-			);
-			$where->add(
-				'idLang',
-				RM_Query_Where::EXACTLY,
-				$this->getIdLang()
-			);
-			$fields = RM_Content_Field::getList($where);
+			$where->add('idContent', '=', $this->getIdContent());
+			$where->add('idLang', '=', $this->getIdLang());
+            $fields = RM_Content_Field::getList($where);
 			foreach ($fields as $field) {
 				/* @var $field RM_Content_Field */
 				$this->fields[ $field->getName() ] = $field;

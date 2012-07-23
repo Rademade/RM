@@ -6,7 +6,11 @@ class RM_Query_Limits
 	private $_limit;
 	private $_pageRange = 10;
 	private $_page;
-	
+
+    public static function get( $limit ) {
+        return new self( $limit );
+    }
+
 	public function __construct($limit) {
 		$this->_limit = (int)$limit;
 	}

@@ -1,51 +1,84 @@
 <?php
 abstract class RM_Entity_Search_Condition
-    extends
-        RM_Entity_Search_Abstract_Rules {
+    implements
+        RM_Query_Interface_ImproveSelect {
 
     /**
-     * @abstract
-     * @return bool
+     * @var RM_Query_Join
      */
-    abstract public function isMatch();
+    private $_join;
 
     /**
-     * @abstract
-     * @param RM_Query_Where $where
-     * @return void
+     * @var RM_Query_Where
      */
-    abstract public function setSearchConditions(RM_Query_Where &$where);
+    private $_where;
 
     /**
-     * TODO update to RM_Query_Join
-     * @abstract
-     * @param Zend_Db_Select $select
-     * @return void
+     * @var RM_Query_Order
      */
-    abstract public function setSearchJoins(Zend_Db_Select $select);
+    private $_order;
 
-    /**
-     * @abstract
-     * @return string
-     */
-    abstract public function getConditionType();
-
-    /**
-     * @return string
-     */
-    public function getConditionDescription() {
-        return $this->getConditionType();
+    public function __construct() {
+        $this->_where = new RM_Query_Where();
+        $this->_order = new RM_Query_Order();
+        $this->_join = new RM_Query_Join();
     }
 
     /**
-     * @param stdClass $data
-     * @return RM_Entity_Search_Autocomplete_Result
+     * @param Zend_Db_Select $select
+     * @return void
      */
-    protected function __initResultModel(stdClass $data) {
-        $result = new RM_Entity_Search_Autocomplete_Result($data);
-        $result->setDescription( $this->getConditionDescription() );
-        $result->setType( $this->getConditionType() );
-        return $result;
+    public function improveQuery(Zend_Db_Select $select) {
+        foreach ($this->_getQueryParts() as $queryPart) {
+            $queryPart->improveQuery( $select );
+        }
+    }
+
+    public function mergeWith(RM_Entity_Search_Condition $condition) {
+        $this->_join->mergeWith( $condition->_getJoin() );
+        $this->_where->mergeWith( $condition->_getWhere() );
+        $this->_order->mergeWith( $condition->_getOrder() );
+    }
+
+    /**
+     * @return RM_Query_Join
+     */
+    protected final function _getJoin() {
+        return $this->_join;
+    }
+
+    /**
+     * @return RM_Query_Order
+     */
+    protected final function _getOrder() {
+        return $this->_order;
+    }
+
+    /**
+     * @return RM_Query_Where
+     */
+    protected final function _getWhere() {
+        return $this->_where;
+    }
+
+    /**
+     * @param RM_Entity_Search_Condition $condition
+     */
+    public function __copyFrom(self $condition) {
+        $this->_where = $condition->_getWhere();
+        $this->_join = $condition->_getJoin();
+        $this->_where = $condition->_getWhere();
+    }
+
+    /**
+     * @return RM_Query_Interface_ImproveSelect[]
+     */
+    private function _getQueryParts() {
+        return array(
+            $this->_getJoin(),
+            $this->_getWhere(),
+            $this->_getOrder()
+        );
     }
 
 }

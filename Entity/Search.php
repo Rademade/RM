@@ -1,81 +1,128 @@
 <?php
 class RM_Entity_Search
     extends
-        RM_Entity_Search_Abstract_Condition {
-
-    /**
-     * @var RM_Entity
-     */
-    protected $_entityName = '';
+        RM_Entity_Search_Entity {
 
     /**
      * @var RM_Entity_Search_Autocomplete
      */
-    private $_autocomplete;
+    private $_autocompleteSearch;
+
+    private $_currentSearchVariety;
 
     /**
-     * @param string $entityName
+     * @return RM_Entity_Search_Autocomplete
      */
-    public function setEntityName($entityName) {
-        $this->_entityName = $entityName;
+    public function getAutocomplete() {
+        if (!$this->_autocompleteSearch instanceof RM_Entity_Search_Autocomplete) {
+            $this->_autocompleteSearch = new RM_Entity_Search_Autocomplete( );
+            $this->_autocompleteSearch->__copyFrom( $this );
+            $this->_autocompleteSearch->setAutocompleteVarieties( $this->_getAutocompleteVarieties() );
+        }
+        return $this->_autocompleteSearch;
     }
 
     /**
-     * @return Zend_Db_Select
+     * @param string $type
      */
-    protected function __getSelect() {
-        $select = call_user_func( array(
-            $this->_entityName,
-            '_getSelect'
-        ) );
-        $this->__setRulesToQuery( $select );
-        $this->__setConditionToQuery( $select );
-        return $select;
+    public function setAutocompleteSearchType($type) {
+        $type = urldecode( trim( $type ) );
+        if (!empty($type)) {
+            $this->_currentSearchVariety = $type;
+        } else {
+            $this->_currentSearchVariety = null;
+        }
     }
 
     /**
-     * @return RM_Entity[]
+     * @return string|null
      */
-    public function getResults() {
-        return call_user_func_array( array(
-            $this->_entityName,
-            '_initList'
-        ), array(
-            $this->__getSelect(),
-            func_get_args()
-        ) );
+    public function getAutocompleteSearchType() {
+        return $this->_currentSearchVariety;
     }
 
     /**
-     * @return RM_Entity
+     * @param Zend_Db_Select $select
      */
-    public function getFirst() {
-        return call_user_func_array( array(
-            $this->_entityName,
-            '_initItem'
-        ), array(
-            $this->__getSelect(),
-            func_get_args()
-        ) );
+    protected function __installQueryCondition(Zend_Db_Select $select) {
+        $where = new RM_Query_Where();
+        foreach ($this->_getMatchConditions() as $condition) {
+            $condition->joinAutocompleteTable();
+            $where->addSubOr( $condition->getWhereCondition( $this->getPhrase() ) );
+        }
+        parent::__installQueryCondition($select );
+        $where->improveQuery( $select );
+        $this->_groupSelectRows( $select );
     }
 
-    public function getCount() {
+    private function _groupSelectRows(Zend_Db_Select $select) {
         $model = $this->_entityName;
-        return RM_Query_Exec::getRowCount(
-            $this->__getSelect(),
-            join( '.', array(
-                $model::TABLE_NAME,
-                $model::getKeyAttributeField()
-            ) )
+        $select->group( join('.', array(
+            $model::TABLE_NAME,
+            $model::getKeyAttributeField()
+        ) ) );
+    }
+
+    /**
+     * Check is current search variety type is available and isSetted
+     *
+     * @param RM_Entity_Search_Autocomplete_Variety $variety
+     * @return bool
+     */
+    private function _isResolveUseVariety(RM_Entity_Search_Autocomplete_Variety $variety) {
+        return (
+            is_null( $this->getAutocompleteSearchType() ) ||
+            $this->getAutocompleteSearchType() ===  $variety->getType()
         );
     }
 
-    public final function getAutocomplete() {
-        if (!$this->_autocomplete instanceof RM_Entity_Search_Autocomplete) {
-            $this->_autocomplete = new RM_Entity_Search_Autocomplete();
-            $this->_autocomplete->__copyFrom( $this );
-        }
-        return $this->_autocomplete;
+    /**
+     * @param RM_Entity_Search_Condition_Entity $condition
+     * @return RM_Entity_Search_Autocomplete_Variety
+     */
+    private function _getConditionVariety(RM_Entity_Search_Condition_Entity $condition) {
+        $variety = $condition->getAutocompleteVariety( $this );
+        return $variety;
     }
+
+
+    /**
+     * @return RM_Entity_Search_Condition_Entity[]
+     */
+    private function _getAutocompleteConditions() {
+        $varieties = array();
+        foreach ($this->getConditions() as $condition) {
+            if ($condition instanceof RM_Entity_Search_Condition_Entity) {
+                $varieties[] = $condition;
+            }
+        }
+        return $varieties;
+    }
+
+    /**
+     * @return RM_Entity_Search_Autocomplete_Variety[]
+     */
+    private function _getAutocompleteVarieties() {
+        $varieties = array();
+        foreach ($this->_getAutocompleteConditions() as $condition) {
+            $varieties[] = $condition->getAutocompleteVariety( $this );
+        }
+        return $varieties;
+    }
+
+    /**
+     * @return RM_Entity_Search_Condition_Entity[]
+     */
+    private function _getMatchConditions() {
+        $conditions = array();
+        foreach ($this->_getAutocompleteConditions() as $condition) {
+            $variety = $this->_getConditionVariety( $condition );
+            if ($variety->isMatch( $this->getPhrase() ) && $this->_isResolveUseVariety( $variety )) {
+                $conditions[] = $condition;
+            }
+        }
+        return $conditions;
+    }
+
 
 }

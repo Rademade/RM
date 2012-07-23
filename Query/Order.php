@@ -11,15 +11,95 @@ class RM_Query_Order
 	
 	const ASC = 1;
 	const DESC = 2;
-	
+
+    /**
+     * @param string $field
+     * @param int $type
+     * @return RM_Query_Order
+     */
+    public function add($field, $type) {
+        //TODO check for duplicate
+        $this->_orders[] = (object)array(
+            'field' =>  $this->_checkField($field),
+            'type'  =>  $this->_checkType($type)
+        );
+        return $this;
+    }
+
+    /**
+     * @deprecated
+     * @param $field
+     * @param $type
+     * @return RM_Query_Order
+     */
 	public function addOrder($field, $type) {
-		$this->_orders[] = array(
-			$this->checkField($field),
-			$this->checkType($type)
-		);
+        $this->add($field, $type);
+        return $this;
 	}
-	
-	private function checkField($name) {
+
+    /**
+     * @param Zend_Db_Select $select
+     */
+    public function improveQuery(Zend_Db_Select $select) {
+        $execOrder = array();
+        if ($this->_expr instanceof Zend_Db_Expr) {
+            $select->order( $this->_expr );
+        } else {
+            foreach ($this->_orders as $order) {
+                $execOrder[] = join(' ', array(
+                    $order->field,
+                    $this->_getType( $order->type )
+                ));
+            }
+            $select->order( $execOrder );
+        }
+    }
+
+    /**
+     * @param RM_Query_Order $order
+     */
+    public function mergeWith(self $order) {
+        foreach ($order->_orders as $orderData) {
+            $this->add(
+                $orderData['field'],
+                $orderData['type']
+            );
+        }
+    }
+
+    public function isReady() {
+        return (!empty($this->_orders));
+    }
+
+    public function byRandom() {
+        $this->_isRandom = true;
+        $this->_expr = new Zend_Db_Expr('RAND()');
+    }
+
+    public function isRandom() {
+        return $this->_isRandom;
+    }
+
+    public function isHashable(){
+        if ($this->isRandom()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function getHash() {
+        $key = '';
+        if (!$this->isRandom()) {
+            foreach ($this->_orders as $order) {
+                $key = (',' . join('.', $order));
+            }
+        }
+        return '_' . md5($key);
+    }
+
+
+	private function _checkField($name) {
 		$name = trim($name);
 		if ($name === '') {
 			throw new Exception('WRONG FIELD GIVEN');
@@ -27,24 +107,20 @@ class RM_Query_Order
 		return $name;
 	}
 	
-	private function checkType($type) {
-		$type = (int)$type;
-		if (in_array($type, array(
-			self::ASC,
-			self::DESC
-		))) {
-			return $type;
-		} else {
-			throw new Exception('WRONG TYPE GIVEN');
-		}
+	private function _checkType($type) {
+        switch ($type) {
+            case 'ASC':
+            case self::ASC:
+                return self::ASC;
+            case 'DESC':
+            case self::DESC:
+                return self::DESC;
+            default:
+    			throw new Exception('Wrong order type given');
+        }
 	}
-	
-	public function byRandom() {
-		$this->_isRandom = true;
-		$this->_expr = new Zend_Db_Expr('RAND()');
-	}
-	
-	private function getType($type) {
+
+	private function _getType($type) {
 		switch (intval($type)) {
 			case self::ASC:
 				return 'ASC';
@@ -52,48 +128,10 @@ class RM_Query_Order
 			case self::DESC:
 				return 'DESC';
 				break;
-		}
-	}
-	
-	public function isReady() {
-		return (!empty($this->_orders));
-	}
-	
-	public function isRandom() {
-		return $this->_isRandom;
+            default:
+                throw new Exception('Wrong order type given');
+        }
 	}
 
-	public function isHashable(){
-		if ($this->isRandom()) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-	
-	public function getHash() {
-		$key = '';
-		if ($this->isRandom()) {
-			$key = 'RAND_' . rand(0, 15);
-		} else {
-			foreach ($this->_orders as $order) {
-				$key = (',' . join('+', $order));
-			}
-		}
-		return '_' . md5($key);
-	}
-	
-	
-	public function improveQuery(Zend_Db_Select $select) {
-		$execOrder = array();
-		if ($this->_expr instanceof Zend_Db_Expr) {
-			$select->order( $this->_expr );
-		} else {
-			foreach ($this->_orders as $order) {
-				$execOrder[] = $order[0] . ' ' . $this->getType( $order[1] );
-			}
-			$select->order( $execOrder );
-		}
-	}
-	
+
 }

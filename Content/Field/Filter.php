@@ -290,7 +290,7 @@ class RM_Content_Field_Filter {
 	protected function quoteSmart($source, &$connection) {
 		// strip slashes
 		if (get_magic_quotes_gpc()) $source = stripslashes($source);
-		// quote both numeric and text
+		// _quoteType both numeric and text
 		$source = $this->escapeString($source, $connection);
 		return $source;
 	}

@@ -5,7 +5,9 @@
  * TODO 3) make wise caching and cache cleaning
  * TODO 4) make attribute validation
  */
-abstract class RM_Entity {
+abstract class RM_Entity
+    implements
+        RM_Entity_Search_Result_Interface {
 
 	const TABLE_NAME = null;
 

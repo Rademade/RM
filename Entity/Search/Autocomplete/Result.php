@@ -1,16 +1,16 @@
 <?php
-class RM_Entity_Search_Autocomplete_Result {
+class RM_Entity_Search_Autocomplete_Result
+    implements
+        RM_Entity_Search_Result_Interface {
 
-    private $_data;
+    private $_value;
 
     private $_type;
 
     private $_description;
 
-    const FIELD_NAME = 'autocompleateName';
-
-    public function __construct(stdClass $data) {
-        $this->_data = $data;
+    public function __construct($value) {
+        $this->_value = $value;
     }
 
     public function setType($type) {
@@ -30,7 +30,7 @@ class RM_Entity_Search_Autocomplete_Result {
     }
 
     public function getValue() {
-        return $this->_data->{ self::FIELD_NAME };
+        return $this->_value;
     }
 
     public function __toArray() {
