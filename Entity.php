@@ -221,7 +221,7 @@ abstract class RM_Entity
     /**
      * TODO cache
      * @param array $conditions
-     * @return RM_Entity[]
+     * @return RM_Entity
      */
     public static function findOne(array $conditions) {
         $select = static::_getSelect();

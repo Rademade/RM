@@ -25,6 +25,8 @@ class RM_View_Element_Icon
     const ICON_RIGHT_BLOCK = 18;
     const ICON_TEXT_BLOCK = 19;
     const ICON_TEXT_FIELD = 20;
+    const ICON_SCHOOL = 21;
+    const ICON_OFFICE = 22;
 	
 	public function __construct(
 		$routeName,
@@ -95,6 +97,10 @@ class RM_View_Element_Icon
                 return 'text-block.png';
             case self::ICON_TEXT_FIELD:
                 return 'text-field.png';
+            case self::ICON_SCHOOL:
+                return 'school.png';
+            case self::ICON_OFFICE:
+                return 'office.png';
 		}
 	}
 	

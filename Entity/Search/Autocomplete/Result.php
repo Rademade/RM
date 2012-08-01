@@ -3,6 +3,8 @@ class RM_Entity_Search_Autocomplete_Result
     implements
         RM_Entity_Search_Result_Interface {
 
+    private $_id;
+
     private $_value;
 
     private $_type;
@@ -11,6 +13,14 @@ class RM_Entity_Search_Autocomplete_Result
 
     public function __construct($value) {
         $this->_value = $value;
+    }
+
+    public function getId() {
+        return $this->_id;
+    }
+
+    public function setId($id) {
+        $this->_id = intval($id);
     }
 
     public function setType($type) {
@@ -35,6 +45,7 @@ class RM_Entity_Search_Autocomplete_Result
 
     public function __toArray() {
         return array(
+            'id' => $this->getId(),
             'value' => $this->getValue(),
             'type' => $this->getType(),
             'desc' => $this->getDescription()

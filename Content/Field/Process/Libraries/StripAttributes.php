@@ -39,7 +39,8 @@ class RM_Content_Field_Process_Libraries_StripAttributes {
 	
 	private function findAttributes($nodes) {
 		foreach ( $nodes as &$node ) {
-			preg_match_all ( "/([^ =]+)\s*=\s*[\"|']{0,1}([^\"']*)[\"|']{0,1}/i", $node ['attributes'], $attributes );
+            $atts = array();
+            preg_match_all ( "/([^ =]+)\s*=\s*[\"|']{0,1}([^\"']*)[\"|']{0,1}/i", $node ['attributes'], $attributes );
 			if ($attributes [1]) {
 				foreach ( $attributes [1] as $att_key => $att ) {
 					$literal = $attributes [0] [$att_key];

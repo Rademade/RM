@@ -80,7 +80,7 @@ class RM_System_Breadcrumbs implements Iterator, Countable {
 	}
 	
 	public function clear() {
-		$this->breadcrumbs = array();
+		$this->_breadcrumbs = array();
 		return $this;
 	}
 

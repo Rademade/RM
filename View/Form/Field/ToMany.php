@@ -18,6 +18,7 @@ class RM_View_Form_Field_ToMany
 	) {
 		$this->_options = $options;
 		$this->_defaultValues = $default;
+        Head::getInstance()->getJS()->add('item');
 		parent::__construct($name, $desc, '');
 	}
 

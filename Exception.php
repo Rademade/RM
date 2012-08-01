@@ -12,6 +12,10 @@ class RM_Exception
 	public function __construct() {
 	}
 
+    public function hasError() {
+        return sizeof( $this->_list ) > 0;
+    }
+
 	public function offsetExists($index) {
 	  return isset($this->_list[$index]);
 	}

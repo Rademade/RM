@@ -14,9 +14,9 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
      * @return RM_Entity_Search_Autocomplete_Result[]
      */
     public function getResults() {
-        $select = $this->_getSelect();
+        $select = $this->__getSelect();
         $this->__installQueryCondition( $select );
-        return $this->_initAutocompleteResults( $select );
+        return $this->__initAutocompleteResults( $select );
     }
 
     /**
@@ -51,7 +51,7 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
     /**
      * @return Zend_Db_Select
      */
-    private function _getSelect() {
+    protected function __getSelect() {
         $select = RM_Entity::getDb()->select();
         $select->from( $this->__getAutocompleteTableName(), array(
             self::FIELD_NAME => $this->__getAutocompleteFieldName()
@@ -65,7 +65,7 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
      * @param Zend_Db_Select $select
      * @return RM_Entity_Search_Autocomplete_Result[]
      */
-    private function _initAutocompleteResults(Zend_Db_Select $select) {
+    protected function __initAutocompleteResults(Zend_Db_Select $select) {
         $result = array();
         foreach ( RM_Entity::getDb()->fetchAll( $select ) as $row ) {
             $result[] = $this->__initResultRow(
