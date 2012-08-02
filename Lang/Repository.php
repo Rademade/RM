@@ -5,13 +5,18 @@ class RM_Lang_Repository
 
     const CLASS_NAME = 'RM_Lang';
 
+    private static $_activeLangs;
+
     public static function getActiveLangs() {
-        $search = new RM_Lang_Search();
-        $search->onlyShow();
-        return call_user_func_array(
-            array($search, 'getResults'),
-            func_get_args()
-        );
+        if (!is_array(self::$_activeLangs)) {
+            $search = new RM_Lang_Search();
+            $search->onlyShow();
+            self::$_activeLangs = call_user_func_array(
+                array($search, 'getResults'),
+                func_get_args()
+            );
+        }
+        return self::$_activeLangs;
     }
 
 }

@@ -46,6 +46,7 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
     protected final function __installQueryCondition(Zend_Db_Select $select) {
         $this->addCondition( $this->_getCompleteCondition() );
         parent::__installQueryCondition( $select );
+        $select->limit(5);
     }
 
     /**

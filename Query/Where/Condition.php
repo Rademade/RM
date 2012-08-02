@@ -40,7 +40,9 @@ class RM_Query_Where_Condition
             switch ( $this->getInitConditionType() ) {
                 case    self::EXACTLY:      return '=';
                 case    self::LESS:         return '<';
+                case    self::LESS_EXACTLY: return '<=';
                 case    self::MORE:         return '>';
+                case    self::MORE_EXACTLY: return '>=';
                 case    self::NOT:          return '!=';
                 case    self::IS:           return 'IS';
                 case    self::LIKE:
@@ -84,9 +86,15 @@ class RM_Query_Where_Condition
             case '>':
             case self::MORE:
                 return self::MORE;
+            case '>=':
+            case self::MORE_EXACTLY:
+                return self::MORE_EXACTLY;
             case '<':
             case self::LESS:
                 return self::LESS;
+            case '<=':
+            case self::LESS_EXACTLY:
+                return self::LESS_EXACTLY;
             case self::NOT:
             case '!=':
                 return self::NOT;

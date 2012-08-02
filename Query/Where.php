@@ -6,7 +6,7 @@ class RM_Query_Where
 	/**
 	 * @var RM_Query_Where_Glue[]
 	 */
-	private $_conditions = array();
+	protected $_conditions = array();
 
 	public function add($field, $type, $value) {
         $condition = new RM_Query_Where_Condition($field, $type, $value);

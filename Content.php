@@ -116,9 +116,10 @@ class RM_Content
 		return $contentLang;
 	}
 
-	/**
-	 * @return RM_Content_Lang
-	 */
+    /**
+     * @param RM_Lang $lang
+     * @return \RM_Content_Lang
+     */
 	public function getContentLang(RM_Lang $lang) {
 		return $this->getContentLangByLangId( $lang->getId() );
 	}

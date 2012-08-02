@@ -15,12 +15,31 @@ class RM_Query_Join
         return new self();
     }
 
-    public function add($type, $to, $from, $key) {
-        $this->_joins[$to] = array(
-            'type'  => $this->_formatJoinType( $type ),
-            'to'    => $to,
-            'from'  => $from,
-            'key'   => $key
+
+    /**
+     * @param string $type
+     * @param string|RM_Query_Join_Object $to
+     * @param string $from
+     * @param string $toKey
+     * @param null|string $fromKey
+     * @param array $fields
+     * @return RM_Query_Join
+     */
+    public function add(
+        $type,
+        $to,
+        $from,
+        $toKey,
+        $fromKey = null,
+        array $fields = array()
+    ) {
+        $this->_joins[ strval( $to ) ] = array(
+            'type'      => $this->_formatJoinType( $type ),
+            'to'        => $to,                                     //joining table name
+            'from'      => $from,                                   //base table name
+            'toKey'     => $toKey,                                  //joining table key
+            'fromKey'   => is_null($fromKey) ? $toKey : $fromKey,    //base table key
+            'fields'    => $fields
         );
         return $this;
     }
@@ -31,7 +50,9 @@ class RM_Query_Join
                 $joinData['type'],
                 $joinData['to'],
                 $joinData['from'],
-                $joinData['key']
+                $joinData['toKey'],
+                $joinData['fromKey'],
+                $joinData['fields']
             );
         }
     }
@@ -42,18 +63,18 @@ class RM_Query_Join
                 $select,
                 $this->_getJoinMethod( $joinData['type'] )
             ), array(
-                $joinData['to'],
+                $this->_extractJoinObject( $joinData['to'] ),
                 join(' = ', array(
                     join('.', array(
                         $joinData['from'],
-                        $joinData['key']
+                        $joinData['fromKey']
                     )),
                     join('.', array(
                         $joinData['to'],
-                        $joinData['key']
+                        $joinData['toKey']
                     ))
                 )),
-                array()
+                $joinData['fields']
             ));
         }
     }
@@ -97,6 +118,15 @@ class RM_Query_Join
                 return 'joinCross';
             case self::OUTER:
                 return 'joinOuter';
+        }
+    }
+
+    private function _extractJoinObject($joinTo) {
+        if ($joinTo instanceof RM_Query_Join_Object) {
+            /* @var RM_Query_Join_Object $joinTo */
+            return $joinTo->getJoinArray();
+        } else {
+            return $joinTo;
         }
     }
 

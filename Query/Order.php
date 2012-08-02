@@ -61,8 +61,8 @@ class RM_Query_Order
     public function mergeWith(self $order) {
         foreach ($order->_orders as $orderData) {
             $this->add(
-                $orderData['field'],
-                $orderData['type']
+                $orderData->field,
+                $orderData->type
             );
         }
     }
