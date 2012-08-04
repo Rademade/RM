@@ -23,11 +23,17 @@ abstract class RM_Entity_Search_Condition
      */
     private $_having;
 
+    /**
+     * @var RM_Query_Group
+     */
+    private $_group;
+
     public function __construct() {
         $this->_where = new RM_Query_Where();
         $this->_order = new RM_Query_Order();
         $this->_join = new RM_Query_Join();
         $this->_having = new RM_Query_Having();
+        $this->_group = new RM_Query_Group();
     }
 
     /**
@@ -38,13 +44,6 @@ abstract class RM_Entity_Search_Condition
         foreach ($this->_getQueryParts() as $queryPart) {
             $queryPart->improveQuery( $select );
         }
-    }
-
-    public function mergeWith(RM_Entity_Search_Condition $condition) {
-        $this->_join->mergeWith( $condition->_getJoin() );
-        $this->_where->mergeWith( $condition->_getWhere() );
-        $this->_order->mergeWith( $condition->_getOrder() );
-        $this->_having->mergeWith( $condition->_getHaving() );
     }
 
     /**
@@ -76,13 +75,10 @@ abstract class RM_Entity_Search_Condition
     }
 
     /**
-     * @param RM_Entity_Search_Condition $condition
+     * @return RM_Query_Group
      */
-    public function __copyFrom(self $condition) {
-        $this->_join = $condition->_getJoin();
-        $this->_where = $condition->_getWhere();
-        $this->_order = $condition->_getOrder();
-        $this->_having = $condition->_getHaving();
+    protected  final function _getGroup() {
+        return $this->_group;
     }
 
     /**
@@ -93,7 +89,8 @@ abstract class RM_Entity_Search_Condition
             $this->_getJoin(),
             $this->_getWhere(),
             $this->_getOrder(),
-            $this->_getHaving()
+            $this->_getHaving(),
+            $this->_getGroup()
         );
     }
 

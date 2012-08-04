@@ -46,7 +46,10 @@ class RM_Query_Where
         }
     }
 
-	protected function _getConditionSQL() {
+    /**
+     * @return string
+     */
+    protected function _getConditionSQL() {
 		$i = 0;
         $sqlParts = array();
 		foreach ($this->_conditions as $condition) {

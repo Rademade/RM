@@ -63,15 +63,11 @@ abstract class RM_Entity_Search_Abstract_Abstract {
      * @return RM_Entity_Search_Condition|null
      */
     private function _getMergedCondition() {
-        $conditions = $this->getConditions();
-        $conditionCount = sizeof($conditions);
-        if ( $conditionCount === 0 ) {
+        if ( sizeof( $this->getConditions() ) === 0 ) {
             return null;
         } else {
-            $collectorCondition = $conditions[ 0 ];
-            for ($i = 1; $i < $conditionCount; $i++) {
-                $collectorCondition->mergeWith( $conditions[ $i ] );
-            }
+            $collectorCondition = new RM_Entity_Search_Condition_Collector();
+            $collectorCondition->mergeWithArray( $this->getConditions() );
             return $collectorCondition;
         }
     }

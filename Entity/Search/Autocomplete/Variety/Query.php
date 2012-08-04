@@ -89,5 +89,4 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
         $condition->installAutocompleteCondition( $this->getPhrase() );
         return $condition;
     }
-
 }

@@ -28,7 +28,6 @@ class RM_Entity_Search_Autocomplete
     public function getAutocompleteVarieties() {
         $varieties = array();
         foreach ($this->_autocompleteVarieties as $variety) {
-            $variety->__copyFrom( $this );//TODO FIX overhead
             $varieties[] = $variety;
         }
         return $varieties;

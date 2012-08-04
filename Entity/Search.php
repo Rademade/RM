@@ -16,7 +16,6 @@ class RM_Entity_Search
     public function getAutocomplete() {
         if (!$this->_autocompleteSearch instanceof RM_Entity_Search_Autocomplete) {
             $this->_autocompleteSearch = new RM_Entity_Search_Autocomplete( );
-            $this->_autocompleteSearch->__copyFrom( $this );
             $this->_autocompleteSearch->setAutocompleteVarieties( $this->_getAutocompleteVarieties() );
         }
         return $this->_autocompleteSearch;
