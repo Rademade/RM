@@ -64,7 +64,11 @@ class RM_Block
     }
 
     public function getId() {
-        return $this->_dataWorker->_getKey()->getValue();
+        return $this->_dataWorker->getValue('idBlock');
+    }
+
+    public function getIdBlock() {
+        return $this->_dataWorker->getValue('idBlock');
     }
 
 	public static function create($blockType, $idPage, $searchType) {
@@ -192,7 +196,7 @@ class RM_Block
             $this->getContentManager()->save()->getId()
         );
         $this->_dataWorker->save();
-        $this->__refreshCache();
+//        $this->__refreshCache();
 	}
 	
 	public function remove() {

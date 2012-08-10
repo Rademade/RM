@@ -121,6 +121,12 @@ class RM_Routing
         return self::_initItem( $select );
 	}
 
+    public static function getByName($name) {
+        $select = self::_getSelect();
+        $select->where( 'name = ?', $name);
+        return self::_initItem( $select );
+    }
+
 	public function validate(RM_Exception $e) {
 		if (!$this->getRoutingUrl()->checkFormat( $this->getParams() )) {
 			$e[] = self::ERROR_ALIAS;

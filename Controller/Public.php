@@ -38,9 +38,9 @@ class RM_Controller_Public
 
     public function postDispatch() {
         parent::postDispatch();
-        $this->view->assign(array(
-            'page' => $this->_page
-        ));
+        if (is_null($this->view->page)) {
+            $this->view->assign('page', $this->_page);
+        }
     }
 
 }
