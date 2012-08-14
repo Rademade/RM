@@ -107,7 +107,7 @@ class RM_Entity_Worker_Data
     }
 
 	public function save() {
-		if (!$this->isInserted()) {
+        if (!$this->isInserted()) {
 			RM_Entity::getDb()->insert(
 				$this->_table,
 				$this->_getInsertData()

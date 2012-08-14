@@ -1,8 +1,4 @@
 <?php
-/**
- * @property int idFieldName
- * @property mixed fieldName
- */
 class RM_Content_Field_Name
 	extends
 		RM_Entity {
@@ -21,15 +17,33 @@ class RM_Content_Field_Name
 		)
 	);
 
+    /**
+     * @var RM_Entity_Worker_Data
+     */
+    private $_dataWorker;
+    /**
+     * @var RM_Entity_Worker_Cache
+     */
+    protected $_cacheWorker;
+
 	private static function create($name) {
-		$fieldName = new self();
+		$fieldName = new self( new RM_Compositor() );
 		$fieldName->setName($name);
 		$fieldName->save();
 		return $fieldName;
 	}
 
+    public function __construct(stdClass $data) {
+        $this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
+        $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
+    }
+
+    public function getId() {
+        return $this->_dataWorker->getValue('idFieldName');
+    }
+
 	public function getName() {
-		return $this->fieldName;
+		return $this->_dataWorker->getValue('fieldName');
 	}
 
 	public function __refreshCache() {
@@ -50,13 +64,18 @@ class RM_Content_Field_Name
 	public function setName($fieldName) {
 		if (!$fieldName)
 			throw new Exception('Empty field name given');
-		if ($this->fieldName !== $fieldName) {
+		if ($this->getName() !== $fieldName) {
 			if (self::getByName($fieldName, false))
 				throw new Exception('Such name already exist');
 			$fieldName = mb_strtolower( trim($fieldName) );
-			$this->fieldName = $fieldName;
+			$this->_dataWorker->setValue('fieldName', $fieldName);
 		}
 	}
+
+    public function save() {
+        $this->_dataWorker->save();
+        $this->__refreshCache();
+    }
 
 	public static function getByName($name, $create = true) {
 		$key = md5($name);
@@ -71,7 +90,7 @@ class RM_Content_Field_Name
 					$filedName->__cache();
 				}
 			}
-			self::_getStorage()->setData($filedName, $key);
+            self::_getStorage()->setData($filedName, $key);
 		}
 		return $filedName;
 	}

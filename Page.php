@@ -58,7 +58,7 @@ class RM_Page
 	private $_route;
 
     /**
-     * @var Application_Model_System_Block[]
+     * @var RM_Block[]
      */
     private $_rightBlock;
 
@@ -66,9 +66,9 @@ class RM_Page
 	const TYPE_CATEGORY = 2;
     const TYPE_COUNTRY = 3;
 
-	public function __construct($data) {
+	public function __construct(stdClass $data) {
 		$this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
-		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
+	    $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
 	}
 
 	protected function __setPageData( $controller, $action, $url) {
@@ -83,7 +83,7 @@ class RM_Page
 	}
 
     public function getId() {
-        return $this->_dataWorker->_getKey()->getValue();
+        return $this->_dataWorker->getValue('id');
     }
 
     public function __get($name) {
@@ -139,9 +139,7 @@ class RM_Page
 	}
 
 	public function setContentManager(RM_Content $contentManager) {
-		if ($this->getIdContent() !== $contentManager->getId()) {
-            $this->_dataWorker->setValue('idContent', $contentManager->getId());
-		}
+        $this->_dataWorker->setValue('idContent', $contentManager->getId());
 		$this->_content = $contentManager;
 	}
 

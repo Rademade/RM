@@ -71,14 +71,13 @@ class RM_Content_Lang
 	public function getIdContent() {
 		return $this->idContent;
 	}
-	
+
 	public function getIdLang() {
 		return $this->idLang;
 	}
 
 	private function checkField($name) {
 		if ( !isset( $this->fields[ $name ] ) ) {
-			//TODO if we create new field, always setups RM_Content_Field_Process_Text
 			$this->fields[ $name ] = RM_Content_Field::getByName(
 				$name,
 				$this->getIdContent(),
@@ -126,7 +125,7 @@ class RM_Content_Lang
 	}
 
 	public function __call($name, $arguments) {
-		if (preg_match('/^(set|get)([a-z]*)$/i', strtolower($name), $result)) {
+		if (preg_match('/^(set|get)([a-z]+)$/i', strtolower($name), $result)) {
 			switch ($result[1]) {
 				case 'set':
 					$this->setFieldContent($result[2], $arguments[0], $arguments[1]);
@@ -153,7 +152,7 @@ class RM_Content_Lang
 	}
 
 	private function _saveFields() {
-		foreach ($this->fields as $field) {
+		foreach ($this->fields as &$field) {
 			$field->setIdContent( $this->getIdContent() );
 			$field->save();
 		}
@@ -184,12 +183,11 @@ class RM_Content_Lang
 	}
 
 	public function save() {
-		parent::save();
+    	parent::save();
 		$this->_saveFields();
 		$this->__refreshCache();
-		$this->getContentManager()->__cleanCache();
+        $this->getContentManager()->__cleanCache();
 	}
-
 
 	public function remove() {
 		$this->contentLangStatus = self::STATUS_DELETED;

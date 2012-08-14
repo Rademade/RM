@@ -168,26 +168,32 @@ class RM_Content_Field
 		    $idContent,
 		    $idLang
         ));
-		if (is_null($field = self::_getStorage()->getData($key))) {
-			if (is_null($field = self::__load($key))) {
-				$select = self::_getSelect();
-				$select->where('idContent = ?', $idContent);
-				$select->where('idLang = ?', $idLang);
-				$select->where('idFieldName = ?', $idFieldName);
-				$field = self::_initItem($select );
-				if (is_null($field)) {
-					$field =  new self( new RM_Compositor( array(
+		if (is_null($field = self::_getStorage()->getData($key))) {//get from storage
+			if (is_null($field = self::__load($key))) {//get from cache
+				if (is_null($field = self::_getFromDB($idContent, $idLang, $idFieldName))) {//get from db
+					$field =  new self( new RM_Compositor( array(//create
 		                'idContent' =>$idContent,
 		                'idLang' => $idLang,
 					    'idFieldName' => $idFieldName
 		            ) ) );
-				}
-				$field->__cache();
+				} else {
+                    $field->__cache();
+                }
 			}
-			self::_getStorage()->setData($field, $key);
+            if ($idContent !== 0) {
+                self::_getStorage()->setData($field, $key);
+            }
 		}
 		return $field;
 	}
+
+    private static function _getFromDB($idContent, $idLang, $idFieldName) {
+        $select = self::_getSelect();
+        $select->where('idContent = ?', $idContent);
+        $select->where('idLang = ?', $idLang);
+        $select->where('idFieldName = ?', $idFieldName);
+        return self::_initItem($select );
+    }
 
 	public function remove() {
 		$this->fieldStatus = self::STATUS_DELETED;

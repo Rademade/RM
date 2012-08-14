@@ -37,6 +37,11 @@ abstract class RM_Entity_Search_Condition_Entity
      */
     abstract public function joinAutocompleteTable();
 
+    /**
+     * @abstract
+     * @param string $phrase
+     * @return RM_Query_Where
+     */
     abstract public function getWhereCondition( $phrase );
 
 }

@@ -13,6 +13,14 @@ class RM_Query_Order
 	const DESC = 2;
 
     /**
+     * @static
+     * @return RM_Query_Order
+     */
+    public static function get() {
+        return new self();
+    }
+
+    /**
      * @param string $field
      * @param int $type
      * @return RM_Query_Order

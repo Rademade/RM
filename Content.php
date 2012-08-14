@@ -1,8 +1,4 @@
 <?php
-/**
- * @property int idDefaultLang
- * @property int contentStatus
- */
 class RM_Content
 	extends
 		RM_Entity
@@ -34,19 +30,37 @@ class RM_Content
 
 	private $_settedLangs = array();
 
+    /**
+     * @var RM_Entity_Worker_Data
+     */
+    private $_dataWorker;
+    /**
+     * @var RM_Entity_Worker_Cache
+     */
+    protected $_cacheWorker;
+
+    public function __construct(stdClass $data) {
+        $this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
+        $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
+    }
+
 	public static function _setSelectRules(Zend_Db_Select $select) {
-		$select->where('contentStatus != ?', self::STATUS_DELETED);
+		$select->where('contents.contentStatus != ?', self::STATUS_DELETED);
 	}
 
+    public function getId() {
+        return $this->_dataWorker->_getKey()->getValue();
+    }
+
 	private function getIdDefaultLang() {
-		return $this->idDefaultLang;
+		return $this->_dataWorker->getValue('idDefaultLang');
 	}
 
 	public function setDefaultLang(RM_Lang $lang) {
 		if (!$this->getContentLang($lang)) {
 			throw new Exception('Such content in content manager not exist');
 		}
-		$this->idDefaultLang = $lang->getId();
+        $this->_dataWorker->setValue('idDefaultLang', $lang->getId());
 	}
 
 	public function isLoadedContentLangs() {
@@ -68,7 +82,7 @@ class RM_Content
 	}
 
 	public static function create() {
-		$content = new self( new RM_Compositor( array(
+		$content = new static( new RM_Compositor( array(
             'idLang' => RM_Lang::getCurrent()->getId()
         ) ) );
 		$content->addContentLang( RM_Lang::getCurrent() );
@@ -184,7 +198,7 @@ class RM_Content
 		foreach ($this->_contentLangs as $contentLang) {
 			/* @var $contentLang RM_Content_Lang */
 			$contentLang->setIdContent( $this->getId() );
-			$contentLang->save();
+            $contentLang->save();
 		}
 	}
 
@@ -207,14 +221,14 @@ class RM_Content
 	}
 
 	public function save() {
-		parent::save();
-		$this->_saveContent();
-		$this->__refreshCache();
-		return $this;
+        $this->_dataWorker->save();
+        $this->_saveContent();
+        $this->__refreshCache();
+        return $this;
 	}
 
 	public function remove() {
-		$this->contentStatus = self::STATUS_DELETED;
+		$this->_dataWorker->setValue('contentStatus', self::STATUS_DELETED);
 		$this->save();
 		$this->__cleanCache();
 	}
