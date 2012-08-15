@@ -183,7 +183,10 @@ class RM_Content
 		return $this->_contentLangs;
 	}
 
-	public function getContentLangs() {
+    /**
+     * @return RM_Content_Lang[]
+     */
+    public function getContentLangs() {
 		$contentLangs = array();
 		foreach ($this->getAllContentLangs() as $contentLang) {
 			/* @var $contentLang RM_Content_Lang */
