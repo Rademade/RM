@@ -54,9 +54,13 @@ abstract class RM_Entity
 	}
 
 	public function __set($name, $value) {
-		if (is_null($this->_dataWorker->setValue($name, $value))) {
-			throw new Exception("Try to set unexpected attribute {$name}");
-		}
+//        if ($this->_dataWorker instanceof RM_Entity_Worker_Data) {
+            if (is_null($this->_dataWorker->setValue($name, $value))) {
+                throw new Exception("Try to set unexpected attribute {$name}");
+            }
+//        } else {
+//            throw new Exception("Try to set '{$name}''");
+//        }
 	}
 
 	public function save() {

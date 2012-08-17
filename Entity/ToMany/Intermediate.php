@@ -6,16 +6,6 @@ abstract class RM_Entity_ToMany_Intermediate
         RM_Interface_Deletable {
 
     /**
-     * @var RM_Entity
-     */
-    private $_from;
-
-    /**
-     * @var RM_Entity
-     */
-    private $_to;
-
-    /**
      * @var RM_Entity_Worker_Data
      */
     protected $_dataWorker;
@@ -70,6 +60,10 @@ abstract class RM_Entity_ToMany_Intermediate
         );
     }
 
+    abstract public function getFrom();
+
+    abstract public function getTo();
+
     public function __construct(stdClass $data) {
         //TODO check if redeclared!
         //TODO check fields!
@@ -89,25 +83,8 @@ abstract class RM_Entity_ToMany_Intermediate
         $this->_dataWorker->setValue(static::FIELD_FROM, (int)$id);
     }
 
-    public function getFrom() {
-        if (!($this->_from instanceof RM_Entity)) {
-            $this->_from = RM_Entity::getById( $this->getIdFrom() );
-        }
-        return $this->_from;
-    }
-
     public function getIdTo() {
         return $this->_dataWorker->getValue( static::FIELD_TO );
-    }
-
-    /**
-     * @return RM_Entity
-     */
-    public function getTo() {
-        if (!($this->_to instanceof RM_Entity)) {
-            $this->_to = RM_Entity::getById( $this->getIdTo() );
-        }
-        return $this->_to;
     }
 
     public function getStatus() {

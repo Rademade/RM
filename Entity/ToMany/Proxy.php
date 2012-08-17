@@ -48,10 +48,17 @@ class RM_Entity_ToMany_Proxy {
      */
     public function getToItems() {
         $list = array();
-        foreach ($this->_getCollection()->getIntermediateEntities() as $intermediate) {
+        foreach ($this->getItems() as $intermediate) {
             $list[] = $intermediate->getTo();
         }
         return $list;
+    }
+
+    /**
+     * @return RM_Entity_ToMany_Intermediate[]
+     */
+    public function getItems() {
+        return $this->_getCollection()->getIntermediateEntities();
     }
 
     /**
