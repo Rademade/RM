@@ -1,8 +1,10 @@
 <?php
+require_once 'Libraries/HTMLPurifier/library/HTMLPurifier.auto.php';
 class RM_Content_Field_Process_Html
-	extends RM_Content_Field_Process {
+	extends
+        RM_Content_Field_Process {
 
-	private $allowedTags = array(
+	private $_allowedTags = array(
 		'h1',
 		'h2',
 		'h3',
@@ -38,22 +40,22 @@ class RM_Content_Field_Process_Html
 		'href',
 		'alt',
 		'height',
-        'target',
 		'width',
 		'align',
         'frameborder',
-        'allowfullscreen'
+        'style'
 	);
 
 	private static $_self;
 
-	protected function __construct(){
-		parent::__construct();
-	}
+    /**
+     * @var HTMLPurifier
+     */
+    private $_purifier;
 
 	public static function init() {
-		if (!(self::$_self instanceof self)) {
-			self::$_self = new self();
+		if (!self::$_self instanceof static) {
+            self::$_self = new static();
 		}
 		return self::$_self;
 	}
@@ -63,36 +65,28 @@ class RM_Content_Field_Process_Html
 	}
 
 	public function getParsedContent($html) {
-        $XML = simplexml_load_string(
-            '<root>'. $html .'</root>',
-            'SimpleXMLElement',
-            LIBXML_NOERROR | LIBXML_NOXMLDECL
-        );
-        /* @var SimpleXMLElement $XML */
-        return ($XML instanceof SimpleXMLElement) ?
-            strip_tags( preg_replace(
-                $this->_getRemoveAttributeGreps( $XML ),
-                array(''),
-                $XML->asXML()
-            ), $this->_getAllowedTags() ) : '';
+        return $this->getPurifier()->purify( $html );
 	}
 
-    private function _getRemoveAttributeGreps(SimpleXMLElement $XML) {
-        $removeGreps = array();
-        foreach ($XML->xpath('descendant::*[@*]') as $tag) {
-            /* @var SimpleXMLElement $tag */
-            foreach ($tag->attributes() as $name => $value) {
-                if (!in_array($name, $this->_allowedAttr)) {
-                    $tag->attributes()->{ $name } = '';
-                    $removeGreps[$name] = '/ '. $name .'=""/';
-                }
-            }
-        }
-        return $removeGreps;
+    /**
+     * @return HTMLPurifier_Config
+     */
+    private function _getConfig() {
+        $config = HTMLPurifier_Config::createDefault();
+        $config->set('Cache.DefinitionImpl', 'Null');
+        $config->set('HTML.AllowedAttributes', $this->_allowedAttr);
+        $config->set('HTML.Allowed', join(',', $this->_allowedTags));
+        $config->set('CSS.AllowedProperties', 'text-align');
+        $config->set('FlashAllowFullScreen', true);
+        $config->set('TargetBlank', true);
+        return $config;
     }
 
-    private function _getAllowedTags() {
-        return '<' . join( '><', $this->allowedTags ) . '>';
+    private function getPurifier() {
+        if (!$this->_purifier instanceof HTMLPurifier) {
+            $this->_purifier = new HTMLPurifier( $this->_getConfig() );
+        }
+        return $this->_purifier;
     }
 
 }

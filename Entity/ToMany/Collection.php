@@ -2,9 +2,9 @@
 class RM_Entity_ToMany_Collection {
 
     /**
-     * @var int
+     * @var RM_Entity
      */
-    private $_idFrom;
+    private $_from;
 
     /**
      * @var RM_Entity_ToMany_Intermediate[]
@@ -19,20 +19,12 @@ class RM_Entity_ToMany_Collection {
      */
     private $_items = array();
 
-    /**
-     * RM_Entity_ToMany_Intermediate
-     * @var string
-     */
-    private $_intermediateClass;
-
-    public function __construct(RM_Entity $from, $intermediateClass) {
-        $this->_intermediateClass = $intermediateClass;//TODO check if instanceof RM_Entity_ToMany_Intermediate
-        $this->_idFrom = (int)$from->getId();
-        $this->_load();
+    public function __construct(RM_Entity $from) {
+        $this->_from = $from;
     }
 
     public function getIdFrom() {
-        return $this->_idFrom;
+        return $this->_from->getId();
     }
 
     public function rebuild() {
@@ -43,41 +35,41 @@ class RM_Entity_ToMany_Collection {
 
     public function add(RM_Entity_ToMany_Intermediate $item) {
         if (!array_key_exists(
-            $item->getId(),
+            $item->getIdTo(),
             $this->_items
         )) {
-            if (array_key_exists(
-                $item->getId(),
+            if ( array_key_exists(
+                $item->getIdTo(),
                 $this->_itemRemove
-            )) {
-                unset( $this->_itemRemove[ $item->getId() ] );
+            ) ) {
+                unset( $this->_itemRemove[ $item->getIdTo() ] );
             }
-            $this->_items[ $item->getId() ] = $item;
-            $this->_itemAdd[ $item->getId() ] = $item;
+            $this->_items[ $item->getIdTo() ] = $item;
+            $this->_itemAdd[ $item->getIdTo() ] = $item;
         }
     }
 
-    public function remove(RM_Entity $item) {
+    public function remove(RM_Entity_ToMany_Intermediate $item) {
         if ( array_key_exists(
-            $item->getId(),
+            $item->getIdTo(),
             $this->_items
         ) ) {
-            $this->_itemRemove[ $item->getId() ] = $item;
-            unset( $this->_items[ $item->getId() ] );
-            unset( $this->_itemAdd[ $item->getId() ] );
+            $this->_itemRemove[ $item->getIdTo() ] = $item;
+            unset( $this->_items[ $item->getIdTo() ] );
+            unset( $this->_itemAdd[ $item->getIdTo() ] );
         }
     }
 
     public function save() {
         foreach ($this->_itemAdd as $id => $item) {
+            $item->setIdFrom( $this->getIdFrom() );
             $item->save();
-            unset($this->_itemAdd[$id]);
+            unset( $this->_itemAdd[ $id ] );
         }
         foreach ($this->_itemRemove as $id => $item) {
             $item->remove();
-            unset($this->_itemRemove[$id]);
+            unset( $this->_itemRemove[ $id ] );
         }
-
     }
 
     /**
@@ -87,19 +79,22 @@ class RM_Entity_ToMany_Collection {
         return $this->_items;
     }
 
-    private function _load() {
-        $conditions = new RM_Query_Where();
-        /* @var RM_Entity_ToMany_Intermediate $model */
-        $model = $this->_intermediateClass;
-        $conditions->add(
-            $model::FIELD_FROM,
-            RM_Query_Where::EXACTLY,
-            $this->getIdFrom()
-        );
-        foreach ($model::getList($conditions) as $item) {
-            /* @var RM_Entity_ToMany_Intermediate $item */
-            $this->_items[ $item->getId() ] = $item;
+    /**
+     * @param RM_Entity_ToMany_Intermediate[] $items
+     * @throws Exception
+     */
+    public function resetIntermediateEntities(array $items) {
+        $this->_items = array();
+        $this->_itemAdd = array();
+        $this->_itemRemove = array();
+        foreach ($items as $item) {
+            if ($item instanceof RM_Entity_ToMany_Intermediate) {
+                $this->_items[ $item->getIdTo() ] = $item;
+            } else {
+                throw new Exception('Not intermediate class given');
+            }
         }
     }
+
 
 }

@@ -32,11 +32,11 @@ class RM_Entity_ToMany_Proxy {
         $intermediateClass
     ) {
         //TODO check if is real intermediate class!
-        $key = join('_', array(
+        $key = join( '_', array(
             get_class( $from ),
             $intermediateClass,
             $from->getId()
-        ));
+        ) );
         if (!isset(self::$_instances[ $key ])) {
             self::$_instances[ $key ] = new self($from, $intermediateClass);
         }
@@ -61,10 +61,7 @@ class RM_Entity_ToMany_Proxy {
     public function add(RM_Entity $to) {
         $model = $this->_getIntermediateClass();
         /* @var RM_Entity_ToMany_Intermediate $intermediate */
-        $intermediate = $model::create(
-            $this->_from,
-            $to
-        );
+        $intermediate = $model::create( $this->_from, $to );
         $this->_getCollection()->add( $intermediate );
         return $intermediate;
     }
@@ -74,10 +71,6 @@ class RM_Entity_ToMany_Proxy {
     }
 
     public function save() {
-        foreach ($this->_getCollection()->getIntermediateEntities() as $item) {
-            $item->setIdFrom( $this->_from->getId() );
-            $item->save();
-        }
         $this->_getCollection()->save();
     }
 
@@ -86,7 +79,8 @@ class RM_Entity_ToMany_Proxy {
      */
     private function _getCollection() {
         if (!$this->_collection instanceof RM_Entity_ToMany_Collection) {
-            $this->_collection = new RM_Entity_ToMany_Collection( $this->_from, $this->_intermediateClass );
+            $this->_collection = new RM_Entity_ToMany_Collection( $this->_from );
+            $this->_collection->resetIntermediateEntities( $this->_getIntermediateItems() );
         }
         return $this->_collection;
     }
@@ -96,6 +90,17 @@ class RM_Entity_ToMany_Proxy {
      */
     private function _getIntermediateClass() {
         return $this->_intermediateClass;
+    }
+
+    /**
+     * @return RM_Entity_ToMany_Intermediate[]
+     */
+    private function _getIntermediateItems() {
+        $where = new RM_Query_Where();
+        /* @var RM_Entity_ToMany_Intermediate $model */
+        $model = $this->_intermediateClass;
+        $where->add($model::FIELD_FROM, '=', $this->_from->getId());
+        return $model::getList($where);
     }
 
 }

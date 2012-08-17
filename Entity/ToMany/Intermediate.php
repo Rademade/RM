@@ -124,6 +124,11 @@ abstract class RM_Entity_ToMany_Intermediate
         }
     }
 
+    public function save() {
+        $this->_dataWorker->save();
+        $this->__refreshCache();
+    }
+
     public function remove() {
         $this->setStatus( self::STATUS_DELETED );
         $this->save();
