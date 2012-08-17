@@ -33,7 +33,7 @@ class RM_Content_Field_Process_Html
         'iframe'
 	);
 	
-	private $allowedAttr = array(
+	private $_allowedAttr = array(
 		'src',
 		'href',
 		'alt',
@@ -57,28 +57,42 @@ class RM_Content_Field_Process_Html
 		}
 		return self::$_self;
 	}
-	
-	private function stripWrongHtml($html) {
-		return strip_tags(
-			$html,
-			'<' . join( '><', $this->allowedTags ) . '>'
-		);
-	}
-
-	private function stripWrongAttr($html) {
-		$stripAttr = new RM_Content_Field_Process_Libraries_StripAttributes();
-		$stripAttr->allow = $this->allowedAttr;
-		return $stripAttr->strip( $html );
-	}
 
 	public function getInitialContent($html) {
 		return $html;
 	}
 
 	public function getParsedContent($html) {
-		$html = $this->stripWrongHtml($html);
-		$html = $this->stripWrongAttr($html);
-		return $html;
+        $XML = simplexml_load_string(
+            '<root>'. $html .'</root>',
+            'SimpleXMLElement',
+            LIBXML_NOERROR | LIBXML_NOXMLDECL
+        );
+        /* @var SimpleXMLElement $XML */
+        return ($XML instanceof SimpleXMLElement) ?
+            strip_tags( preg_replace(
+                $this->_getRemoveAttributeGreps( $XML ),
+                array(''),
+                $XML->asXML()
+            ), $this->_getAllowedTags() ) : '';
 	}
+
+    private function _getRemoveAttributeGreps(SimpleXMLElement $XML) {
+        $removeGreps = array();
+        foreach ($XML->xpath('descendant::*[@*]') as $tag) {
+            /* @var SimpleXMLElement $tag */
+            foreach ($tag->attributes() as $name => $value) {
+                if (!in_array($name, $this->_allowedAttr)) {
+                    $tag->attributes()->{ $name } = '';
+                    $removeGreps[$name] = '/ '. $name .'=""/';
+                }
+            }
+        }
+        return $removeGreps;
+    }
+
+    private function _getAllowedTags() {
+        return '<' . join( '><', $this->allowedTags ) . '>';
+    }
 
 }
