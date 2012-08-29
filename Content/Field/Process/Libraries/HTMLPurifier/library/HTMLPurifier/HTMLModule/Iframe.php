@@ -29,6 +29,7 @@ class HTMLPurifier_HTMLModule_Iframe extends HTMLPurifier_HTMLModule
                 'longdesc' => 'URI',
                 'marginheight' => 'Pixels',
                 'marginwidth' => 'Pixels',
+                'allowfullscreen' => 'Enum#0,1,allowfullscreen'
             )
         );
     }

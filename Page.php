@@ -65,8 +65,9 @@ class RM_Page
 	const TYPE_PAGE = 1;
 	const TYPE_CATEGORY = 2;
     const TYPE_COUNTRY = 3;
+    const TYPE_SUB_CATEGORY = 4;
 
-	public function __construct(stdClass $data) {
+    public function __construct(stdClass $data) {
 		$this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
 	    $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
 	}

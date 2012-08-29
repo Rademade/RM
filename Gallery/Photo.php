@@ -1,11 +1,4 @@
 <?php
-/**
-* @property int idGalleryPhoto
-* @property int idGallery
-* @property int galleryPhotoPosition
-* @property int galleryPhotoStatus
-* @property int idPhoto
- */
 class RM_Gallery_Photo
 	extends
 		RM_Photo {
@@ -60,10 +53,6 @@ class RM_Gallery_Photo
 		}
 	}
 
-	public function getIdPhoto() {
-		return $this->idPhoto;
-	}
-	
 	public static function createGalleryPhoto(
 		$idGallery,
 		$position,
@@ -82,11 +71,11 @@ class RM_Gallery_Photo
 	}
 
 	public function getIdRelation() {
-		return $this->idGalleryPhoto;
+		return $this->_dataWorker->getValue('idGalleryPhoto');
 	}
 	
 	public function getIdGallery() {
-		return $this->idGallery;
+		return $this->_dataWorker->getValue('idGallery');
 	}
 
     /**
@@ -112,7 +101,7 @@ class RM_Gallery_Photo
 		$select = self::_getSelect();
 		$select->where('galleriesPhotos.idGallery = ?', intval($idGallery));
 		$order = new RM_Query_Order();
-		$order->addOrder('galleryPhotoPosition', RM_Query_Order::ASC);
+		$order->add('galleryPhotoPosition', RM_Query_Order::ASC);
 		$order->improveQuery($select);
 		$list = $limit->getResult($select);
 		foreach ($list as &$photo) {
@@ -122,19 +111,21 @@ class RM_Gallery_Photo
 	}
 
 	public function setPosition($position) {
-		$this->galleryPhotoPosition = (int)$position;
+        $position = (int)$position;
+		$this->_dataWorker->setValue('galleryPhotoPosition', $position);
 	}
 	
 	public function getPosition() {
-		return $this->galleryPhotoPosition;
+		return $this->_dataWorker->getValue('galleryPhotoPosition');
 	}
 	
 	public function getStatus() {
-		return $this->galleryPhotoStatus;
+		return $this->_dataWorker->getValue('galleryPhotoStatus');
 	}
 	
 	public function setStatus($status) {
-		$this->galleryPhotoStatus = (int)$status;
+        $status = (int)$status;
+		$this->_dataWorker->setValue('galleryPhotoStatus', $status);
 	}
 
 	public function __refreshCache() {
@@ -149,7 +140,7 @@ class RM_Gallery_Photo
 
 	public function save() {
 		parent::save();
-		$this->idPhoto = $this->getIdPhoto();
+		$this->_dataWorker->setValue('idPhoto', $this->getIdPhoto());
 		$this->_dataWorker->save();
 		$this->getGallery()->__refreshCache();
 	}

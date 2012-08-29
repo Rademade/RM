@@ -1,11 +1,4 @@
 <?php
-/**
-* @property int idUser
-* @property int idContent
-* @property int id
-* @property string photoPath
-* @property int photoStatus
-*/
 class RM_Photo
 	extends
 		RM_Entity {
@@ -15,9 +8,8 @@ class RM_Photo
 	const TABLE_NAME = 'photos';
 
 	protected static $_properties = array(
-		'id' => array(
+		'idPhoto' => array(
 			'id' => true,
-			'field' => 'idPhoto',
 			'type' => 'int'
 		),
 		'idContent' => array(
@@ -69,24 +61,9 @@ class RM_Photo
 		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
 	}
 
-	public function __get($name) {
-		$val = $this->_dataWorker->getValue($name);
-		if (is_null($val)) {
-			throw new Exception("Try to get unexpected attribute {$name}");
-		} else {
-			return $val;
-		}
-	}
-
-	public function __set($name, $value) {
-		if (is_null($this->_dataWorker->setValue($name, $value))) {
-			throw new Exception("Try to set unexpected attribute {$name}");
-		}
-	}
-
 	public static function create(RM_User_Interface $user) {
 		$photo = new self(new stdClass());
-		$photo->idUser = $user->getId();
+		$photo->_dataWorker->setValue('idUser', $user->getId());
 		return $photo;
 	}
 
@@ -111,11 +88,15 @@ class RM_Photo
 	}
 	
 	private function createContent() {
-		if ($this->idContent === 0) {
+		if ($this->getIdContent() === 0) {
 			$this->_content = RM_Content::create();
 			$this->_content->save();
 		}
 	}
+
+    public function getIdContent() {
+        return $this->_dataWorker->getValue('idContent');
+    }
 	
 	public function noSave() {
 		$this->_noSave = true;
@@ -126,38 +107,38 @@ class RM_Photo
 			if ($this->getIdContent() === 0) {			
 				$this->createContent();
 			} else {
-				$this->_content = RM_Content::getById($this->idContent);
+				$this->_content = RM_Content::getById( $this->getIdContent() );
 			}
 		}
 		return $this->_content;
 	}
 
-	public function getIdPhoto() {
-		return $this->id;
-	}
+    public function getId() {
+        return $this->getIdPhoto();
+    }
 
-	public function getIdContent() {
-		return $this->idContent;
+	public function getIdPhoto() {
+		return $this->_dataWorker->getValue('idPhoto');
 	}
 
 	public function getIdUser() {
-		return $this->idUser;
+		return $this->_dataWorker->getValue('idUser');
 	}
 
 	public function getPhotoPath() {
-		return $this->photoPath;
+		return $this->_dataWorker->getValue('photoPath');
 	}
 	
 	public function getStatus() {
-		return $this->photoStatus;
+		return $this->_dataWorker->getValue('photoStatus');
 	}
 	
 	public function setStatus($status) {
-		$this->photoStatus = (int)$status;
+		$this->_dataWorker->setValue('photoStatus', (int)$status);
 	}
 
 	public function setPhotoPath($path) {
-		$this->photoPath = $path;
+		$this->_dataWorker->setValue('photoPath', $path);
 	}
 
 	public function getPhotoDir() {

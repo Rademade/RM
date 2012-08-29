@@ -42,8 +42,8 @@ class RM_Content_Field_Process_Html
 		'height',
 		'width',
 		'align',
-        'frameborder',
-        'style'
+        'style',
+        'target'
 	);
 
 	private static $_self;
@@ -73,12 +73,10 @@ class RM_Content_Field_Process_Html
      */
     private function _getConfig() {
         $config = HTMLPurifier_Config::createDefault();
-        $config->set('Cache.DefinitionImpl', 'Null');
+        $config->set('Cache.DefinitionImpl', null);
         $config->set('HTML.AllowedAttributes', $this->_allowedAttr);
         $config->set('HTML.Allowed', join(',', $this->_allowedTags));
         $config->set('CSS.AllowedProperties', 'text-align');
-        $config->set('FlashAllowFullScreen', true);
-        $config->set('TargetBlank', true);
         return $config;
     }
 
