@@ -82,7 +82,7 @@ class RM_View_Element_Icon
 			case self::ICON_BOOK:
 				return 'book.png';
 			case self::ICON_STAR:
-				return 'popular.png';
+				return 'star.png';
 			case self::ICON_NEW:
 				return 'new.gif';
 			case self::ICON_COMMENTS:

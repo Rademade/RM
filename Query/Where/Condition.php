@@ -34,11 +34,16 @@ class RM_Query_Where_Condition
 
     public function getConditionType() {
         if (is_array( $this->getValue() )) {
-            if ($this->getInitConditionType() === self::EXACTLY) return 'IN';
+            if ( in_array($this->getInitConditionType(), array(
+                self::EXACTLY,
+                self::NOT_IN
+            ) ) )
+                return 'IN';
             throw new Exception('Array value given with not exactly type');
         } else {
             switch ( $this->getInitConditionType() ) {
                 case    self::EXACTLY:      return '=';
+                case    self::NOT_IN:       return 'NOT IN';
                 case    self::LESS:         return '<';
                 case    self::LESS_EXACTLY: return '<=';
                 case    self::MORE:         return '>';
@@ -83,6 +88,10 @@ class RM_Query_Where_Condition
             case self::EXACTLY:
             case 'IN':
                 return self::EXACTLY;
+            case 'NOT IN':
+            case self::NOT_IN:
+                return self::NOT_IN;
+                break;
             case '>':
             case self::MORE:
                 return self::MORE;

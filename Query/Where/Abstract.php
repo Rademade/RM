@@ -5,6 +5,7 @@ abstract class RM_Query_Where_Abstract
         RM_Query_Interface_Hashable {
 
     const EXACTLY = 1;//IN, =
+    const NOT_IN = 11;
     const MORE = 2;
     const LESS = 3;
     const NOT = 4;
@@ -14,6 +15,8 @@ abstract class RM_Query_Where_Abstract
     const END_LIKE = 8; //LIKE %val
     const MORE_EXACTLY = 9;
     const LESS_EXACTLY = 10;
+    //const NOT_IN = 11;
+    //TODO next 12
 
     public function isHashable(){
         return true;
