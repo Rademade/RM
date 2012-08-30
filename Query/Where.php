@@ -53,11 +53,14 @@ class RM_Query_Where
 		$i = 0;
         $sqlParts = array();
 		foreach ($this->_conditions as $condition) {
-			++$i;
-            if ($i !== 1) {
-                $sqlParts[] = $condition->getGlueTypeSQL();
+            $conditionSQL = $condition->getCondition()->_getConditionSQL();
+            if (!empty($conditionSQL)) {
+                ++$i;
+                if ($i !== 1) {
+                    $sqlParts[] = $condition->getGlueTypeSQL();
+                }
+                $sqlParts[] =  $conditionSQL;
             }
-            $sqlParts[] =  $condition->getCondition()->_getConditionSQL();
 		}
 		return '(' . join(' ', $sqlParts) . ')';
 	}

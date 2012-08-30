@@ -38,7 +38,7 @@ class RM_Entity_Search_Entity
     }
 
     /**
-     * @return RM_Entity[]
+     * @return RM_Entity[]|RM_Entity_Search_Result_Interface[]
      */
     public function getResults() {
         return call_user_func_array( array(
