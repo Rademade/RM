@@ -1,8 +1,4 @@
 <?php
-/**
-* @property mixed idGallery
-* @property mixed galleryStatus
-*/
 class RM_Gallery
 	extends
 		RM_Entity
@@ -27,24 +23,46 @@ class RM_Gallery
 
 	private $_isPhotosLoaded = false;
 	private $_photos = array();
+
 	/**
 	 * @var RM_Gallery_Photo
 	 */
 	private $_poster;
-	private $_photosCount = 0;
 
+    /**
+     * @var RM_Entity_Worker_Data
+     */
+    private $_dataWorker;
+    /**
+     * @var RM_Entity_Worker_Cache
+     */
+    protected $_cacheWorker;
 
 	public static function create() {
-		$gallery = new self();
+		$gallery = new static( new stdClass() );
 		return $gallery;
 	}
 
+    public function __construct($data) {
+        $this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
+        $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
+    }
+
+    public function getId() {
+        return $this->getIdGallery();
+    }
+
+    public function getIdGallery() {
+        return $this->_dataWorker->getValue('idGallery');
+    }
+
 	public function setStatus($statusGallery) {
-		$this->galleryStatus = (int)$statusGallery;
+        $statusGallery = (int)$statusGallery;
+		$this->_dataWorker->setValue('galleryStatus', $statusGallery);
 	}
 
 	public function getStatus() {
-		return $this->galleryStatus;
+		return $this->_dataWorker->getValue('galleryStatus');
 	}
 
 	public function getMaxPosition() {
@@ -58,12 +76,14 @@ class RM_Gallery
 	}
 
 	public function addPhoto(RM_Photo $photo) {
-		$this->_photos[] = RM_Gallery_Photo::createGalleryPhoto(
-			$this->getId(),
-			($this->getMaxPosition() + 1),
-			$photo
-		);
-		$this->__refreshCache();
+        if ( !$this->_isPhotoAdded($photo) ) {
+            $this->_photos[] = RM_Gallery_Photo::createGalleryPhoto(
+                $this->getId(),
+                ($this->getMaxPosition() + 1),
+                $photo
+            );
+            $this->__refreshCache();
+        }
 	}
 	
 	/**
@@ -129,7 +149,8 @@ class RM_Gallery
 
 
     public function save() {
-        parent::save();
+        $this->_dataWorker->save();
+        $this->__cache();
         return $this;
     }
 
@@ -171,5 +192,14 @@ class RM_Gallery
 		$this->save();
 		$this->__cleanCache();
 	}
+
+    private function _isPhotoAdded(RM_Photo $addPhoto) {
+        foreach ($this->getPhotos() as $photo) {
+            if ($addPhoto->getId() === $photo->getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
 	
 }

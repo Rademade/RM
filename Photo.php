@@ -62,19 +62,21 @@ class RM_Photo
 	}
 
 	public static function create(RM_User_Interface $user) {
-		$photo = new self(new stdClass());
+		$photo = new static(new stdClass());
 		$photo->_dataWorker->setValue('idUser', $user->getId());
 		return $photo;
 	}
 
 	public function save() {
-		$this->_dataWorker->save();
-		$this->__cache();
+        if (!$this->isNoSave()) {
+            $this->_dataWorker->save();
+            $this->__cache();
+        }
         return $this;
 	}
 
 	public static function getEmpty() {
-		$photo = new self( new RM_Compositor( array(
+		$photo = new static( new RM_Compositor( array(
             'photoPath' => self::NO_IMAGE
         ) ) );
 		$photo->noSave();
@@ -97,7 +99,11 @@ class RM_Photo
     public function getIdContent() {
         return $this->_dataWorker->getValue('idContent');
     }
-	
+
+    public function isNoSave() {
+        return $this->_noSave === true;
+    }
+
 	public function noSave() {
 		$this->_noSave = true;
 	}
@@ -219,25 +225,18 @@ class RM_Photo
 	}
 
 	public function upload($tmpName) {
-		$expansion = $this->validate($tmpName);
-		$randomPath = md5(uniqid() . microtime(true));
-		$i = 0;
-		$step = 4;
-		$dirPath = '';
-		while ($i < strlen($randomPath) - $step) {
-			$segment = substr($randomPath, $i, $step);
-			$dirPath .= $segment . '/';
-			$i += $step;
-		}
-		mkdir(PUBLIC_PATH . self::SAVE_PATH . $dirPath, 0777, true);
-		$this->setPhotoPath(
-			$dirPath .
-			substr($randomPath, $i, $step) . '.' .//last segment
-			strtolower($expansion)
-		);
+        $this->validate($tmpName);
+        $this->_generateImageSavePath(  );
 		copy($tmpName, $this->getFullPhotoPath());
 		$this->save();
 	}
+
+    public function setBinaryImage($imageBinary) {
+        //TODO validate binary
+        $this->_generateImageSavePath(  );
+        file_put_contents( $this->getFullPhotoPath(), $imageBinary );
+        $this->save();
+    }
 
 	public function remove(RM_User_Interface $user) {
 		if ($user->getId() === $this->getIdUser() || 
@@ -257,5 +256,19 @@ class RM_Photo
 			'photoPath' => $this->_getPath()
 		);
 	}
+
+    private function _generateImageSavePath() {
+        $randomPath = md5(uniqid() . microtime(true));
+        $i = 0;
+        $step = 4;
+        $dirPath = '';
+        while ($i < strlen($randomPath) - $step) {
+            $segment = substr($randomPath, $i, $step);
+            $dirPath .= $segment . '/';
+            $i += $step;
+        }
+        mkdir(PUBLIC_PATH . self::SAVE_PATH . $dirPath, 0777, true);
+        $this->setPhotoPath( $dirPath . substr($randomPath, $i, $step) );
+    }
 
 }
