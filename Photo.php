@@ -62,7 +62,7 @@ class RM_Photo
 	}
 
 	public static function create(RM_User_Interface $user) {
-		$photo = new static(new stdClass());
+		$photo = new self(new stdClass());
 		$photo->_dataWorker->setValue('idUser', $user->getId());
 		return $photo;
 	}
