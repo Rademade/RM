@@ -7,6 +7,10 @@ class RM_Lang_Repository
 
     private static $_activeLangs;
 
+    /**
+     * @static
+     * @return RM_Lang[]
+     */
     public static function getActiveLangs() {
         if (!is_array(self::$_activeLangs)) {
             $search = new RM_Lang_Search();
