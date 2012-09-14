@@ -67,6 +67,9 @@ class RM_Query_Order
      * @param RM_Query_Order $order
      */
     public function mergeWith(self $order) {
+        if ($order->_expr instanceof Zend_Db_Expr) {
+            $this->_expr = $order->_expr;
+        }
         foreach ($order->_orders as $orderData) {
             $this->add(
                 $orderData->field,
