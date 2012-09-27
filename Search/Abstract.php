@@ -52,6 +52,9 @@ abstract class RM_Search_Abstract {
         $this->_select = clone $this->_select;
     }
 
+    /**
+     * @return RM_Entity[]
+     */
     public function getResults() {
         $model = static::SEARCH_MODEL;
         return $model::_initList( $this->_select, func_get_args() );

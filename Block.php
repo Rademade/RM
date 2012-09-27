@@ -147,8 +147,11 @@ class RM_Block
 		}
 		$this->_content = $contentManager;
 	}
-	
-	public function getContentManager() {
+
+    /**
+     * @return RM_Content
+     */
+    public function getContentManager() {
 		if (is_null($this->_content)) {
 			$this->_content = RM_Content::getById( $this->getIdContent() );
 		}
@@ -177,17 +180,13 @@ class RM_Block
 
 
 	public function show() {
-		if ($this->getStatus() !== self::STATUS_SHOW) {
-			$this->setStatus(self::STATUS_SHOW);
-			$this->save();
-		}
+        $this->setStatus(self::STATUS_SHOW);
+        $this->save();
 	}
 	
 	public function hide() {
-		if ($this->getStatus() !== self::STATUS_HIDE) {
-			$this->setStatus(self::STATUS_HIDE);
-			$this->save();
-		}
+        $this->setStatus(self::STATUS_HIDE);
+        $this->save();
 	}
 
 	public function save() {

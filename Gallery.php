@@ -107,7 +107,11 @@ class RM_Gallery
 		}
 	}
 
-	public function getPhotosCount() {
+    /**
+     * TODO optimization
+     * @return int
+     */
+    public function getPhotosCount() {
 		return sizeof( $this->getPhotos() );
 	}
 
