@@ -87,10 +87,14 @@ class RM_Query_Join
                 return self::INNER_JOIN;
                 break;
             case 'left':
+            case 'leftJoin':
+            case 'joinLeft':
             case self::LEFT:
                 return self::LEFT;
                 break;
             case 'right':
+            case 'rightJoin':
+            case 'joinRight':
             case self::RIGHT:
                 return self::RIGHT;
                 break;

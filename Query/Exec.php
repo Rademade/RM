@@ -50,7 +50,8 @@ class RM_Query_Exec {
             '$1 COUNT(' . $idFieldName . ') as count $3',
             $select->assemble()
         );
-        return (int)$db->fetchRow( $sqlQuery )->count;
+        $resultRow = $db->fetchRow( $sqlQuery );
+        return $resultRow ? (int)$resultRow->count : 0;
     }
 
 }
