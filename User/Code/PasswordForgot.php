@@ -43,7 +43,7 @@ class RM_User_Code_PasswordForgot
 		}
 	}
 
-	public static function create(RM_User_Profile_Interface $user) {
+	public static function create($user) {
 		$code = parent::create($user);
 		/* @var $code RM_User_Code_PasswordForgot */
 		$code->_generatePassword();

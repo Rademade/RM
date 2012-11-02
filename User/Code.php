@@ -87,8 +87,18 @@ abstract class RM_User_Code
 	public function getIdUser() {
 		return $this->idUser;
 	}
-	
-	public static function create(RM_User_Profile_Interface $user) {
+
+    /**
+     * @static
+     * @param RM_User_Profile_Interface|RM_User_Interface|RM_Entity $user
+     * @throws Exception
+     * @return RM_User_Code
+     */
+    public static function create($user) {
+        $reflection = new ReflectionClass( get_class($user) );
+        if (!$reflection->hasMethod('getId')) {//TODO not stupid check
+            throw new Exception('Must be instanceof RM_User_Profile_Interface|RM_User_Interface|RM_Entity');
+        }
 		return new static( new RM_Compositor( array(
 			'idUser' => $user->getId(),
 		    'activationCode' => self::_generateCode(),
