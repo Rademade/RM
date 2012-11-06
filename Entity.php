@@ -272,7 +272,7 @@ abstract class RM_Entity
 	) {
 		$list = RM_Query_Exec::select($select, $queryComponents);
         foreach ($list as &$item) {
-			$item = new static($item);
+			$item = new static( $item );
 		}
 		return $list;
 	}

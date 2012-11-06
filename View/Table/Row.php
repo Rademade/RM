@@ -207,7 +207,7 @@ class RM_View_Table_Row {
 	}
 
 	/**
-	 * @return Application_Model_View_Element_Icon[]
+	 * @return RM_View_Element_Icon[]
 	 */
 	public function getIcons() {
 		return $this->_icons;

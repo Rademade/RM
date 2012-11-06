@@ -135,6 +135,10 @@ class RM_User
 		return $user;
 	}
 
+    public static function getByUser(self $user) {
+        return $user;
+    }
+
 	public function getFailLoginCount() {
 		return $this->failLogins;
 	}
