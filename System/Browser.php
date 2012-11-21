@@ -20,6 +20,10 @@ class RM_System_Browser {
         curl_setopt($this->_curl, CURLOPT_FOLLOWLOCATION, true);
     }
 
+    public function setMaxWaiting($seconds) {
+        curl_setopt($this->_curl, CURLOPT_CONNECTTIMEOUT, $seconds);
+    }
+
 	public function likeBrowser() {
 		curl_setopt($this->_curl, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)");
 		curl_setopt($this->_curl, CURLOPT_REFERER, "http://google.com");

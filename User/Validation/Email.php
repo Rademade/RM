@@ -3,6 +3,8 @@ class RM_User_Validation_Email
 	extends
 		RM_User_Validation {
 
+    const EMAIL_EXCEPTION_CODE = 100;
+
     const CACHE_NAME = 'emailValidation';
 
 	private $_email;
@@ -57,6 +59,7 @@ class RM_User_Validation_Email
         $cache = $cachemanager->getCache( self::CACHE_NAME );
         if ( ($status = $cache->load( $emailHash )) === false ) {
             $browser = new RM_System_Browser();
+            $browser->setMaxWaiting( 30 );
             $browser->setPostData( array(
                 'name' => 'email',
                 'cmd' => $email
