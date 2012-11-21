@@ -3,6 +3,8 @@ class RM_User_Validation_Email
 	extends
 		RM_User_Validation {
 
+    const CACHE_NAME = 'emailValidation';
+
 	private $_email;
 
 	public function __construct($email) {
@@ -13,11 +15,14 @@ class RM_User_Validation_Email
 		return $this->_email;
 	}
 
-	public function isValid() {
+	public function isValid($remoteCheck = false) {
 		$validator = new Zend_Validate_EmailAddress(array(
-			 'allow' => Zend_Validate_Hostname::ALLOW_DNS
+	        'allow' => Zend_Validate_Hostname::ALLOW_DNS,
 		));
-		return $validator->isValid( $this->getEmail() );
+		return (
+            $validator->isValid( $this->getEmail() ) &&
+            ( !$remoteCheck || ( $remoteCheck && $this->_checkRemoteEmail( $this->getEmail() ) ) )
+        );
 	}
 
 	public function isUnique( $excludedId = 0 ) {
@@ -42,5 +47,24 @@ class RM_User_Validation_Email
 			'utf-8'
 		);
 	}
+
+    private function _checkRemoteEmail($email) {
+        $emailHash = md5( $email );//generate hash
+        /* @var Zend_Cache_Manager $cachemanager */
+        $cachemanager = Zend_Registry::get('cachemanager');
+        /* @var Zend_Cache_Core $cache */
+        $cache = $cachemanager->getCache( self::CACHE_NAME );
+        if ( ($status = $cache->load( $emailHash )) === false ) {
+            $browser = new RM_System_Browser();
+            $browser->setPostData( array(
+                'name' => 'email',
+                'cmd' => $email
+            ) );
+            $result = $browser->download( 'http://domw.net/data.php' );
+            $status = preg_match('/OK\</', $result);
+            $cache->save( $status );
+        }
+        return $status === 1;
+    }
 
 }
