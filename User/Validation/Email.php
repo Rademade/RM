@@ -15,15 +15,16 @@ class RM_User_Validation_Email
 		return $this->_email;
 	}
 
-	public function isValid($remoteCheck = false) {
+	public function isValid() {
 		$validator = new Zend_Validate_EmailAddress(array(
 	        'allow' => Zend_Validate_Hostname::ALLOW_DNS,
 		));
-		return (
-            $validator->isValid( $this->getEmail() ) &&
-            ( !$remoteCheck || ( $remoteCheck && $this->_checkRemoteEmail( $this->getEmail() ) ) )
-        );
+		return $validator->isValid( $this->getEmail() );
 	}
+
+    public function isValidRemote() {
+        return $this->isValid() && $this->_checkRemoteEmail( $this->getEmail() );
+    }
 
 	public function isUnique( $excludedId = 0 ) {
 		if ($this->isValid()) {
