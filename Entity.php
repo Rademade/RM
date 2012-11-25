@@ -277,9 +277,15 @@ abstract class RM_Entity
 		return $list;
 	}
 
+    /* Event manager */
+
+    public static function getEntityEventManager() {
+        return self::_getStorage()->getEventManager();
+    }
+
 	/* Entity storage data block */
 
-	public static function &_getStorage() {
+    public static function &_getStorage() {
 		$storage = RM_Entity_Storage::getInstance( get_called_class() );
 		if (!is_array($storage->getProperties())) {
 			$storage->parse( static::$_properties );

@@ -22,6 +22,11 @@ class RM_Entity_Storage {
 
     private $_className;
 
+    /**
+     * @var Zend_EventManager_EventManager
+     */
+    private $_eventManager;
+
     private function __construct($className) {
         $this->_className = $className;
     }
@@ -97,5 +102,15 @@ class RM_Entity_Storage {
 			);
 		}
 	}
+
+    /**
+     * @return Zend_EventManager_EventManager
+     */
+    public function getEventManager() {
+        if (!$this->_eventManager instanceof Zend_EventManager_EventManager) {
+            $this->_eventManager = new Zend_EventManager_EventManager();
+        }
+        return $this->_eventManager;
+    }
 
 }
