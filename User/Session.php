@@ -44,7 +44,20 @@ class RM_User_Session {
 	}
 
 	public static function getMyIp() {
-		return getenv('REMOTE_ADDR');
+        $IP_ServerKeys = array(
+            'HTTP_CLIENT_IP',
+            'HTTP_X_FORWARDED_FOR',
+            'HTTP_X_FORWARDED',
+            'HTTP_FORWARDED_FOR',
+            'HTTP_FORWARDED',
+            'REMOTE_ADDR'
+        );
+        foreach ($IP_ServerKeys as $serverKey) {
+            if ( isset( $_SERVER[ $serverKey ] ) ) {
+                return $_SERVER[ $serverKey ];
+            }
+        }
+        return '127.0.0.1';
 	}
 
     public function remember() {
