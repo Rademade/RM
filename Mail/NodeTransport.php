@@ -29,7 +29,15 @@ class RM_Mail_NodeTransport extends Zend_Mail_Transport_Smtp {
         $this->_connection->send();
     }
 
-    public function send(RM_Mail_Message $mail) {
+    /**
+     * @param Zend_Mail $mail
+     * @throws Exception
+     * @return void
+     */
+    public function send(Zend_Mail $mail) {
+        if (!$mail instanceof RM_Mail_Message) {
+            throw new Exception('$mail must be RM_Mail_Message');
+        }
         $this->_mail = $mail;
         parent::send($mail);
     }
