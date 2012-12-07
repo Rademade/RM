@@ -13,6 +13,7 @@ class RM_Mail_NodeTransport extends Zend_Mail_Transport_Smtp {
     protected $_mail = false;
 
     public function _sendMail() {
+
         if (!($this->_connection instanceof RM_Mail_NodeProtocol)) {
             $this->setConnection(new RM_Mail_NodeProtocol($this->_host, $this->_port));
             $this->_connection->connect();

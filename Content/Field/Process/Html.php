@@ -76,7 +76,9 @@ class RM_Content_Field_Process_Html
         $config->set('Cache.DefinitionImpl', null);
         $config->set('HTML.AllowedAttributes', $this->_allowedAttr);
         $config->set('HTML.Allowed', join(',', $this->_allowedTags));
-        $config->set('CSS.AllowedProperties', 'text-align');
+        $config->set('HTML.Allowed', join(',', $this->_allowedTags));
+        $config->set('Attr.AllowedFrameTargets', array('_blank'));
+        $config->set('Attr.TargetBlank', true);
         return $config;
     }
 
