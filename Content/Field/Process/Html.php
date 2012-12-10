@@ -46,8 +46,7 @@ class RM_Content_Field_Process_Html
 	);
 
     private $_allowedCssAttr = array(
-        'text-align',
-        'font-weight'
+        'text-align'
     );
 
 	private static $_self;
