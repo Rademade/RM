@@ -42,9 +42,13 @@ class RM_Content_Field_Process_Html
 		'height',
 		'width',
 		'align',
-        'style',
         'target'
 	);
+
+    private $_allowedCssAttr = array(
+        'text-align',
+        'font-weight'
+    );
 
 	private static $_self;
 
@@ -65,7 +69,8 @@ class RM_Content_Field_Process_Html
 	}
 
 	public function getParsedContent($html) {
-        return $this->getPurifier()->purify( $html );
+        $html = $this->getPurifier()->purify( $html );
+        return $html;
 	}
 
     /**
@@ -76,9 +81,8 @@ class RM_Content_Field_Process_Html
         $config->set('Cache.DefinitionImpl', null);
         $config->set('HTML.AllowedAttributes', $this->_allowedAttr);
         $config->set('HTML.Allowed', join(',', $this->_allowedTags));
-        $config->set('HTML.Allowed', join(',', $this->_allowedTags));
+        $config->set('CSS.AllowedProperties', $this->_allowedCssAttr);
         $config->set('Attr.AllowedFrameTargets', array('_blank'));
-        $config->set('Attr.TargetBlank', true);
         return $config;
     }
 
