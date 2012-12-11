@@ -8,7 +8,7 @@ trait RM_Trait_Content {
 
     abstract public function getIdContent();
 
-    abstract protected function __setIdContent();
+    abstract protected function __setIdContent($idContent);
 
     public function setContentManager(RM_Content $contentManager) {
         $this->__setIdContent( $contentManager->getId() );
