@@ -1,7 +1,4 @@
 <?php
-/**
- * @deprecated
- */
 abstract class RM_System_Controller_Ajax
 	extends Zend_Controller_Action {
 

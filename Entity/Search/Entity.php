@@ -64,8 +64,6 @@ class RM_Entity_Search_Entity
     }
 
     public function getCount() {
-//        echo $this->__getSelect();
-//        die();
         $model = $this->_entityName;
         return RM_Query_Exec::getRowCount(
             $this->__getSelect(),
