@@ -173,7 +173,11 @@ class RM_Routing
 	public function setName($name) {
         $this->name = $name;
 	}
-	
+
+    public function getControllerName() {
+        return $this->controller;
+    }
+
 	public function getAction() {
 		return $this->action;
 	}
