@@ -22,7 +22,7 @@ class RM_Routing_Url_Translite {
     private function getReplace() {
 	    return array (
 	    	"a", "b", "v", "g", "d", "d", "e", "z", "z", "i", "j", "k", "l", "lj", "m",
-	    	"n", "nj", "o", "p", "r", "s", "t", "c", "u", "f", "h", "c", "c", "dz", "s",
+	    	"n", "nj", "o", "p", "r", "s", "t", "c", "u", "f", "h", "c", "ch", "dz", "s",
 	    	'ya', '', 'y', 'j', 'w', '', 'je', 'ju', 'jo'
 	   	);		
     }
