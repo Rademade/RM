@@ -182,11 +182,15 @@ class RM_Content_Lang
 		return $contentLang;
 	}
 
-	public function save() {
+    /**
+     * @return RM_Content_Lang
+     */
+    public function save() {
     	parent::save();
 		$this->_saveFields();
 		$this->__refreshCache();
         $this->getContentManager()->__cleanCache();
+        return $this;
 	}
 
 	public function remove() {

@@ -42,7 +42,8 @@ class RM_Content_Field_Process_Html
 		'height',
 		'width',
 		'align',
-        'target'
+        'target',
+        'style'
 	);
 
     private $_allowedCssAttr = array(
@@ -78,8 +79,8 @@ class RM_Content_Field_Process_Html
     private function _getConfig() {
         $config = HTMLPurifier_Config::createDefault();
         $config->set('Cache.DefinitionImpl', null);
-        $config->set('HTML.AllowedAttributes', $this->_allowedAttr);
         $config->set('HTML.Allowed', join(',', $this->_allowedTags));
+        $config->set('HTML.AllowedAttributes', $this->_allowedAttr);
         $config->set('CSS.AllowedProperties', $this->_allowedCssAttr);
         $config->set('Attr.AllowedFrameTargets', array('_blank'));
         return $config;
