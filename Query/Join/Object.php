@@ -5,6 +5,10 @@ class RM_Query_Join_Object {
 
     private $_joinObject;
 
+    /**
+     * @param string $joinAs
+     * @param Zend_Db_Select $joinObject
+     */
     public function __construct(
         $joinAs,
         $joinObject

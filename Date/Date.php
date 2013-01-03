@@ -7,9 +7,9 @@ class RM_Date_Date {
 	
 	const DAY = 86400;
 
-	const ISO_DATE = 1;
-	const SEARCH_DATE = 2;
-	const STRONG_DATE = 3;
+	const ISO_DATE = 1;         // Y-m-d
+	const SEARCH_DATE = 2;      // d.m.Y
+	const STRONG_DATE = 3;      // d/m/Y
 
 	public function __construct( $year, $month, $day ) {
 		$this->_year = (int)$year;
