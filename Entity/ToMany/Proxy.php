@@ -3,6 +3,8 @@ class RM_Entity_ToMany_Proxy {
 
     private static $_instances = array();
 
+    private static $_entitiesKeys = array();
+
     /**
      * @var RM_Entity
      */
@@ -29,18 +31,35 @@ class RM_Entity_ToMany_Proxy {
 
     public static function get(
         RM_Entity $from,
-        $intermediateClass
+        $intermediateClass,
+        $autoKey = true
     ) {
         //TODO check if is real intermediate class!
         $key = join( '_', array(
-            get_class( $from ),
             $intermediateClass,
-            $from->getId()
+            $autoKey ?
+                self::_getAutoEntityId( $from ) :
+                ( get_class( $from ) . '-' . $from->getId() ) //class name + id
         ) );
         if (!isset(self::$_instances[ $key ])) {
             self::$_instances[ $key ] = new self($from, $intermediateClass);
         }
         return self::$_instances[ $key ];
+    }
+
+    private static function _getAutoEntityId(RM_Entity $from) {
+        foreach (self::$_entitiesKeys as $key => $fromEntity)
+            if ($fromEntity === $fromEntity) return $key;
+        $key = self::_generateUniqueEntityKey();
+        self::$_entitiesKeys[ $key ] = $from;
+        return $key;
+    }
+
+    private static function _generateUniqueEntityKey() {
+        $key = md5( uniqid() . microtime(true) );
+        if ( isset( self::$_entitiesKeys[ $key ] ) )
+            $key = self::_generateUniqueEntityKey();
+        return $key;
     }
 
     /**

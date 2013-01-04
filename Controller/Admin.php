@@ -235,7 +235,7 @@ abstract class RM_Controller_Admin
         }
     }
 
-    private function _getAddName() {
+    protected function _getAddName() {
         if (is_string($this->_addName)) {
             $name  = $this->_addName;
         } else {
