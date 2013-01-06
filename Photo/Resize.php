@@ -65,10 +65,12 @@ class Resize {
         return $this->_size;
     }
 
-    public function writeImage($savePath, $width, $height, $crop = false) {
+    public function writeImage($savePath, $width, $height, $crop = false, $maxWidth = null) {
         if (!(is_null($width) && is_null($height))) {
             if (is_null($width) && $this->getHeight() !== 0) {
                 $width = $height / $this->getHeight() * $this->getWidth();
+                if (!is_null($maxWidth) && $maxWidth < $width)
+                    $width = $maxWidth;
             }
             if (is_null($height) && $this->getWidth() !== 0) {
                 $height = $width / $this->getWidth() * $this->getHeight();
