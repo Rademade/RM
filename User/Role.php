@@ -75,8 +75,8 @@ class RM_User_Role
 	public function isCountryManager() {
 		return ($this->adminAccess === self::ADMIN_ACCESS_COUNRTY_MANGER) || $this->isMainAdmin();
 	}
-	
-	public function isSimpleManager() {
+
+    public function isSimpleManager() {
 		return ($this->adminAccess === self::ADMIN_ACCESS_COUNRTY_MANGER) || $this->isCountryManager();	
 	}
 	
