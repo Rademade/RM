@@ -81,6 +81,7 @@ abstract class RM_Entity_ToMany_Intermediate
 
     public function setIdFrom($id) {
         $this->_dataWorker->setValue(static::FIELD_FROM, (int)$id);
+        return $this;
     }
 
     public function getIdTo() {

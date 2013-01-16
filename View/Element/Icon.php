@@ -27,7 +27,8 @@ class RM_View_Element_Icon
     const ICON_TEXT_FIELD = 20;
     const ICON_SCHOOL = 21;
     const ICON_OFFICE = 22;
-    const ICON_TICKET = 23;
+    const ICON_FLY = 23;
+    const ICON_COPY = 24;
 	
 	public function __construct(
 		$routeName,
@@ -102,8 +103,10 @@ class RM_View_Element_Icon
                 return 'school.png';
             case self::ICON_OFFICE:
                 return 'office.png';
-            case self::ICON_TICKET:
-                return 'tag.png';
+            case self::ICON_FLY:
+                return 'fly.png';
+            case self::ICON_COPY:
+                return 'copy.png';
 		}
 	}
 	
