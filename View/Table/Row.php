@@ -19,6 +19,7 @@ class RM_View_Table_Row {
 	private $_isStockable = false;
 	private $_withCheckBox = false;
 	private $_stockStatus;
+    private $_stockPrice;
 	private $_currentStatus;
 	private $_position;
 	private $_index;
@@ -154,9 +155,10 @@ class RM_View_Table_Row {
 		return $this->getIndex()%2;
 	}
 
-	public function setStockable( $status ) {
+	public function setStockable($status, $price) {
 		$this->_isStockable = true;
 		$this->_stockStatus = (int)$status;
+        $this->_stockPrice = $price;
 		return $this;
 	}
 
@@ -187,6 +189,10 @@ class RM_View_Table_Row {
 	public function getStockStatus() {
 		return $this->_stockStatus;
 	}
+
+    public function getStockPrice() {
+        return $this->_stockPrice;
+    }
 
 	public function isStockable() {
 		return $this->_isStockable;
