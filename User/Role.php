@@ -38,7 +38,7 @@ class RM_User_Role
 	);
 
 	const ADMIN_ACCESS_BASE = 1;
-	const ADMIN_ACCESS_COUNRTY_MANGER = 2;
+	const ADMIN_ACCESS_COUNTRY_MANAGER = 2;
 	const ADMIN_ACCESS_SIMPLE_MANAGER = 3;
 	
 	const USER_ACCESS_BASE = 1;
@@ -59,7 +59,7 @@ class RM_User_Role
 	public function isAdmin() {
 		return in_array($this->adminAccess, array(
 			self::ADMIN_ACCESS_BASE,
-			self::ADMIN_ACCESS_COUNRTY_MANGER,
+			self::ADMIN_ACCESS_COUNTRY_MANAGER,
 			self::ADMIN_ACCESS_SIMPLE_MANAGER
 		));
 	}
@@ -73,11 +73,11 @@ class RM_User_Role
 	}
 
 	public function isCountryManager() {
-		return ($this->adminAccess === self::ADMIN_ACCESS_COUNRTY_MANGER) || $this->isMainAdmin();
+		return ($this->adminAccess === self::ADMIN_ACCESS_COUNTRY_MANAGER) || $this->isMainAdmin();
 	}
 
     public function isSimpleManager() {
-		return ($this->adminAccess === self::ADMIN_ACCESS_COUNRTY_MANGER) || $this->isCountryManager();	
+		return ($this->adminAccess === self::ADMIN_ACCESS_SIMPLE_MANAGER) || $this->isCountryManager();
 	}
 	
 	public function isUser() {
