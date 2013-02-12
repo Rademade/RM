@@ -181,6 +181,10 @@ class RM_Routing
 	public function getAction() {
 		return $this->action;
 	}
+
+    public function getModuleName() {
+        return $this->module;
+    }
 	
 	public function setAction($actionName) {
         if ($actionName === '') {

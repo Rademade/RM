@@ -3,6 +3,9 @@ trait RM_Trait_Singleton {
 
     protected static $instance;
 
+    /**
+     * @return static
+     */
     final public static function getInstance() {
         return isset(static::$instance)
             ? static::$instance
