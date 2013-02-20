@@ -4,6 +4,8 @@ class RM_Content_Field_Process_Html
 	extends
         RM_Content_Field_Process {
 
+    private $_config;
+
 	private $_allowedTags = array(
 		'h1',
 		'h2',
@@ -113,7 +115,14 @@ class RM_Content_Field_Process_Html
         return $config;
     }
 
-    private function getPurifier() {
+    /**
+     * @return HTMLPurifier_Config
+     */
+    public function getCurrentConfig() {
+        return $this->_purifier->config;
+    }
+
+    public function getPurifier() {
         if (!$this->_purifier instanceof HTMLPurifier) {
             $this->_purifier = new HTMLPurifier( $this->_getConfig() );
         }
