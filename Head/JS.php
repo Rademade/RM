@@ -49,7 +49,7 @@ class RM_Head_JS
 		foreach ($this->_files->{$tag} as $path) {
 			$c->add($this->__getFullPath($this->_path, $path));
 		}
-//		$c->hideDebugInfo();
+		$c->hideDebugInfo();
 		$c->simpleMode();
 		$c->cacheDir( PUBLIC_PATH . $this->_compress_path );
 		$c->setVersion( $this->getVersion() );
