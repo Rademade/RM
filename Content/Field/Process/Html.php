@@ -1,10 +1,8 @@
 <?php
-require_once 'Libraries/HTMLPurifier/library/HTMLPurifier.auto.php';
+require_once 'Libraries/HTMLPurifier/library/HTMLPurifier.safe-includes.php';
 class RM_Content_Field_Process_Html
 	extends
         RM_Content_Field_Process {
-
-    private $_config;
 
 	private $_allowedTags = array(
 		'h1',
@@ -34,7 +32,6 @@ class RM_Content_Field_Process_Html
 		'tbody',
 		'tfoot',
 		'br',
-        'iframe'
 	);
 	
 	private $_allowedAttr = array(
@@ -67,27 +64,10 @@ class RM_Content_Field_Process_Html
 	}
 
     /**
-     * @param array|string $tags
-     * @return \RM_Content_Field_Process_Html
+     * @return HTMLPurifier_Config
      */
-    public function addAllowedTag($tags) {
-        if (!is_array($tags)) {
-            $tags = array($tags);
-        }
-        $this->_allowedTags = array_merge($this->_allowedTags, $tags);
-        return $this;
-    }
-
-    /**
-     * @param array|string $attr
-     * @return \RM_Content_Field_Process_Html
-     */
-    public function addAllowedAttr($attr) {
-        if (!is_array($attr)) {
-            $attr = array($attr);
-        }
-        $this->_allowedCssAttr = array_merge($this->_allowedCssAttr, $attr);
-        return $this;
+    public function getCurrentConfig() {
+        return $this->getPurifier()->config;
     }
 
 	public function getInitialContent($html) {
@@ -95,7 +75,10 @@ class RM_Content_Field_Process_Html
 	}
 
 	public function getParsedContent($html) {
+        var_dump($html);
         $html = $this->getPurifier()->purify( $html );
+        var_dump($html);
+        die();
         return $html;
 	}
 
@@ -105,22 +88,15 @@ class RM_Content_Field_Process_Html
     private function _getConfig() {
         $config = HTMLPurifier_Config::createDefault();
         $config->set('Cache.DefinitionImpl', null);
+        $config->set('HTML.Doctype', 'XHTML 1.1');
         $config->set('HTML.Allowed', join(',', $this->_allowedTags));
         $config->set('HTML.AllowedAttributes', $this->_allowedAttr);
         $config->set('CSS.AllowedProperties', $this->_allowedCssAttr);
-        $config->set('Attr.EnableID', true);
         $config->set('Attr.AllowedFrameTargets', array('_blank'));
         return $config;
     }
 
-    /**
-     * @return HTMLPurifier_Config
-     */
-    public function getCurrentConfig() {
-        return $this->getPurifier()->config;
-    }
-
-    public function getPurifier() {
+    private function getPurifier() {
         if (!$this->_purifier instanceof HTMLPurifier) {
             $this->_purifier = new HTMLPurifier( $this->_getConfig() );
         }
