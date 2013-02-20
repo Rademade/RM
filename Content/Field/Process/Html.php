@@ -64,6 +64,30 @@ class RM_Content_Field_Process_Html
 		return self::$_self;
 	}
 
+    /**
+     * @param array|string $tags
+     * @return \RM_Content_Field_Process_Html
+     */
+    public function addAllowedTag($tags) {
+        if (!is_array($tags)) {
+            $tags = array($tags);
+        }
+        $this->_allowedTags = array_merge($this->_allowedTags, $tags);
+        return $this;
+    }
+
+    /**
+     * @param array|string $attr
+     * @return \RM_Content_Field_Process_Html
+     */
+    public function addAllowedAttr($attr) {
+        if (!is_array($attr)) {
+            $attr = array($attr);
+        }
+        $this->_allowedCssAttr = array_merge($this->_allowedCssAttr, $attr);
+        return $this;
+    }
+
 	public function getInitialContent($html) {
 		return $html;
 	}
@@ -83,6 +107,9 @@ class RM_Content_Field_Process_Html
         $config->set('HTML.AllowedAttributes', $this->_allowedAttr);
         $config->set('CSS.AllowedProperties', $this->_allowedCssAttr);
         $config->set('Attr.AllowedFrameTargets', array('_blank'));
+        //youtube and video
+        $config->set('HTML.SafeIframe', true);
+        $config->set('URI.SafeIframeRegexp', '%^http://(www.youtube(?:-nocookie)?.com/embed/|player.vimeo.com/video/)%');
         return $config;
     }
 
