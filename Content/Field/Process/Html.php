@@ -75,10 +75,7 @@ class RM_Content_Field_Process_Html
 	}
 
 	public function getParsedContent($html) {
-        var_dump($html);
         $html = $this->getPurifier()->purify( $html );
-        var_dump($html);
-        die();
         return $html;
 	}
 
