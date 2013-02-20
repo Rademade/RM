@@ -19,7 +19,7 @@
  */
 
 /*
-    HTML Purifier 4.4.0 - Standards Compliant HTML Filtering
+    HTML Purifier 4.5.0 - Standards Compliant HTML Filtering
     Copyright (C) 2006-2008 Edward Z. Yang
 
     This library is free software; you can redistribute it and/or
@@ -55,10 +55,10 @@ class HTMLPurifier
 {
 
     /** Version of HTML Purifier */
-    public $version = '4.4.0';
+    public $version = '4.5.0';
 
     /** Constant with version of HTML Purifier */
-    const VERSION = '4.4.0';
+    const VERSION = '4.5.0';
 
     /** Global configuration object */
     public $config;
@@ -79,7 +79,7 @@ class HTMLPurifier
 
     /**
      * Initializes the purifier.
-     * @param $config HTMLPurifier_Config object for all instances of
+     * @param $config Optional HTMLPurifier_Config object for all instances of
      *                the purifier, if omitted, a default configuration is
      *                supplied (which can be overridden on a per-use basis).
      *                The parameter can also be any type that

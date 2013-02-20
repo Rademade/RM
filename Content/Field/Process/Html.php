@@ -108,10 +108,8 @@ class RM_Content_Field_Process_Html
         $config->set('HTML.Allowed', join(',', $this->_allowedTags));
         $config->set('HTML.AllowedAttributes', $this->_allowedAttr);
         $config->set('CSS.AllowedProperties', $this->_allowedCssAttr);
+        $config->set('Attr.EnableID', true);
         $config->set('Attr.AllowedFrameTargets', array('_blank'));
-        //youtube and video
-        $config->set('HTML.SafeIframe', true);
-        $config->set('URI.SafeIframeRegexp', '%^http://(www.youtube(?:-nocookie)?.com/embed/|player.vimeo.com/video/)%');
         return $config;
     }
 
