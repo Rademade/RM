@@ -119,7 +119,7 @@ class RM_Content_Field_Process_Html
      * @return HTMLPurifier_Config
      */
     public function getCurrentConfig() {
-        return $this->_purifier->config;
+        return $this->getPurifier()->config;
     }
 
     public function getPurifier() {
