@@ -95,6 +95,7 @@ class RM_Content_Field_Process_Html
 
     private function getPurifier() {
         if (!$this->_purifier instanceof HTMLPurifier) {
+            error_reporting(0);//todo hard code
             $this->_purifier = new HTMLPurifier( $this->_getConfig() );
         }
         return $this->_purifier;
