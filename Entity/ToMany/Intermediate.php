@@ -49,8 +49,8 @@ abstract class RM_Entity_ToMany_Intermediate
         RM_Entity $to
     ) {
         $select = static::_getSelect();
-        $select->where(static::FIELD_FROM . ' = ?', $from->getId());
-        $select->where(static::FIELD_TO . ' = ?', $to->getId());
+        $select->where(static::TABLE_NAME . '.' . static::FIELD_FROM . ' = ?', $from->getId());
+        $select->where(static::TABLE_NAME . '.' . static::FIELD_TO . ' = ?', $to->getId());
         return static::_initItem($select);
     }
 
