@@ -17,7 +17,7 @@ class RM_Head
     private $_css;
 
     /**
-     * @return Head
+     * @return RM_Head
      */
     public static function getInstance() {
         return self::$_self;

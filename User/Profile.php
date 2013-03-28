@@ -103,8 +103,8 @@ class RM_User_Profile
         return static::getById( $user->getId() );
     }
 
-    public static function getByEmail($email) {
-        $select = self::_getSelect();
+    public static function getByEmail($email, array $options = array()) {
+        $select = self::_getSelect($options);
         $select->where('profileEmail = ?', $email);
         return self::_initItem( $select );
     }

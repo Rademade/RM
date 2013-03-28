@@ -29,11 +29,11 @@ abstract class RM_Entity
 	protected $_cacheWorker;
 
 	public function __construct($data = null) {
-		if (is_null($data)) {
-			$data = new stdClass();
-        }
 		$this->_calledClass = get_called_class();
-		$this->_dataWorker = new RM_Entity_Worker_Data($this->_calledClass, $data);
+		$this->_dataWorker = new RM_Entity_Worker_Data(
+            $this->_calledClass,
+            is_null($data) ? new stdClass() : $data
+        );
 	}
 
 	/* Manipulation data block */
@@ -54,13 +54,13 @@ abstract class RM_Entity
 	}
 
 	public function __set($name, $value) {
-//        if ($this->_dataWorker instanceof RM_Entity_Worker_Data) {
+        if ($this->_dataWorker instanceof RM_Entity_Worker_Data) {
             if (is_null($this->_dataWorker->setValue($name, $value))) {
                 throw new Exception("Try to set unexpected attribute {$name}");
             }
-//        } else {
-//            throw new Exception("Try to set '{$name}''");
-//        }
+        } else {
+            throw new Exception("Try to set '{$name}''");
+        }
 	}
 
 	public function save() {
@@ -168,30 +168,35 @@ abstract class RM_Entity
 
     /**
      * @static
+     *
+     * @param array $options
      * @throws Exception
      * @return Zend_Db_Select
      */
-	public static function _getSelect() {
+	public static function _getSelect(array $options = array()) {
 		if (is_null(static::TABLE_NAME)) {
 			throw new Exception('Table name not setted');
 		}
 		$select = self::getDb()->select();
 		/* @var $select Zend_Db_Select */
 		$select->from(static::TABLE_NAME, static::_getDbAttributes());
-		static::_setSelectRules( $select );
+        if (isset($options['no_rule']) && $options['no_rule']) {
+            static::_setSelectRules( $select );
+        }
 		return $select;
 	}
 
-	/**
-	 * @static
-	 * @param $id
-	 * @return static
-	 */
-	public static function getById($id) {
+    /**
+     * @static
+     * @param $id
+     * @param array $options
+     * @return static
+     */
+	public static function getById($id, array $options = array()) {
 		$id = (int)$id;
 		if (is_null($item = static::_getStorage()->getData($id))) {
 			if (is_null($item = static::__load($id))) {
-				$select = static::_getSelect();
+				$select = static::_getSelect($options);
 				$select->where(
 					static::TABLE_NAME . '.' .static::_getKeyAttributeProperties()->getFieldName() . ' = ' . $id
 				);
@@ -225,10 +230,11 @@ abstract class RM_Entity
     /**
      * TODO cache
      * @param array $conditions
+     * @param array $options
      * @return RM_Entity
      */
-    public static function findOne(array $conditions) {
-        $select = static::_getSelect();
+    public static function findOne(array $conditions, array $options = array()) {
+        $select = static::_getSelect($options);
         foreach ($conditions as $field => $value) {
             $select->where($field . ' = ?', $value);
         }
