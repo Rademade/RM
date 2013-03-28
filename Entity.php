@@ -176,7 +176,7 @@ abstract class RM_Entity
 		$select = self::getDb()->select();
 		/* @var $select Zend_Db_Select */
 		$select->from(static::TABLE_NAME, static::_getDbAttributes());
-        if (isset($options['no_rule']) && $options['no_rule']) {
+        if (!(isset($options['no_rule']) && $options['no_rule'])) {
             static::_setSelectRules( $select );
         }
 		return $select;
