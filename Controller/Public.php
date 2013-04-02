@@ -3,16 +3,7 @@ class RM_Controller_Public
     extends
         RM_Controller_Base_Abstract {
 
-    /**
-     * @var RM_User_Session
-     */
-    protected $_userSession;
-
     protected $_page;
-
-    /**
-     * @var int
-     */
     private $_idPage;
 
     public function preDispatch() {

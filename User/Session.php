@@ -19,6 +19,17 @@ class RM_User_Session {
 		$this->session = new Zend_Session_Namespace ("User");
 	}
 
+    public function __set($name, $value) {
+        if ($name == 'idUser') {
+            throw new Exception('Property idUser is private');
+        }
+        $this->session->{$name} = $value;
+    }
+
+    public function __get($name) {
+        return $this->session->{$name};
+    }
+
 	/**
 	 * @static
 	 * @return RM_User_Session

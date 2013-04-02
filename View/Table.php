@@ -7,6 +7,7 @@ class RM_View_Table {
 	private $_firstPosition = 0;
 	private $_editRouteName = null;
 	private $_paginator = null;
+    private $_paginatorOptions = false;
 	private $_autoAdd = false;
 	private $_statusUrl = '';
 	private $_view;
@@ -68,9 +69,20 @@ class RM_View_Table {
 		$this->_statusUrl = $url;
 		return $this;
 	}
-	
-	public function addPaginator(Zend_Paginator $paginator) {
+
+    /**
+     * @param Zend_Paginator $paginator
+     *
+     * Available keys:
+     * <li> itemsOnPage
+     * <li> selectedOnPage
+     * @param array          $paginatorOptions
+     *
+     * @return RM_View_Table
+     */
+    public function addPaginator(Zend_Paginator $paginator, array $paginatorOptions = array()) {
 		$this->_paginator = $paginator;
+        $this->_paginatorOptions = $paginatorOptions;
 		return $this;
 	}
 
@@ -119,7 +131,7 @@ class RM_View_Table {
 	
 	public function renderPaginator() {
 		if (!is_null($this->_paginator)) {
-			return $this->_view->paginationControl($this->_paginator, 'Sliding', 'blocks/table/paginator.phtml');
+			return $this->_view->paginationControl($this->_paginator, 'Sliding', 'blocks/table/paginator.phtml', $this->_paginatorOptions);
 		} else {
 			return false;
 		}
