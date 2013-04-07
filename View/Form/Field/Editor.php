@@ -6,8 +6,8 @@ class RM_View_Form_Field_Editor
 		
 	public function __construct($desc, $name, $value) {
 		parent::__construct($name, $desc, $value);
-		Head::getInstance()->getJS()->add('edit');
-		Head::getInstance()->getCSS()->add('editor');
+		RM_Head::getInstance()->getJS()->add('edit');
+        RM_Head::getInstance()->getCSS()->add('editor');
 	}
 
 	public function render($idLang) {

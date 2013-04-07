@@ -30,6 +30,10 @@ class RM_User_Session {
         return $this->session->{$name};
     }
 
+    public function __isset($name) {
+        return $this->session->__isset( $name );
+    }
+
 	/**
 	 * @static
 	 * @return RM_User_Session

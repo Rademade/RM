@@ -23,6 +23,7 @@ class RM_View_Table_Row {
 	private $_currentStatus;
 	private $_position;
 	private $_index;
+    private $_color;
 	private $_icons = array();
 
 	private static $_number = 0;
@@ -206,6 +207,15 @@ class RM_View_Table_Row {
 	public function isWithCheckBox() {
 		return $this->_withCheckBox;
 	}
+
+    public function setColor($color) {
+        $this->_color = $color;
+        return $this;
+    }
+
+    public function getColor() {
+        return $this->_color;
+    }
 
 	public function addIcon(RM_View_Element_Icon $icon) {
 		$this->_icons[] = $icon;

@@ -6,7 +6,7 @@
 
 		public function __construct($desc, $name, $value) {
 			parent::__construct($name, $desc, $value);
-			Head::getInstance()->getJS()->add('datepicker');
+			RM_Head::getInstance()->getJS()->add('datepicker');
 		}
 
 		public function render($idLang) {

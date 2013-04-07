@@ -16,9 +16,9 @@ class RM_View_Form_Langs {
 	const TAB_TPL = 'blocks/form/tabs.phtml';
 	
 	public function __construct() {
-		Head::getInstance()->getJS()->add('langs');
+		RM_Head::getInstance()->getJS()->add('langs');
 		$order = new RM_Query_Order();
-		$order->addOrder('idLang', RM_Query_Order::DESC);
+		$order->add('idLang', RM_Query_Order::DESC);
 		$this->_allLangs = RM_Lang::getList(false, $order);
 		$this->_defaultLang = RM_Lang::getDefault();
 		$this->addLang($this->_defaultLang);

@@ -9,7 +9,7 @@ class RM_View_Form_Field_Image
 		
 	public function __construct($desc, $name, $idPhoto, $width, $height) {
 		parent::__construct($name, $desc, $idPhoto);
-		Head::getInstance()->getJS()->add('upload');
+		RM_Head::getInstance()->getJS()->add('upload');
 		$this->setWidth($width);
 		$this->setHeight($height);
 	}
