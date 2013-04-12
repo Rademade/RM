@@ -14,10 +14,8 @@ class RM_Mail_Message_RemoteTransport {
         if ( !isset($cfg['host']) ) {
             throw new Exception('Parameter host not setted');
         }
-        return new self(
-            $cfg['host'],
-            isset($cfg['cfg']) ? $cfg['cfg'] : array()
-        );
+        $remoteConfig = isset($cfg['cfg']) ? $cfg['cfg'] : array();
+        return new self($cfg['host'], $remoteConfig);
     }
 
     protected function _validateHost($host) {

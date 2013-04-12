@@ -9,6 +9,15 @@ class RM_Exception
 
 	protected $_list = array();
 
+
+    public static function initArray(array $errors) {
+        $rmException = new self();
+        foreach ($errors as $error) {
+            $rmException->_list[] = $error['text'];
+        }
+        return $rmException;
+    }
+
 	public function __construct() {
 	}
 
@@ -59,5 +68,5 @@ class RM_Exception
 	public function getMessages(){
 		return $this->_list;
 	}
- }
- ?>
+
+}

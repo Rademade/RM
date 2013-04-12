@@ -94,7 +94,9 @@ abstract class RM_Controller_Admin
     public function ajaxAction() {
         $this->__disableView();
         $data = (object)array_merge($this->getRequest()->getPost(), $_GET);
-        $this->_ajaxResponse = new stdClass();
+        if ( is_null($this->_ajaxResponse) ) {
+            $this->_ajaxResponse = new stdClass();
+        }
         if (isset($data->type)) switch ( intval($data->type) ) {
             case RM_Interface_Deletable::ACTION_DELETE:
                 $item = $this->_getItemById( $data->id );
