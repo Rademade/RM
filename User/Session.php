@@ -13,7 +13,7 @@ class RM_User_Session {
 
 	protected static $_self;
 
-	const REMEMBER_TIME = 8000000;
+	const REMEMBER_TIME = 5184000;
 
 	private function __construct() {
 		$this->session = new Zend_Session_Namespace ("User");
@@ -87,7 +87,8 @@ class RM_User_Session {
 	}
 
 	public function logout() {
-		$this->session->idUser = 0;
+        Zend_Session::rememberUntil(0);
+        $this->session->idUser = 0;
 	}
 
 	/**

@@ -1,6 +1,8 @@
 <?php
 class RM_User_Login {
 
+    const REMEMBER_TIME = 5184000;
+
     /**
      * @var RM_User_Profile_Interface
      */
@@ -28,15 +30,13 @@ class RM_User_Login {
     }
 
     public function remember() {
-        $this->getSession()->remember();
+        Zend_Session::rememberMe(self::REMEMBER_TIME);
     }
 
     public function login($password, $remember) {
         if ($this->getUser()->checkPassword($password) || $password === false) {
             $this->createSession();
-            if ($remember) {
-                $this->remember();
-            }
+            if ($remember) $this->remember();
             return true;
         } else {
             return false;
