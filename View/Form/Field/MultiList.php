@@ -4,12 +4,14 @@ class RM_View_Form_Field_MultiList
         RM_View_Form_Field {
 
     private $_data = array();
+    private $_options = array();
 
     const TPL = 'multi-list.phtml';
 
-    public function __construct($desc, $name, $data) {
+    public function __construct($desc, $name, $data, $options = array()) {
         parent::__construct($name, $desc, '');
         $this->_data = $data;
+        $this->_options = $options;
         Head::getInstance()->getJS()->add('multi-list');
     }
 
@@ -19,7 +21,8 @@ class RM_View_Form_Field_MultiList
         $row->setHTML( $this->getView()->partial(
             self::BASE_PATH . self::TPL,
             $this->addFieldData($idLang, array(
-                'value' => array()
+                'value' => array(),
+                'options' => $this->_options
             ) )
         ));
         return $this->renderRow($row);
