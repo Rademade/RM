@@ -63,8 +63,11 @@ abstract class RM_View_Form_Field {
 	public function isHide() {
 		return $this->hide;
 	}
-	
-	public function hide() {
+
+    /**
+     * @return RM_View_Form_Field
+     */
+    public function hide() {
 		$this->hide = true;
 		return $this;
 	}

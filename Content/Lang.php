@@ -9,7 +9,8 @@ class RM_Content_Lang
 	extends
 		RM_Entity
 	implements
-		RM_Interface_Deletable {
+		RM_Interface_Deletable,
+        JsonSerializable {
 
 	private $loaded = false;
 
@@ -199,4 +200,11 @@ class RM_Content_Lang
 		$this->__cleanCache();
 	}
 
+    public function jsonSerialize() {
+        $fields = array();
+        foreach ($this->getAllFields() as $field) {
+            $fields[ $field->getName() ] = $field->getContent();
+        }
+        return $fields;
+    }
 }

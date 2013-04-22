@@ -1,7 +1,9 @@
 <?php
 class RM_Photo
 	extends
-		RM_Entity {
+		RM_Entity
+    implements
+        JsonSerializable  {
 
 	const CACHE_NAME = 'photos';
 
@@ -269,6 +271,12 @@ class RM_Photo
         }
         mkdir(PUBLIC_PATH . self::SAVE_PATH . $dirPath, 0777, true);
         $this->setPhotoPath( $dirPath . substr($randomPath, $i, $step) );
+    }
+
+    function jsonSerialize() {
+        return array(
+            'path' => $this->getPath()
+        );
     }
 
 }

@@ -81,7 +81,10 @@ class RM_Content
 		}
 	}
 
-	public static function create() {
+    /**
+     * @return RM_Content
+     */
+    public static function create() {
 		$content = new static( new RM_Compositor( array(
             'idLang' => RM_Lang::getCurrent()->getId()
         ) ) );
