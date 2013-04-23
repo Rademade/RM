@@ -1,6 +1,11 @@
 <?php
-class RM_Entity_ToMany_Proxy {
+class RM_Entity_ToMany_Proxy
+    implements
+        JsonSerializable {
 
+    /**
+     * @var self[]
+     */
     private static $_instances = array();
 
     private static $_entitiesKeys = array();
@@ -49,7 +54,7 @@ class RM_Entity_ToMany_Proxy {
 
     private static function _getAutoEntityId(RM_Entity $from) {
         foreach (self::$_entitiesKeys as $key => $fromEntity)
-            if ($fromEntity === $fromEntity) return $key;
+            if ($fromEntity === $from) return $key;
         $key = self::_generateUniqueEntityKey();
         self::$_entitiesKeys[ $key ] = $from;
         return $key;
@@ -127,6 +132,10 @@ class RM_Entity_ToMany_Proxy {
         $model = $this->_intermediateClass;
         $where->add($model::FIELD_FROM, '=', $this->_from->getId());
         return $model::getList($where);
+    }
+
+    public function jsonSerialize() {
+        return $this->getItems();
     }
 
 }

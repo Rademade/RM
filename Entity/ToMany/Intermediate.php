@@ -3,7 +3,8 @@ abstract class RM_Entity_ToMany_Intermediate
     extends
         RM_Entity
     implements
-        RM_Interface_Deletable {
+        RM_Interface_Deletable,
+        JsonSerializable {
 
     /**
      * @var RM_Entity_Worker_Data
@@ -113,4 +114,10 @@ abstract class RM_Entity_ToMany_Intermediate
         $this->__cleanCache();
     }
 
+    public function jsonSerialize() {
+        return array(
+            'idFrom' => $this->getIdFrom(),
+            'idTo' => $this->getIdTo()
+        );
+    }
 }
