@@ -1,6 +1,9 @@
 <?php
 class Resize {
 
+    const RESOLUTION_MAX_WIDTH = 3000;
+    const RESOLUTION_MAX_HEIGHT = 2000;
+
 	private $_rootDirPath;
 	private $_rootImagePath;
 
@@ -36,11 +39,11 @@ class Resize {
 	}
 
 	public function getWidth() {
-		return !is_null( $this->_width ) ? $this->_width : $this->getSize()[0];
+		return !is_null( $this->_width ) ? min($this->_width, self::RESOLUTION_MAX_WIDTH) : $this->getSize()[0];
 	}
 
 	public function getHeight() {
-		return !is_null( $this->_height ) ? $this->_height : $this->getSize()[1];
+		return !is_null( $this->_height ) ? min($this->_height, self::RESOLUTION_MAX_HEIGHT) : $this->getSize()[1];
 	}
 
 	public function isCrop() {
@@ -151,7 +154,7 @@ class Resize {
 		);
 	}
 
-	private function _cropImage(){
+	private function _cropImage() {
 		$this->getImagick()->cropThumbnailImage(
 			$this->getWidth(),
 			$this->getHeight()
