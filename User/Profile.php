@@ -270,6 +270,10 @@ class RM_User_Profile
         }
     }
 
+    public function getPassword() {
+        return $this->profilePassword;
+    }
+
     private function _generatePasswordHash($password) {
         return sha1( md5( $password ) . static::PASSWORD_SALT);
     }
