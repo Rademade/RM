@@ -4,24 +4,24 @@ class Resize {
     const RESOLUTION_MAX_WIDTH = 3000;
     const RESOLUTION_MAX_HEIGHT = 2000;
 
-	private $_rootDirPath;
-	private $_rootImagePath;
+    protected $_rootDirPath;
+    protected $_rootImagePath;
 
-	private $_width;
-	private $_height;
-	private $_crop;
-    private $_thumbPath;
+	protected $_width;
+    protected $_height;
+    protected $_crop;
+    protected $_thumbPath;
 
-	private $_hashDir;
+    protected $_hashDir;
 
 	/**
 	 * @var Imagick
 	 */
-	private $_imagick;
+    protected $_imagick;
 	/**
 	 * @var array
 	 */
-	private $_size;
+    protected $_size;
 
 	const DEFAULT_CACHE_PATH = '/imagecache/';
 
@@ -68,6 +68,14 @@ class Resize {
         return $this->_size;
     }
 
+    public function getOriginWidth() {
+        return $this->getSize()[0];
+    }
+
+    public function getOriginHeight() {
+        return $this->getSize()[1];
+    }
+
     public function writeImage($savePath, $width, $height, $crop = false, $maxWidth = null) {
         if (!(is_null($width) && is_null($height))) {
             if (is_null($width) && $this->getHeight() !== 0) {
@@ -112,14 +120,14 @@ class Resize {
 	}
 
 
-    private function _getThumbName() {
+    protected function _getThumbName() {
         return join('/', array(
             $this->_getHashDir(),
             $this->_getHashName()
         ));
     }
 
-    private function _getRootThumbPath() {
+    protected function _getRootThumbPath() {
         if (!$this->_thumbPath) {
             $this->_thumbPath = join('', array(
                 $this->_rootDirPath,
@@ -130,7 +138,7 @@ class Resize {
         return $this->_thumbPath;
     }
 
-	private function _getHashName() {
+	protected function _getHashName() {
 		return join('.', array(
 			$this->getWidth(),
 			$this->getHeight(),
@@ -138,14 +146,14 @@ class Resize {
        ));
 	}
 
-	private function _getHashDir() {
+	protected function _getHashDir() {
 		if (is_null( $this->_hashDir )) {
 			$this->_hashDir = $this->_implodeHash( md5( $this->_rootImagePath ) );
 		}
 		return $this->_hashDir;
 	}
 
-	private function _resizeImage() {
+	protected function _resizeImage() {
 		$this->getImagick()->resizeImage(
 			$this->getWidth(),
 			$this->getHeight(),
@@ -154,14 +162,14 @@ class Resize {
 		);
 	}
 
-	private function _cropImage() {
+	protected function _cropImage() {
 		$this->getImagick()->cropThumbnailImage(
 			$this->getWidth(),
 			$this->getHeight()
 		);
 	}
 
-    private function _implodeHash( $hash ) {
+    protected function _implodeHash( $hash ) {
         $i = 0;
         $stepLength = 11;
         $implodedHash = '';
@@ -173,7 +181,7 @@ class Resize {
         return $implodedHash . substr($hash, $i, $stepLength);
     }
 
-	private function _createDir() {
+	protected function _createDir() {
 		$dir = join('', array(
             $this->_rootDirPath,
             self::DEFAULT_CACHE_PATH
@@ -186,14 +194,14 @@ class Resize {
 		}
 	}
 
-	private function _createImage() {
+	protected function _createImage() {
 		($this->isCrop()) ? $this->_cropImage() : $this->_resizeImage();
 		$this->getImagick()->writeImage($this->_getRootThumbPath());
 		$this->getImagick()->clear();
 		$this->getImagick()->destroy();
 	}
 
-	private function _cacheHeaders() {
+	protected function _cacheHeaders() {
 		header( join(' ', array(
 			'Expires:' .
 			gmdate('D, d M'),
