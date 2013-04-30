@@ -31,7 +31,7 @@ class RM_Auth {
     /**
      * @return Zend_Auth_Result
      */
-    public function auth() {
+    public function authenticate() {
         $auth = Zend_Auth::getInstance();
         return $auth->authenticate( $this->_getHttpAuth() );
     }

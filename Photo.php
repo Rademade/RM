@@ -275,7 +275,9 @@ class RM_Photo
 
     function jsonSerialize() {
         return array(
-            'path' => $this->getPath()
+            'path' => $this->getPath(),
+//            'width' => $this->getWidth(),
+//            'height' => $this->getHeight()
         );
     }
 
