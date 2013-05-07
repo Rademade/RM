@@ -74,8 +74,8 @@ class RM_View_Table {
      * @param Zend_Paginator $paginator
      *
      * Available keys:
-     * <li> itemsOnPage
-     * <li> selectedOnPage
+     *  - itemsOnPage
+     *  - selectedOnPage
      * @param array          $paginatorOptions
      *
      * @return RM_View_Table
@@ -151,7 +151,7 @@ class RM_View_Table {
 				'table' => $this
 			));
 		} catch (Exception $e) {
-			echo $e;
+			return $e->getMessage();
 		}
 	}
 

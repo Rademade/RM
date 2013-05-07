@@ -10,6 +10,7 @@ class RM_Date_Date {
 	const ISO_DATE = 1;         // Y-m-d
 	const SEARCH_DATE = 2;      // d.m.Y
 	const STRONG_DATE = 3;      // d/m/Y
+    const JS_DATE = 4;
 
 	public function __construct( $year, $month, $day ) {
 		$this->_year = (int)$year;
@@ -102,6 +103,8 @@ class RM_Date_Date {
 				return new self($p[3], $p[2], $p[1]);
 			case self::STRONG_DATE:
 				return new self($p[3], $p[2], $p[1]);
+            case self::JS_DATE:
+                throw new Exception('Not yet implementated');
 		}
 	}
 
@@ -127,6 +130,8 @@ class RM_Date_Date {
 				return date('d.m.Y', $this->getTimestamp());
 			case self::STRONG_DATE:
 				return date('d/m/Y', $this->getTimestamp());
+            case self::JS_DATE:
+                return date('D, d M y H:i:s', $this->getTimestamp())." +0000";
 		}
 	}
 

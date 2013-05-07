@@ -96,5 +96,4 @@ class RM_Entity_ToMany_Collection {
         }
     }
 
-
 }
