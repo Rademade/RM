@@ -55,7 +55,10 @@ abstract class RM_View_Form_Field {
 		return $this->value->isMultiLang();
 	}
 
-	public function disable() {
+    /**
+     * @return RM_View_Form_Field
+     */
+    public function disable() {
 		$this->disabled = true;
 		return $this;
 	}

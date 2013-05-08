@@ -149,5 +149,18 @@ class RM_Date_Date {
 			$this->_year
 		);
 	}
+
+    public function compare(self $withDate) {
+        return $this->getTimestamp() === $withDate->getTimestamp();
+    }
+
+    public function getDecrementedDay() {
+        return self::initFromTimestamp( $this->getTimestamp() - self::DAY );
+    }
+
+    public function inRange(self $from, self $to) {
+        $ts = $this->getTimestamp();
+        return $from->getTimestamp() <= $ts && $ts <= $to->getTimestamp();
+    }
 	
 }
