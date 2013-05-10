@@ -15,7 +15,7 @@ class RM_User_Session {
 
 	const REMEMBER_TIME = 5184000;
 
-	private function __construct() {
+	protected function __construct() {
 		$this->session = new Zend_Session_Namespace ("User");
 	}
 

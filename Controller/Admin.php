@@ -26,6 +26,8 @@ abstract class RM_Controller_Admin
     protected $_ajaxUrl;
     protected $_ajaxResponse;
 
+    protected $_programmerAccessOnly = false;
+
     public function preDispatch() {
         parent::preDispatch();
         $this->__initParams();
@@ -164,8 +166,12 @@ abstract class RM_Controller_Admin
 
     protected function __onlyAdmin() {
         $this->__initSession();
-        if (!$this->__isAdmin())
+        if (!$this->__isAdmin()) {
             $this->__redirectToLogin();
+        }
+        if ($this->_programmerAccessOnly && !$this->_user->getRole()->isProgrammer()) {
+            $this->__redirectToLogin();
+        }
     }
 
     protected function __redirectToLogin() {
