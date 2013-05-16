@@ -61,9 +61,7 @@ abstract class RM_Controller_Admin
         $action = 'Add ' . $this->_getAddName();
         $this->__getCrumbs()->add($action, array(), $this->_addRoute);
         $this->view->headTitle()->append( $action );
-        $this->view->tabs = array(
-            RM_Lang::getDefault()
-        );
+        $this->view->assign('tabs', [ RM_Lang::getDefault() ]);
     }
 
     public function editAction() {
@@ -72,9 +70,10 @@ abstract class RM_Controller_Admin
         $this->__getCrumbs()->add($action, array(
             'id' => 0
         ), $this->_editRoute);
-        $this->view->tabs = array(
-            RM_Lang::getDefault()
-        );
+        $this->view->assign( array(
+            'tabs' => [ RM_Lang::getDefault() ],
+            'edit' => true
+        ) );
         $this->_helper->viewRenderer->setScriptAction('add');
         $this->_entity = $this->_getItemById( $this->getParam('id') );
     }
@@ -85,10 +84,7 @@ abstract class RM_Controller_Admin
      */
     protected function _getItemById($id) {
         return call_user_func(
-            array(
-                $this->_itemClassName,
-                'getById'
-            ),
+            [ $this->_itemClassName, 'getById' ],
             $id
         );
     }
@@ -160,6 +156,7 @@ abstract class RM_Controller_Admin
 
     protected function __setViewParams() {
         $this->view->assign(array(
+            'editRoute' => $this->_editRoute,
             'ajaxUrl' => $this->_ajaxUrl
         ));
     }
