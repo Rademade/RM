@@ -3,15 +3,17 @@ class RM_View_Form_Field_MultiList
     extends
         RM_View_Form_Field {
 
-    private $_data = array();
-    private $_options = array();
+    private $_data = [];
+    private $_options = [];
+    private $_defaultKeys = [];
 
     const TPL = 'multi-list.phtml';
 
-    public function __construct($desc, $name, $data, $options = array()) {
+    public function __construct($desc, $name, $data, array $options = array(), array $defaultKeys = array('')) {
         parent::__construct($name, $desc, '');
         $this->_data = $data;
         $this->_options = $options;
+        $this->_defaultKeys = $defaultKeys;
         Head::getInstance()->getJS()->add('multi-list');
     }
 
@@ -22,6 +24,7 @@ class RM_View_Form_Field_MultiList
             self::BASE_PATH . self::TPL,
             $this->addFieldData($idLang, array(
                 'value' => array(),
+                'defaultKeys' => $this->_defaultKeys,
                 'options' => $this->_options
             ) )
         ));
