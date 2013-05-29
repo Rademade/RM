@@ -240,6 +240,15 @@ abstract class RM_Controller_Admin
         }
     }
 
+    protected function _turnSwitcher($methodSuffix, $key) {
+        $data = (object)$this->getRequest()->getPost();
+        $prefix = (isset($data->{$key}) && intval($data->{$key}) === 1) ? 'set' : 'unset';
+        call_user_func( array(
+            $this->_entity,
+            $prefix . $methodSuffix
+        ) );
+    }
+
     protected function _getAddName() {
         if (is_string($this->_addName)) {
             $name  = $this->_addName;
