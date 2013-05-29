@@ -7,7 +7,7 @@ class RM_System_Browser_DownloadStrategy_CustomProxy
 
     private function _getProxyUrl($url) {
         return join('', array(
-            'http://irkiev.com.ua/proxy.php?',
+            'http://tropical.in.ua/proxy.php?',
             join('&', array(
                 'API_KEY=' . self::API_KEY,
                 'url=' . base64_encode($url)
