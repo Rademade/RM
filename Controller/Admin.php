@@ -58,6 +58,7 @@ abstract class RM_Controller_Admin
     }
 
     public function addAction() {
+        static::__configureParser();
         $action = 'Add ' . $this->_getAddName();
         $this->__getCrumbs()->add($action, array(), $this->_addRoute);
         $this->view->headTitle()->append( $action );
@@ -65,6 +66,7 @@ abstract class RM_Controller_Admin
     }
 
     public function editAction() {
+        static::__configureParser();
         $action = 'Edit ' . $this->_getAddName();
         $this->view->headTitle()->append( $action );
         $this->__getCrumbs()->add($action, array(
@@ -263,5 +265,11 @@ abstract class RM_Controller_Admin
             RM_View_Top::getInstance()->getBreadcrumbs()->getBack()
         );
     }
+
+    protected static function __configureParser() {
+        $config = RM_Content_Field_Process_Html::init()->getCurrentConfig();
+        $config->set('HTML.SafeIframe', true);
+    }
+
 
 }

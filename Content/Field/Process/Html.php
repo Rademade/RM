@@ -41,12 +41,13 @@ class RM_Content_Field_Process_Html
 		'height',
 		'width',
 		'align',
-        'target',
-        'style'
+        'style',
+        'target'
 	);
 
     private $_allowedCssAttr = array(
-        'text-align'
+        'text-align',
+        'float'
     );
 
 	private static $_self;
@@ -83,13 +84,16 @@ class RM_Content_Field_Process_Html
      * @return HTMLPurifier_Config
      */
     private function _getConfig() {
+        /* @var HTMLPurifier_Config $config */
         $config = HTMLPurifier_Config::createDefault();
         $config->set('Cache.DefinitionImpl', null);
-        $config->set('HTML.Doctype', 'XHTML 1.1');
+        $config->set('Core.Encoding', 'UTF-8');
+        $config->set('HTML.Doctype', 'XHTML 1.0 Transitional');
         $config->set('HTML.Allowed', join(',', $this->_allowedTags));
         $config->set('HTML.AllowedAttributes', $this->_allowedAttr);
         $config->set('CSS.AllowedProperties', $this->_allowedCssAttr);
         $config->set('Attr.AllowedFrameTargets', array('_blank'));
+        $config->set('Attr.DefaultImageAlt', '');
         return $config;
     }
 

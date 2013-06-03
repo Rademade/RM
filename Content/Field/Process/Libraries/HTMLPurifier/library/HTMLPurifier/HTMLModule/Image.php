@@ -16,6 +16,7 @@ class HTMLPurifier_HTMLModule_Image extends HTMLPurifier_HTMLModule
             'img', 'Inline', 'Empty', 'Common',
             array(
                 'alt*' => 'Text',
+                'data-id' => 'Text',
                 // According to the spec, it's Length, but percents can
                 // be abused, so we allow only Pixels.
                 'height' => 'Pixels#' . $max,

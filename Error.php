@@ -122,7 +122,7 @@ class RM_Error
 			'idLog' => RM_Error_Category::getByLog($name)->getId(),
 			'errorTime' => date('Y-m-d H:i:s'),
 			'errorText' => !is_string($error) ? serialize($error) : $error,
-			'errorServer' => json_encode($_SERVER),
+			'errorServer' => @json_encode($_SERVER),
 			'errorRequestData' => json_encode($_REQUEST),
 			'errorUrl' => isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'php-cli'
 		) ) );

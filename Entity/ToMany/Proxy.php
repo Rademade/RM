@@ -70,6 +70,22 @@ class RM_Entity_ToMany_Proxy
     /**
      * @return RM_Entity[]
      */
+    public function getFirst() {
+        $items = $this->getItems();
+        return reset( $items )->getTo();
+    }
+
+    /**
+     * @return RM_Entity[]
+     */
+    public function getLast() {
+        $items = $this->getItems();
+        return end( $items )->getTo();
+    }
+
+    /**
+     * @return RM_Entity[]
+     */
     public function getToItems() {
         $list = array();
         foreach ($this->getItems() as $intermediate) {
