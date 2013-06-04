@@ -23,6 +23,11 @@ abstract class RM_Controller_Base_Abstract
      */
     protected $_profile;
 
+    /**
+     * @var Zend_View_Abstract
+     */
+    public $view;
+
     public function preDispatch() {
         $this->__initSession();
         $this->__initProfile();

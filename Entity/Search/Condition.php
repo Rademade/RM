@@ -46,6 +46,15 @@ abstract class RM_Entity_Search_Condition
         }
     }
 
+    public function improveQueryWithTypes(Zend_Db_Select $select, array $types = []) {
+        foreach ($this->_getQueryParts() as $queryPart) {
+            if (in_array(get_class($queryPart), $types)) {
+                $queryPart->improveQuery( $select );
+            }
+        }
+    }
+
+
     /**
      * @return RM_Query_Join
      */
