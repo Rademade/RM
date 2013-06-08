@@ -64,6 +64,12 @@ class RM_Content_Field
 		$select->where('fieldStatus != ?', self::STATUS_DELETED);
 	}
 
+    public function save() {
+        if (!$this->isEmptyContent()) {
+            parent::save();
+        }
+    }
+
 	public function getIdName() {
 		return $this->idFieldName;
 	}

@@ -190,7 +190,7 @@ abstract class RM_Entity
      */
 	public static function getById($id, array $options = array()) {
 		$id = (int)$id;
-		if (is_null($item = static::_getStorage()->getData($id))) {
+        if (is_null($item = static::_getStorage()->getData($id))) {
 			if (is_null($item = static::__load($id))) {
 				$select = static::_getSelect($options);
 				$select->where(
