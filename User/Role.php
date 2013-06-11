@@ -44,6 +44,12 @@ class RM_User_Role
 	const USER_ACCESS_BASE = 1;
 	const USER_ACCESS_BASE_ROLE_ID = 5;
 
+    const HIERARCHY_PROGRAMMER = 1;
+    const HIERARCHY_MAIN_ADMIN = 2;
+    const HIERARCHY_COUNTRY_MANAGER = 3;
+    const HIERARCHY_SIMPLE_MANAGER = 4;
+    const HIERARCHY_SIMPLE_USER = 5;
+
 	public function getShortDesc() {
 		return $this->shortDesc;
 	}

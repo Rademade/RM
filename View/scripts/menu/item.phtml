@@ -1,0 +1,12 @@
+<li>
+    <a <?
+       if ($this->currentMenu == $this->menuItem['menu']) :
+           ?>class="current"<?
+        endif;
+    ?> href="<?=$this->menuItem['url']?>"><?
+        echo $this->menuItem['name'];
+        if (isset($this->menuItem['count']) && $this->menuItem['count'] > 0):
+            echo ' (' . $this->menuItem['count'] . ') ';
+        endif;
+    ?></a>
+</li>

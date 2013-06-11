@@ -1,0 +1,11 @@
+<li>
+    <a class="submenu-link" href="javascript:void(0);"><?=$this->name?></a>
+    <ul class="submenu"><?
+        foreach ($this->subItems as $subItem) :
+            echo $this->partial('menu/item.phtml', array(
+                'menuItem' => $subItem,
+                'currentMenu' => $this->currentMenu
+            ));
+        endforeach;
+    ?></ul>
+</li>
