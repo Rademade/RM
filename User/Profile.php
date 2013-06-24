@@ -166,32 +166,9 @@ class RM_User_Profile
         }
     }
 
-    private function _validateEmail(
-        $email,
-        RM_Exception $e = null,
-        $isThrow
-    ) {
-        if (is_null($e)) {
-            $e = new RM_Exception();
-        }
-        $validator = new RM_User_Validation_Email( $email );
-        $validator->format();
-        if (!$validator->isValid()) {
-            $e[] = 'Email not valid';
-        } else {
-            if (!$validator->isUnique( $this->getId() )) {
-                $e[] = 'Such email already exists';
-            }
-        }
-        if ($isThrow && (bool)$e->current()) {
-            throw $e;
-        }
-        return $validator->getEmail();
-    }
-
     public function setEmail($email) {
         if ($this->getEmail() !== $email) {
-            $email = $this->_validateEmail($email, null, true );
+            $email = $this->__validateEmail($email, null, true );
             $this->profileEmail = mb_strtolower($email, 'UTF-8');
         }
     }
@@ -336,6 +313,24 @@ class RM_User_Profile
             'profileLastname' => $this->getLastname(),
             'profileEmail' => $this->getEmail()
         );
+    }
+
+    protected function __validateEmail($email, RM_Exception $e = null, $isThrow) {
+        if (is_null($e))
+            $e = new RM_Exception();
+        $validator = new RM_User_Validation_Email( $email );
+        $validator->format();
+        if (!$validator->isValid()) {
+            $e[] = 'Email not valid';
+        } else {
+            if (!$validator->isUnique( $this->getId() )) {
+                $e[] = 'Such email already exists';
+            }
+        }
+        if ($isThrow && (bool)$e->current()) {
+            throw $e;
+        }
+        return $validator->getEmail();
     }
 
 }

@@ -15,7 +15,7 @@ class RM_View_Form_Field_Checkbox
 			self::BASE_PATH . self::TPL,
 			$this->addFieldData($idLang, array() )
 		));
-		return $this->renderRow($row);
+        return $this->renderRow($row);
 	}
 
 }
