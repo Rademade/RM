@@ -16,7 +16,7 @@ class HTMLPurifier_HTMLModule_Hypertext extends HTMLPurifier_HTMLModule
                 // 'charset' => 'Charset',
                 'href' => 'URI',
                 // 'hreflang' => 'LanguageCode',
-                'rel' => new HTMLPurifier_AttrDef_HTML_LinkTypes('rel'),
+                'rel' => 'Text',
                 'rev' => new HTMLPurifier_AttrDef_HTML_LinkTypes('rev'),
                 // 'tabindex' => 'Number',
                 // 'type' => 'ContentType',
