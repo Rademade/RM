@@ -5,7 +5,7 @@
                 if (isset($menuItem['subItems'])) :
                     echo $this->partial('menu/sub-items.phtml', array(
                         'subItems' => $menuItem['subItems'],
-                        'name' => $menuItem['name'],
+                        'menuItem' => $menuItem,
                         'currentMenu' => $this->currentMenu
                     ));
                 else :

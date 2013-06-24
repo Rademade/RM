@@ -1,5 +1,10 @@
 <li>
-    <a class="submenu-link" href="javascript:void(0);"><?=$this->name?></a>
+    <a class="submenu-link" href="javascript:void(0);"><?
+        echo $this->menuItem['name'];
+        if (isset($this->menuItem['count']) && $this->menuItem['count'] > 0):
+            echo ' (' . $this->menuItem['count'] . ') ';
+        endif;
+    ?></a>
     <ul class="submenu"><?
         foreach ($this->subItems as $subItem) :
             echo $this->partial('menu/item.phtml', array(
