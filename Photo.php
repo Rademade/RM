@@ -179,13 +179,13 @@ class RM_Photo
 		$select->where(RM_Photo::TABLE_NAME . '.photoStatus != ?', RM_Interface_Deletable::STATUS_DELETED);
 	}
 
-	private function _getPath() {
+	public function _getSavePath() {
 		return self::SAVE_PATH . $this->getPhotoPath();
 	}
 
 	public function getPath($width = null, $height = null) {
 		if (is_null($width) && is_null($height)) {//original
-			return $this->_getPath();
+			return $this->_getSavePath();
 		} else {
             if (is_null($width) && $this->getHeight() !== 0) {
     		    $width = $height / $this->getHeight() * $this->getWidth();
@@ -193,7 +193,7 @@ class RM_Photo
             if (is_null($height) && $this->getWidth() !== 0) {
                 $height = $width / $this->getWidth() * $this->getHeight();
             }
-            return self::getProportionPath($width, $height) . $this->_getPath();
+            return self::getProportionPath($width, $height) . $this->_getSavePath();
         }
 	}
 	
@@ -255,7 +255,7 @@ class RM_Photo
 	public function _toJSON() {
 		return array(
 			'id' => $this->getId(),
-			'photoPath' => $this->_getPath()
+			'photoPath' => $this->_getSavePath()
 		);
 	}
 

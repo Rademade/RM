@@ -1,18 +1,30 @@
 <?php
+require_once 'Resize/PathLoader.php';
+require_once 'Resize/Resizer.php';
+require_once 'Resize/ResizedImage.php';
+
+class RM_Resize extends Resize {
+
+}
+
 class Resize {
 
     const RESOLUTION_MAX_WIDTH = 3000;
     const RESOLUTION_MAX_HEIGHT = 2000;
 
+    /**
+     * @var RM_Photo_Resize_PathLoader
+     */
+    protected $_pathLoader;
+
+    /**
+     * @var RM_Photo_Resize_Resizer
+     */
+    protected $_resizer;
+
     protected $_rootDirPath;
-    protected $_rootImagePath;
-
-	protected $_width;
-    protected $_height;
-    protected $_crop;
-    protected $_thumbPath;
-
-    protected $_hashDir;
+    protected $_imagePath;
+    protected $_resizedImagePath;
 
 	/**
 	 * @var Imagick
@@ -23,47 +35,45 @@ class Resize {
 	 */
     protected $_size;
 
-	const DEFAULT_CACHE_PATH = '/imagecache/';
-
-	public function __construct($rootDirPath, $imagePath) {
-		$this->_rootDirPath = $rootDirPath;
-        $urlParams = parse_url($imagePath);
-		$this->_rootImagePath =  $this->_rootDirPath . $urlParams['path'];
-		if (!is_file($this->_rootImagePath)) {
-			throw new Exception('Wrong image path given');
-		} else {
-			if ($this->getSize() === false) {
-				throw new Exception('Wrong image file given');
-			}
-		}
+    /**
+     * TODO remove arguments. Need only for path loader
+     * @param $rootDirPath
+     * @param $imagePath
+     */
+    public function __construct($rootDirPath, $imagePath) {
+        $this->_rootDirPath = $rootDirPath;
+        $this->_imagePath = parse_url($imagePath)['path'];
 	}
 
-	public function getWidth() {
-		return !is_null( $this->_width ) ? min($this->_width, self::RESOLUTION_MAX_WIDTH) : $this->getSize()[0];
-	}
+    public function setPathLoader(RM_Photo_Resize_PathLoader $pathLoader) {
+        $this->_pathLoader = $pathLoader;
+    }
 
-	public function getHeight() {
-		return !is_null( $this->_height ) ? min($this->_height, self::RESOLUTION_MAX_HEIGHT) : $this->getSize()[1];
-	}
+    public function getPathLoader() {
+        if (!$this->_pathLoader instanceof RM_Photo_Resize_PathLoader) {
+            $this->_pathLoader = new RM_Photo_Resize_PathLoader($this->_rootDirPath, $this->_imagePath);
+        }
+        return $this->_pathLoader;
+    }
 
-	public function isCrop() {
-		return $this->_crop;
-	}
+    public function setResizer(RM_Photo_Resize_Resizer $resizer) {
+        $this->_resizer = $resizer;
+    }
+
+    public function getResizer() {
+        if (!$this->_resizer instanceof RM_Photo_Resize_Resizer) {
+            $this->_resizer = new RM_Photo_Resize_Resizer( $this->getPathLoader()->getOriginFullPath() );
+        }
+        return $this->_resizer;
+    }
 
 	public function getMime() {
 		return $this->getSize()['mime'];
 	}
 
-	public function getImagick() {
-		if (!($this->_imagick instanceof Imagick)) {
-			$this->_imagick = new Imagick( $this->_rootImagePath );
-		}
-		return $this->_imagick;
-	}
-
     public function getSize() {
-        if (!is_array($this->_size)) {
-            $this->_size = getimagesize( $this->_rootImagePath );
+        if (is_null($this->_size)) {
+            $this->_size = getimagesize( $this->getPathLoader()->getOriginFullPath() );
         }
         return $this->_size;
     }
@@ -76,141 +86,75 @@ class Resize {
         return $this->getSize()[1];
     }
 
-    public function writeImage($savePath, $width, $height, $crop = false, $maxWidth = null) {
-        if (!(is_null($width) && is_null($height))) {
-            if (is_null($width) && $this->getHeight() !== 0) {
-                $width = $height / $this->getHeight() * $this->getWidth();
-                if (!is_null($maxWidth) && $maxWidth < $width)
-                    $width = $maxWidth;
-            }
-            if (is_null($height) && $this->getWidth() !== 0) {
-                $height = $width / $this->getWidth() * $this->getHeight();
-            }
-        }
-        $this->_width = $width;
-        $this->_height = $height;
-        $this->_crop = $crop;
-        $this->_thumbPath = $savePath;
-        $this->_createImage();
-    }
-
     /**
-     * Create thumb and save image cache file
+     * Ресайз с выдерживанием пропорций
      *
      * @param $width
      * @param $height
-     * @param bool $crop
+     * @param bool $isCrop
+     * @param int $maxWidth
+     * @param int $maxHeight
+     * @return RM_Photo_Resize_ResizedImage
      */
-    public function resize($width, $height, $crop = false) {
-		$this->_width = $width;
-		$this->_height = $height;
-		$this->_crop = $crop;
-		if (!is_file( $this->_getRootThumbPath() )) {//if null -> generates unique path
-            $this->_createDir();
-			$this->_createImage();
-		}
-	}
-
-    public function echoImage() {
-        //TODO check if thumb created
-		$this->_cacheHeaders();
-		header('Content-Type: ' . $this->getMime());
-		header("Content-Length: " . filesize( $this->_getRootThumbPath()));
-		echo file_get_contents($this->_getRootThumbPath());
-	}
-
-
-    protected function _getThumbName() {
-        return join('/', array(
-            $this->_getHashDir(),
-            $this->_getHashName()
-        ));
-    }
-
-    protected function _getRootThumbPath() {
-        if (!$this->_thumbPath) {
-            $this->_thumbPath = join('', array(
-                $this->_rootDirPath,
-                self::DEFAULT_CACHE_PATH,
-                $this->_getThumbName()
-            ));
+    public function proportionalResize($width, $height, $isCrop = false, $maxWidth = null, $maxHeight = null) {
+        if ( !(is_null($width) && is_null($height)) ) {
+            if (is_null($width)) {
+                $width = $height / $this->getOriginHeight() * $this->getOriginWidth();
+                $width = is_null($maxWidth) ? $width : min($width, $maxWidth);
+            }
+            if (is_null($height)) {
+                $height = $width / $this->getOriginWidth() * $this->getOriginHeight();
+                $height = is_null($maxHeight) ? $height : min($height, $maxHeight);
+            }
         }
-        return $this->_thumbPath;
+        return $this->resize($width, $height, $isCrop);
     }
 
-	protected function _getHashName() {
-		return join('.', array(
-			$this->getWidth(),
-			$this->getHeight(),
-			$this->isCrop()
-       ));
-	}
-
-	protected function _getHashDir() {
-		if (is_null( $this->_hashDir )) {
-			$this->_hashDir = $this->_implodeHash( md5( $this->_rootImagePath ) );
+    /**
+     * Жесткий ресайз по заданым параметреам
+     *
+     * @param $width
+     * @param $height
+     * @param bool $isCrop
+     * @return RM_Photo_Resize_ResizedImage
+     */
+    public function resize($width, $height, $isCrop = false) {
+        $width = $this->_fixResizeWidth( $width );
+        $height = $this->_fixResizeHeight( $height );
+        $this->getPathLoader()->setResizeFileNameParams([$width, $height, $isCrop ? 1 : 0]);
+        $resizedImagePath = $this->getPathLoader()->getFullResizedImagePath( );
+		if ( !is_file( $resizedImagePath ) ) { //if null generates unique path
+            $this->getPathLoader()->createDirForResizedImage();
+            $this->_resizeProcessor( func_get_args() );//сделано для разширения метода и дополнительных аргуметов
+            $this->getResizer()->saveImage( $resizedImagePath );
 		}
-		return $this->_hashDir;
+        return new RM_Photo_Resize_ResizedImage($resizedImagePath, $this->getMime());
 	}
 
-	protected function _resizeImage() {
-		$this->getImagick()->resizeImage(
-			$this->getWidth(),
-			$this->getHeight(),
-			Imagick::FILTER_LANCZOS,
-			1
-		);
-	}
-
-	protected function _cropImage() {
-		$this->getImagick()->cropThumbnailImage(
-			$this->getWidth(),
-			$this->getHeight()
-		);
-	}
-
-    protected function _implodeHash( $hash ) {
-        $i = 0;
-        $stepLength = 11;
-        $implodedHash = '';
-        while ($i < strlen($hash) - $stepLength) {
-            $segment = substr($hash, $i, $stepLength);
-            $implodedHash .= $segment . '/';
-            $i += $stepLength;
+    /**
+     * Arguments from resize function
+     * 0 - width
+     * 1 - height
+     * 2 - isCrop
+     * @param $arguments
+     */
+    protected function _resizeProcessor($arguments) {
+        $width = $arguments[0];
+        $height = $arguments[1];
+        $isCrop = $arguments[2];
+        if ($isCrop) {
+            $this->getResizer()->cropImage($width, $height);
+        } else {
+            $this->getResizer()->resizeImage($width, $height);
         }
-        return $implodedHash . substr($hash, $i, $stepLength);
     }
 
-	protected function _createDir() {
-		$dir = join('', array(
-            $this->_rootDirPath,
-            self::DEFAULT_CACHE_PATH
-        ));
-		foreach (explode('/', $this->_getHashDir()) as $segment) {
-			$dir .= ($segment . '/');
-			if (!is_dir($dir)) {
-				mkdir($dir, 0777);
-			}
-		}
-	}
+    protected function _fixResizeWidth($width = null) {
+        return !is_null( $width ) ? min($width, self::RESOLUTION_MAX_WIDTH) : $this->getSize()[0];
+    }
 
-	protected function _createImage() {
-		($this->isCrop()) ? $this->_cropImage() : $this->_resizeImage();
-		$this->getImagick()->writeImage($this->_getRootThumbPath());
-		$this->getImagick()->clear();
-		$this->getImagick()->destroy();
-	}
-
-	protected function _cacheHeaders() {
-		header( join(' ', array(
-			'Expires:' .
-			gmdate('D, d M'),
-			(gmdate('Y') + 1),
-			gmdate('H:i:s'),
-			'GMT'
-        )));
-		header('Pragma: cache');
-		header('Cache-Control: max-age=' . 60 * 60 * 24 * 365);
-	}
+    protected function _fixResizeHeight($height = null) {
+        return !is_null( $height ) ? min($height, self::RESOLUTION_MAX_HEIGHT) : $this->getSize()[1];
+    }
 
 }
