@@ -22,6 +22,11 @@ class Resize {
      */
     protected $_resizer;
 
+    /**
+     * @var RM_Photo_Resize_ResizedImage
+     */
+    protected $_lastResizedImage;
+
     protected $_rootDirPath;
     protected $_imagePath;
     protected $_resizedImagePath;
@@ -128,8 +133,16 @@ class Resize {
             $this->_resizeProcessor( func_get_args() );//сделано для разширения метода и дополнительных аргуметов
             $this->getResizer()->saveImage( $resizedImagePath );
 		}
-        return new RM_Photo_Resize_ResizedImage($resizedImagePath, $this->getMime());
+        $this->_lastResizedImage = new RM_Photo_Resize_ResizedImage($resizedImagePath, $this->getMime());
+        return $this->_lastResizedImage;
 	}
+
+    /**
+     * @deprecated
+     */
+    public function echoImage() {
+        $this->_lastResizedImage->echoImage();
+    }
 
     /**
      * Arguments from resize function
