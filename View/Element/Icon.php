@@ -29,6 +29,7 @@ class RM_View_Element_Icon
     const ICON_OFFICE = 22;
     const ICON_FLY = 23;
     const ICON_COPY = 24;
+    const ICON_MENU_GALLERY = 25;
 	
 	public function __construct(
 		$routeName,
@@ -107,6 +108,8 @@ class RM_View_Element_Icon
                 return 'fly.png';
             case self::ICON_COPY:
                 return 'copy.png';
+            case self::ICON_MENU_GALLERY:
+                return 'menu-gallery.png';
 		}
 	}
 	
