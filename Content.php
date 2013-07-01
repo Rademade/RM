@@ -93,7 +93,7 @@ class RM_Content
 	}
 
 	/**
-	 * Get default content lang for this contnent manager
+	 * Get default content lang for this content manager
 	 * Default idLang get form lang or custom set in content manager
 	 *
 	 * @name getDefaultContentLang

@@ -55,9 +55,15 @@ class RM_Content_Field
 	 */
 	private $_fieldName;
 
+    /**
+     * @var string
+     */
+    private $_savedContent;
+
 	public function  __construct(stdClass $data) {
 		parent::__construct($data);
 		$this->_fieldName = RM_Content_Field_Name::getById( $data->idFieldName );
+        $this->_savedContent = isset($data->fieldContent) ? $data->fieldContent : '';
 	}
 
 	public static function _setSelectRules(Zend_Db_Select $select) {
@@ -67,6 +73,7 @@ class RM_Content_Field
     public function save() {
         if (!$this->isEmptyContent()) {
             parent::save();
+            $this->_savedContent = $this->getContent();
         }
     }
 
@@ -148,7 +155,10 @@ class RM_Content_Field
 	}
 
 	public function isEmptyContent() {
-		return ($this->getContent() === '' || is_null($this->getContent()));//TODO all empty types
+		return (
+            ($this->getContent() === '' || is_null($this->getContent())) &&
+            $this->_savedContent == ''
+        );//TODO all empty types
 	}
 
 	public function __refreshCache() {
