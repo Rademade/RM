@@ -229,7 +229,7 @@ class RM_Photo
 	public function upload($tmpName) {
         $this->validate($tmpName);
         $this->_generateImageSavePath(  );
-		copy($tmpName, $this->getFullPhotoPath());
+        copy($tmpName, $this->getFullPhotoPath());
 		$this->save();
 	}
 

@@ -30,7 +30,7 @@ class RM_Entity_Worker_Cache
 		}
 	}
 
-	public function cache($data, $key, $tags) {
+	public function cache($data, $key, $tags = array()) {
 		if ($this->_cache instanceof Zend_Cache_Core) {
 			$this->_cache->save( $data, $key, $tags);
 		}

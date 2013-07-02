@@ -70,15 +70,15 @@ abstract class RM_Entity
 	/* Cache data block list */
 
 	protected static function _clearCacheList($key) {
-		static::_getStorage()->getCacher()->remove( $key );
+		static::getCacher()->remove( $key );
 	}
 
 	protected static function _loadList($key) {
-		return static::_getStorage()->getCacher()->load( $key );
+		return static::getCacher()->load( $key );
 	}
 
 	protected function _cacheList(array $data, $key) {
-		static::_getStorage()->getCacher()->cache($data, $key, array());
+		static::getCacher()->cache($data, $key, array());
 	}
 
 	/* Cache data block item */
@@ -115,7 +115,7 @@ abstract class RM_Entity
 	}
 
 	protected static function __load($key) {
-		return static::_getStorage()->getCacher()->load( $key );
+		return static::getCacher()->load( $key );
 	}
 
 	/* Attribute process block */
@@ -298,5 +298,9 @@ abstract class RM_Entity
 		}
 		return $storage;
 	}
+
+    public static function getCacher() {
+        return static::_getStorage()->getCacher();
+    }
 
 }
