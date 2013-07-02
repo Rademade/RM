@@ -186,7 +186,7 @@ class RM_Lang
         )) {
             $this->langUrl = $url;
         } else {
-            throw new Exception('');
+            throw new Exception('Lang url must be 2-4 characters long and contains only letters and digits');
         }
 	}
 
