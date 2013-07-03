@@ -92,7 +92,7 @@ abstract class RM_Model_Tag
         return $this->_dataWorker->getValue('tagAlias');
     }
 
-    protected function setAlias($alias) {
+    protected function __setAlias($alias) {
         $this->_dataWorker->setValue('tagAlias', $alias);
     }
 

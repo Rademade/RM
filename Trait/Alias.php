@@ -18,7 +18,7 @@ trait RM_Trait_Alias {
 
     abstract public function getAlias();
     abstract public function getName();
-    abstract protected function setAlias($alias);
+    abstract protected function __setAlias($alias);
 
     abstract public function getId();
 
@@ -39,13 +39,17 @@ trait RM_Trait_Alias {
     }
 
     protected function _generateAlias() {
-        $url = new RM_Routing_Url($this->getName());
-        $url->formatLikeAlias();
-        $alias = $url->getInitialUrl();
+        $alias = $this->_getFormattedAlias();
         if (!$this->_isUniqueAlias($alias)) {
             throw new Exception(get_called_class() . ' with such alias already exist');
         }
-        $this->setAlias($alias);
+        $this->__setAlias($alias);
+    }
+
+    protected function _getFormattedAlias() {
+        $url = new RM_Routing_Url($this->getName());
+        $url->formatLikeAlias();
+        return $url->getInitialUrl();
     }
 
     protected function __refreshAliasCache() {
