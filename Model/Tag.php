@@ -49,6 +49,7 @@ abstract class RM_Model_Tag
     }
 
     public static function create() {
+        /* @var RM_Model_Tag $rmTag */
         $rmTag = new static(new RM_Compositor(array(
             'tagType' => static::TAG_TYPE
         )));
@@ -64,6 +65,22 @@ abstract class RM_Model_Tag
         return 'tagAlias';
     }
 
+    public function validate(RM_Exception $e = null, $throw = true) {
+        if (is_null($e)) {
+            $e = new RM_Exception();
+        }
+        foreach ($this->getContentManager()->getAllContentLangs() as $contentLang) {
+            /* @var $contentLang RM_Content_Lang */
+            if ($contentLang->getName() == '') {
+                $lang = RM_Lang::getById($contentLang->getIdLang());
+                $e[] = 'Tag name on ' . $lang->getName() . ' language not defined';
+            }
+        }
+        if ($throw && (bool)$e->current()) {
+            throw $e;
+        }
+    }
+
     public function save() {
         $this->_generateAlias();
         $this->_dataWorker->setValue('idContent', $this->getContentManager()->save()->getId());
@@ -73,6 +90,10 @@ abstract class RM_Model_Tag
     }
 
     public function getId() {
+        return $this->_dataWorker->_getKey()->getValue();
+    }
+
+    public function getIdTag() {
         return $this->_dataWorker->_getKey()->getValue();
     }
 
