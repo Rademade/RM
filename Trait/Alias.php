@@ -27,13 +27,14 @@ trait RM_Trait_Alias {
      *
      * @return static
      */
-    public static function getByAlias($alias) {
-        $result = static::getCacher()->load(self::_prepareAlias($alias));
+    final public static function getByAlias($alias) {
+        $preparedAlias = self::_prepareAlias($alias);
+        $result = static::getCacher()->load($preparedAlias);
         if (!$result instanceof static) {
             $result = static::findOne(array(
                 static::_getAliasFieldName() => $alias
             ));
-            static::getCacher()->cache($result, self::_prepareAlias($alias));
+            static::getCacher()->cache($result, $preparedAlias);
         }
         return $result;
     }
@@ -53,11 +54,11 @@ trait RM_Trait_Alias {
     }
 
     protected function __refreshAliasCache() {
-        static::getCacher()->cache($this, $this->getAlias());
+        static::getCacher()->cache($this, static::_prepareAlias($this->getAlias()));
     }
 
     protected function __cleanAliasCache() {
-        static::getCacher()->remove($this->getAlias());
+        static::getCacher()->remove(static::_prepareAlias($this->getAlias()));
     }
 
     private function _isUniqueAlias($alias) {
