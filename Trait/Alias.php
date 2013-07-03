@@ -44,7 +44,7 @@ trait RM_Trait_Alias {
         if (!$this->_isUniqueAlias($alias)) {
             throw new Exception(get_called_class() . ' with such alias already exist');
         }
-        $this->__setAlias($alias);
+        $this->_updateAlias($alias);
     }
 
     protected function _getFormattedAlias() {
@@ -68,6 +68,13 @@ trait RM_Trait_Alias {
 
     private static function _prepareAlias($alias) {
         return preg_replace('/[^\w\d\_]+/', '_', $alias);
+    }
+
+    private function _updateAlias($alias) {
+        if ($this->getAlias() != '' && $this->getAlias() != $alias) {
+            $this->__cleanAliasCache();
+        }
+        $this->__setAlias($alias);
     }
 
 }

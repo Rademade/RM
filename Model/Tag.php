@@ -12,7 +12,7 @@ abstract class RM_Model_Tag
     const TABLE_NAME = 'rmTags';
     const CACHE_NAME = 'rmTags';
 
-    const TAG_TYPE = '';
+    const TAG_TYPE = 0;
 
     protected static $_properties = array(
         'idTag' => array(
