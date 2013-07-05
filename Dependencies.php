@@ -1,5 +1,7 @@
 <?php
-class RM_Dependencies {
+class RM_Dependencies
+    extends
+        stdClass {
 
     private $_storage = array();
 
