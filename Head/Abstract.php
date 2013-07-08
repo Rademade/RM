@@ -6,6 +6,8 @@ abstract class RM_Head_Abstract {
      */
     private $_view;
 
+    private static $_compressState;
+
     /**
      * @return Zend_View
      */
@@ -30,6 +32,18 @@ abstract class RM_Head_Abstract {
         } else {
             return PUBLIC_PATH . $path . $filePath;
         }
+    }
+
+    protected function __getBaseCompressState() {
+        if ( is_null(self::$_compressState ) ) {
+            $state = false;
+            $cfg = Zend_Registry::get('cfg');
+            if (isset($cfg['assets']) && isset($cfg['assets']['compress'])) {
+                $state = intval($cfg['assets']['compress']) === 1;
+            }
+            self::$_compressState = $state;
+        }
+        return self::$_compressState;
     }
 
     private function _isRemote($filePath) {

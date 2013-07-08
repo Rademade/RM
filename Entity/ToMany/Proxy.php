@@ -154,4 +154,10 @@ class RM_Entity_ToMany_Proxy
         return $this->getItems();
     }
 
+    public function __destruct() {
+        $key = self::_getAutoEntityId( $this->_from );
+        unset( self::$_entitiesKeys[ $key ] );
+        unset( self::$_instances[ $key ] );
+    }
+
 }

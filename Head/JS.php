@@ -35,8 +35,11 @@ class RM_Head_JS
 	}
 
 	public function isCommpress() {
-		return $this->_compress;
-	}
+        if ($this->_compress)
+            return true;
+        return $this->__getBaseCompressState();
+
+    }
 
 	private function  _appendTag($tag) {
 		foreach ($this->_files->{$tag} as $path) {

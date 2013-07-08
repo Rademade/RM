@@ -38,7 +38,10 @@ class RM_Gallery
      */
     protected $_cacheWorker;
 
-	public static function create() {
+    /**
+     * @return RM_Gallery
+     */
+    public static function create() {
 		$gallery = new static( new stdClass() );
 		return $gallery;
 	}
