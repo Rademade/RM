@@ -3,7 +3,7 @@ abstract class RM_Mail {
 	
 	protected $_cnf;
 	private $transport;
-	
+
 	public function __construct() {
 		$this->_cnf = Zend_Registry::get("cfg");
         $transport = 'Zend_Mail_Transport_Smtp';
