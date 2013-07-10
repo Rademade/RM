@@ -36,6 +36,10 @@ abstract class RM_Entity
         );
 	}
 
+    public function destroy() {
+
+    }
+
 	/* Manipulation data block */
 
 	public function getId() {
@@ -189,36 +193,22 @@ abstract class RM_Entity
      * @return static
      */
 	public static function getById($id, array $options = array()) {
-        $id = (int)$id;
+		$id = (int)$id;
         if (is_null($item = static::_getStorage()->getData($id))) {
-            if (is_null($item = static::__load($id))) {
-                $select = static::_getSelect( $options );
-                $select->where(static::TABLE_NAME . '.' . static::_getKeyAttributeProperties()->getFieldName() . ' = ' . $id);
-                $item = static::_initItem($select);
-                if ($item instanceof self) {
-                    $item->__cache();
-                }
-            }
-            static::_getStorage()->setData($item, $id);
-        }
-        return $item;
+			if (is_null($item = static::__load($id))) {
+				$select = static::_getSelect($options);
+				$select->where(
+					static::TABLE_NAME . '.' .static::_getKeyAttributeProperties()->getFieldName() . ' = ' . $id
+				);
+				$item = static::_initItem($select);
+				if ($item instanceof self) {
+					$item->__cache();
+				}
+			}
+			static::_getStorage()->setData($item, $id);
+		}
+		return $item;
 	}
-
-    public static function getFirst() {
-        $cacheName = 'FIRST';
-        if (is_null($item = static::_getStorage()->getData( $cacheName ))) {
-            if (is_null($item = static::__load( $cacheName ))) {
-                $select = static::_getSelect( );
-                $select->order(static::TABLE_NAME . '.' . static::_getKeyAttributeProperties()->getFieldName() . ' ASC');
-                $item = static::_initItem($select);
-                if ($item instanceof self) {
-                    $item->__cache();
-                }
-            }
-            static::_getStorage()->setData($item, $cacheName);
-        }
-        return $item;
-    }
 
     /**
      * TODO cache
