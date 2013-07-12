@@ -36,10 +36,6 @@ abstract class RM_Entity
         );
     }
 
-    public function __destruct() {
-        echo 'Destruct ' . get_called_class() . ' with ' . $this->getId() . PHP_EOL;
-    }
-
     public function destroy() {
         static::_getStorage()->clearData($this->getId());
     }
