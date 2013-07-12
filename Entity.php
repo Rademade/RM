@@ -29,15 +29,19 @@ abstract class RM_Entity
 	protected $_cacheWorker;
 
 	public function __construct($data = null) {
-		$this->_calledClass = get_called_class();
+        $this->_calledClass = get_called_class();
 		$this->_dataWorker = new RM_Entity_Worker_Data(
             $this->_calledClass,
             is_null($data) ? new stdClass() : $data
         );
-	}
+    }
+
+    public function __destruct() {
+        echo 'Destruct ' . get_called_class() . ' with ' . $this->getId() . PHP_EOL;
+    }
 
     public function destroy() {
-
+        static::_getStorage()->clearData($this->getId());
     }
 
 	/* Manipulation data block */
@@ -257,7 +261,13 @@ abstract class RM_Entity
 		}
 	}
 
-	public static function getCount(
+    /**
+     * @param RM_Query_Where $where
+     * @param RM_Query_Join  $join
+     *
+     * @return int
+     */
+    public static function getCount(
         RM_Query_Where $where = null,
         RM_Query_Join $join = null
     ) {

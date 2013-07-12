@@ -110,6 +110,17 @@ class RM_Lang
 		return self::$default;
 	}
 
+    public static function getByIsoName($isoName) {
+        $key = md5( $isoName );
+        if (is_null($item = static::_getStorage()->getData($key))) {
+            $select = static::_getSelect();
+            $select->where('isoName = ?', $isoName);
+            $item = static::_initItem($select);
+            static::_getStorage()->setData($item, $key);
+        }
+        return $item;
+    }
+
     public static function getByUrl($url) {
         $select = self::_getSelect();
         $select->where('langUrl = ?', $url);

@@ -25,10 +25,16 @@ class RM_Content
 		)
  	);
 
-	private $_contentLangs = array();
+    /**
+     * @var RM_Content_Lang[]
+     */
+    private $_contentLangs = array();
 	private $_loadedContentLangs = false;
 
-	private $_settedLangs = array();
+    /**
+     * @var RM_Content_Lang[]
+     */
+    private $_settedLangs = array();
 
     /**
      * @var RM_Entity_Worker_Data
@@ -42,6 +48,13 @@ class RM_Content
     public function __construct(stdClass $data) {
         $this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
         $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
+    }
+
+    public function destroy() {
+        foreach ($this->_contentLangs as &$contentLang) $contentLang->destroy();
+        $this->_contentLangs = [];
+        $this->_loadedContentLangs = false;
+        parent::destroy();
     }
 
 	public static function _setSelectRules(Zend_Db_Select $select) {

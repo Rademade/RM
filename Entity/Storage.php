@@ -83,6 +83,12 @@ class RM_Entity_Storage {
 		return (isset($this->_dataStorage[$key])) ? $this->_dataStorage[$key] : null;
 	}
 
+    public function clearData($key) {
+        if (isset($this->_dataStorage[$key])) {
+            unset( $this->_dataStorage[$key] );
+        }
+    }
+
 	/**
 	 * @return RM_Entity_Worker_Cache
 	 */

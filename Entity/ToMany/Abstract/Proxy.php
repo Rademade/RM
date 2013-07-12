@@ -35,12 +35,19 @@ abstract class RM_Entity_ToMany_Abstract_Proxy
     }
 
     public function destroy() {
-        $key = static::_getAutoEntityId($this->_entity);
-        unset(static::$_entitiesKeys[$key]);
-        unset(static::$_instances[$key]);
+        if ($this->_entity instanceof RM_Entity) {
+            $key = static::_getAutoEntityId($this->_entity);
+            unset(static::$_entitiesKeys[$key]);
+            unset(static::$_instances[$key]);
+            $this->_entity = null;
+        }
+        if ($this->_collection instanceof RM_Entity_ToMany_Abstract_Collection) {
+            $this->_getCollection()->destroy();
+            $this->_collection = null;
+        }
     }
 
-    public static function get(
+    public static function &get(
         RM_Entity $entity,
         $intermediateClass,
         $autoKey = true

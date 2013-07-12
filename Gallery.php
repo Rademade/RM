@@ -22,7 +22,10 @@ class RM_Gallery
 	);
 
 	private $_isPhotosLoaded = false;
-	private $_photos = array();
+    /**
+     * @var RM_Gallery_Photo[]
+     */
+    private $_photos = array();
 
 	/**
 	 * @var RM_Gallery_Photo
@@ -49,6 +52,15 @@ class RM_Gallery
     public function __construct($data) {
         $this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
         $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
+    }
+
+    public function destroy() {
+        if ($this->_poster) $this->_poster->destroy();
+        foreach ($this->_photos as &$photo) $photo->destroy();
+        $this->_poster = null;
+        $this->_isPhotosLoaded = false;
+        $this->_photos = [];
+        parent::destroy();
     }
 
     public function getId() {
@@ -87,6 +99,7 @@ class RM_Gallery
             );
             $this->__refreshCache();
         }
+        $photo->destroy();
 	}
 	
 	/**

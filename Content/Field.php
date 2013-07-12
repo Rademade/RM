@@ -66,6 +66,17 @@ class RM_Content_Field
         $this->_savedContent = isset($data->fieldContent) ? $data->fieldContent : '';
 	}
 
+    public function destroy() {
+        $key = join('_', array(
+            $this->idFieldName,
+            $this->idContent,
+            $this->idLang
+        ));
+        $this->_getStorage()->clearData( $key );
+        $this->_process = null;
+        parent::destroy();
+    }
+
 	public static function _setSelectRules(Zend_Db_Select $select) {
 		$select->where('fieldStatus != ?', self::STATUS_DELETED);
 	}

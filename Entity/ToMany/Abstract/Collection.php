@@ -25,6 +25,16 @@ abstract class RM_Entity_ToMany_Abstract_Collection {
         $this->_entity = $entity;
     }
 
+    public function destroy() {
+        $this->_entity = null;
+        foreach ($this->_items as &$item) $item->destroy();
+        foreach ($this->_itemAdd as &$item) $item->destroy();
+        foreach ($this->_itemRemove as &$item) $item->destroy();
+        $this->_items = [];
+        $this->_itemAdd = [];
+        $this->_itemRemove = [];
+    }
+
     public function getIdEntity() {
         return $this->_entity->getId();
     }

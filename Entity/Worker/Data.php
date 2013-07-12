@@ -27,7 +27,7 @@ class RM_Entity_Worker_Data
 	 * @param stdClass $data
 	 */
 	public function __construct($className, stdClass $data) {
-		$this->_callClassName = $className;
+        $this->_callClassName = $className;
 		$this->_initProperties( $className );
 		$this->_initEntity( $data );
 	}

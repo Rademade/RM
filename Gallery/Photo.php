@@ -36,11 +36,22 @@ class RM_Gallery_Photo
 	 */
 	protected $_cacheWorker;
 
+    /**
+     * @var RM_Gallery
+     */
+    protected $_gallery;
+
 	public function __construct($data) {
 		parent::__construct($data);
 		$this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
 		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
 	}
+
+    public function destroy() {
+        if ($this->_gallery) $this->getGallery()->destroy();
+        $this->_gallery = null;
+        parent::destroy();
+    }
 
 	public function __get($name) {
 		$val = $this->_dataWorker->getValue($name);
@@ -82,8 +93,11 @@ class RM_Gallery_Photo
      * @return RM_Gallery
      */
 	public function getGallery() {
-		return RM_Gallery::getById( $this->getIdGallery() );
-	}
+        if (!$this->_gallery instanceof RM_Gallery) {
+            $this->_gallery = RM_Gallery::getById( $this->getIdGallery() );
+        }
+        return $this->_gallery;
+    }
 
 	/**
 	 * @static

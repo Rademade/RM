@@ -39,6 +39,11 @@ abstract class RM_Entity_ToMany_Intermediate
         return $intermediate;
     }
 
+    public function destroy() {
+        $this->getTo()->destroy();
+        parent::destroy();
+    }
+
     /**
      * @static
      * @param RM_Entity $from
@@ -61,8 +66,14 @@ abstract class RM_Entity_ToMany_Intermediate
         );
     }
 
+    /**
+     * @return RM_Entity
+     */
     abstract public function getFrom();
 
+    /**
+     * @return RM_Entity
+     */
     abstract public function getTo();
 
     public function __construct(stdClass $data) {

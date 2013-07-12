@@ -29,7 +29,7 @@ class RM_Photo
 		)
 	);
 
-	const FULL_IMAGE = 1;
+    const FULL_IMAGE = 1;
 	
 	private $_imageInfo = null;
 
@@ -62,6 +62,12 @@ class RM_Photo
 		$this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
 		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
 	}
+
+    public function destroy() {
+        if ($this->_content) $this->getContent()->destroy();
+        $this->_content = null;
+        parent::destroy();
+    }
 
 	public static function create(RM_User_Interface $user) {
 		$photo = new self(new stdClass());

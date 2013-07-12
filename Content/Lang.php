@@ -12,8 +12,6 @@ class RM_Content_Lang
 		RM_Interface_Deletable,
         JsonSerializable {
 
-	private $loaded = false;
-
 	const AUTO_CACHE = false;
 	const CACHE_NAME = 'fields';
 
@@ -35,8 +33,10 @@ class RM_Content_Lang
 			'type' => 'int'
 		)
  	);
-	
-	/**
+
+    private $loaded = false;
+
+    /**
 	 * @var RM_Content_Field[]
 	 */
 	private $fields = array();
@@ -44,6 +44,12 @@ class RM_Content_Lang
 	public static function _setSelectRules(Zend_Db_Select $select) {
 		$select->where('contentLangStatus != ?', self::STATUS_DELETED);
 	}
+
+    public function destroy() {
+        foreach ($this->fields as &$field) $field->destroy();
+        $this->clearLoadedFields();
+        parent::destroy();
+    }
 
 	public function loadFields() {
 		if (!$this->loaded) {
