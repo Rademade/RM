@@ -3,7 +3,7 @@ class RM_Head_CSS
     extends
         RM_Head_Abstract {
 	
-	private $_compress;
+	private $_compress = null;
 	private $_path;
 	private $_compress_path;
 	private $_files;
@@ -11,7 +11,9 @@ class RM_Head_CSS
 	private $_usedTags = array();
 	
 	public function __construct(Zend_Config $cfg) {
-		$this->_compress = intval($cfg->compress) === 1 ? true : false;
+        if ( isset($cfg->compress) ) {
+            $this->_compress = intval($cfg->compress) === 1 ? true : false;
+        }
 		$this->_path = $cfg->path;
 		$this->_files = $cfg->file;
 		$this->_ver = $cfg->version;
@@ -35,9 +37,7 @@ class RM_Head_CSS
 	}
 
 	public function isCommpress() {
-        if ($this->_compress)
-            return true;
-        return $this->__getBaseCompressState();
+        return ( $this->_compress == null ) ? $this->__getBaseCompressState() : $this->_compress;
 	}
 	
 	private function  _appendTag($tag) {

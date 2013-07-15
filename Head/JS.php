@@ -3,8 +3,8 @@ class RM_Head_JS
     extends
         RM_Head_Abstract {
 
-	private $_compress;
-	private $_path;
+    private $_compress = null;
+    private $_path;
 	private $_compress_path;
 	private $_files;
 	private $_ver;
@@ -34,11 +34,8 @@ class RM_Head_JS
 		return $this->_isTagExist($tag) && !$this->_isTagUsed($tag);
 	}
 
-	public function isCommpress() {
-        if ($this->_compress)
-            return true;
-        return $this->__getBaseCompressState();
-
+    public function isCommpress() {
+        return ($this->_compress == null) ? $this->__getBaseCompressState() : $this->_compress;
     }
 
 	private function  _appendTag($tag) {
