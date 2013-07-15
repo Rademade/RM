@@ -11,7 +11,9 @@ class RM_Head_JS
 	private $_usedTags = array();
 
 	public function __construct(Zend_Config $cfg) {
-		$this->_compress = intval($cfg->compress) === 1 ? true : false;
+        if (isset($cfg->compress)) {
+            $this->_compress = intval($cfg->compress) === 1 ? true : false;
+        }
 		$this->_path = $cfg->path;
 		$this->_files = $cfg->file;
 		$this->_ver = $cfg->version;
