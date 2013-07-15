@@ -37,7 +37,7 @@ class RM_Head_JS
 	}
 
     public function isCommpress() {
-        return ($this->_compress == null) ? $this->__getBaseCompressState() : $this->_compress;
+        return ($this->_compress === null) ? $this->__getBaseCompressState() : $this->_compress;
     }
 
 	private function  _appendTag($tag) {
