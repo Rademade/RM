@@ -210,6 +210,17 @@ abstract class RM_Entity
 		return $item;
 	}
 
+    public static function getFirst() {
+        $cacheName = 'FIRST';
+        if (is_null($item = static::_getStorage()->getData($cacheName))) {
+            $select = static::_getSelect();
+            $select->order(static::TABLE_NAME . '.' . static::_getKeyAttributeProperties()->getFieldName() . ' ASC');
+            $item = static::_initItem($select);
+            static::_getStorage()->setData($item, $cacheName);
+        }
+        return $item;
+    }
+
     /**
      * TODO cache
      * @param array $conditions
