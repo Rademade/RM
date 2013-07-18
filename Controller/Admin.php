@@ -266,9 +266,13 @@ abstract class RM_Controller_Admin
         );
     }
 
+    /**
+     * @return HTMLPurifier_Config
+     */
     protected static function __configureParser() {
         $config = RM_Content_Field_Process_Html::init()->getCurrentConfig();
         $config->set('HTML.SafeIframe', true);
+        return $config;
     }
 
 
