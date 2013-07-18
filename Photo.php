@@ -78,7 +78,7 @@ class RM_Photo
 	public function save() {
         if (!$this->isNoSave()) {
             $this->_dataWorker->save();
-            $this->__cache();
+            $this->__refreshCache();
         }
         return $this;
 	}

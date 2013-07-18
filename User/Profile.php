@@ -264,6 +264,7 @@ class RM_User_Profile
     }
 
     public function setStatus($status) {
+        $status = (int)$status;
         if (in_array($status, array(
             self::STATUS_DELETED,
             self::STATUS_HIDE,
