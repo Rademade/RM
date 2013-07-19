@@ -22,13 +22,17 @@ class RM_Controller_Service_Ajax {
     }
 
     public function processRequest(stdClass $data) {
-        $result = 'Type of AJAX process not given';
+        $result = new stdClass();
         if (isset($data->type))  {
             $method = $this->__typeToMethod( (int)$data->type );
             if (is_string($method)) {
                 $result = $this->{$method}($data);
-            }
-        }
+            } else {
+				$result->error = "Wrong AJAX process type given"
+			}
+        } else {
+			$result->error = "Attribute AJAX process type not given";
+		}
         return $result;
     }
 
