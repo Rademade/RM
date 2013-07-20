@@ -20,6 +20,10 @@ class RM_Routing_Url {
         return $this;
     }
 
+    public function stripLastSlashes($url) {
+        return rtrim($url, '/');
+    }
+
     public function formatLikeAlias() {
         $this->format();
         $this->url = $this->_aliasFormat( $this->url );
