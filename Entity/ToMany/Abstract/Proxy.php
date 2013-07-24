@@ -102,19 +102,27 @@ abstract class RM_Entity_ToMany_Abstract_Proxy
     }
 
     /**
-     * @return RM_Entity[]
+     * @return RM_Entity
      */
     public function getFirst() {
         $items = $this->getItems();
-        return $this->__getIntermediateEntity(reset($items));
+        $first = reset($items);
+        if ($first) {
+            return $this->__getIntermediateEntity($first);
+        }
+        return null;
     }
 
     /**
-     * @return RM_Entity[]
+     * @return RM_Entity
      */
     public function getLast() {
         $items = $this->getItems();
-        return $this->__getIntermediateEntity(end($items));
+        $last = end($items);
+        if ($last) {
+            return $this->__getIntermediateEntity($last);
+        }
+        return null;
     }
 
     public function resetItems() {
