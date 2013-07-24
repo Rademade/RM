@@ -66,6 +66,12 @@ class RM_User_Profile
         $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
     }
 
+    public function destroy() {
+        parent::destroy();
+        if ($this->_user) $this->getUser()->destroy();
+        $this->_user = null;
+    }
+
     public function getId() {
         return $this->_dataWorker->getValue(
             static::_getKeyAttributeProperties()->getName()

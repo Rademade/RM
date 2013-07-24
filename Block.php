@@ -46,21 +46,24 @@ class RM_Block
      * @var RM_Entity_Worker_Data
      */
     private $_dataWorker;
-
     /**
      * @var RM_Entity_Worker_Cache
      */
     protected $_cacheWorker;
-
     /**
      * @var RM_Content
      */
     private $_content = null;
 
-
     public function __construct(stdClass $data) {
         $this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
         $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
+    }
+
+    public function destroy() {
+        parent::destroy();
+        if ($this->_content) $this->getContentManager()->destroy();
+        $this->_content = null;
     }
 
     public function getId() {
