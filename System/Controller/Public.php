@@ -11,8 +11,14 @@ abstract class RM_System_Controller_Public
 	 */
 	protected $_cart;
 
+    /**
+     * @var Application_Model_Watcher
+     */
     protected $_userWatcher;
 
+    /**
+     * @var RM_User_Session
+     */
     protected $_userSession;
 
 	public function preDispatch() {
