@@ -221,6 +221,13 @@ abstract class RM_Entity
         return $item;
     }
 
+    public static function getLast() {
+        $select = static::_getSelect();
+        $select->order(static::TABLE_NAME . '.' . static::_getKeyAttributeProperties()->getFieldName() . ' DESC');
+        $item = static::_initItem($select);
+        return $item;
+    }
+
     /**
      * TODO cache
      * @param array $conditions
