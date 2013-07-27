@@ -44,4 +44,8 @@ trait RM_Trait_Content {
         return $this->getContentManager()->getCurrentContentLang();
     }
 
+    protected function __saveContent() {
+        $this->__setIdContent( $this->getContentManager()->save()->getId() );
+    }
+
 }
