@@ -131,7 +131,7 @@ class RM_Date_Date {
 			case self::STRONG_DATE:
 				return date('d/m/Y', $this->getTimestamp());
             case self::JS_DATE:
-                return date('D, d M y H:i:s', $this->getTimestamp())." +0000";
+                return date('D, d M Y H:i:s', $this->getTimestamp())." +0000";
 		}
 	}
 
