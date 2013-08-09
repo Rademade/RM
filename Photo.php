@@ -194,10 +194,10 @@ class RM_Photo
         $width = $this->getWidth();
         if ($height == 0 || $width == 0) return '';
         if ($maxWidth / $width < $maxHeight / $height) {
-            $height = $maxWidth / $width * $height;
+            $height = floor($maxWidth / $width * $height);
             $width = $maxWidth;
         } else {
-            $width = $maxHeight / $height * $width;
+            $width = floor($maxHeight / $height * $width);
             $height = $maxHeight;
         }
         return self::getProportionPath($width, $height) . $this->_getSavePath();
