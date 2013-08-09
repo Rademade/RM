@@ -52,6 +52,7 @@ class RM_Routing_Url {
         foreach ($params as  $param => $value) {
             $url = str_replace('/:' . $param, '', $url);
         }
+        $url = '/' . ltrim($url, '/');
         return preg_match('/^\/[a-z0-9\_\&\.\-\/]*\/?$/i', $url);
     }
 

@@ -189,6 +189,20 @@ class RM_Photo
 		return self::SAVE_PATH . $this->getPhotoPath();
 	}
 
+    public function getProportionalPhoto($maxWidth, $maxHeight, &$width = null, &$height = null) {
+        $height = $this->getHeight();
+        $width = $this->getWidth();
+        if ($height == 0 || $width == 0) return '';
+        if ($maxWidth / $width < $maxHeight / $height) {
+            $height = $maxWidth / $width * $height;
+            $width = $maxWidth;
+        } else {
+            $width = $maxHeight / $height * $width;
+            $height = $maxHeight;
+        }
+        return self::getProportionPath($width, $height) . $this->_getSavePath();
+    }
+    
 	public function getPath($width = null, $height = null) {
 		if (is_null($width) && is_null($height)) {//original
 			return $this->_getSavePath();
