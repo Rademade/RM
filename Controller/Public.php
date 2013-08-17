@@ -4,6 +4,7 @@ class RM_Controller_Public
         RM_Controller_Base_Abstract {
 
     protected $_page;
+    protected $_metaAutoAppend = true;
     private $_idPage;
 
     public function preDispatch() {
@@ -15,7 +16,7 @@ class RM_Controller_Public
             if ($this->_page instanceof RM_Interface_Hideable && !$this->_page->isShow()) {
                 $this->redirect('/');
             }
-            if ($this->_page instanceof RM_Interface_Contentable) {
+            if ($this->_metaAutoAppend && $this->_page instanceof RM_Interface_Contentable) {
                 $this->_initMeta( $this->_page);
             }
         }
