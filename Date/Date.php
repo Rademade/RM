@@ -6,6 +6,7 @@ class RM_Date_Date {
 	private $_day;
 	
 	const DAY = 86400;
+    const MONTH_COUNT = 12;
 
 	const ISO_DATE = 1;         // Y-m-d
 	const SEARCH_DATE = 2;      // d.m.Y
@@ -87,6 +88,16 @@ class RM_Date_Date {
 		return $this;
 	}
 
+    public function addMonth($month = 1) {
+        $newMonth = $this->getMonth() + $month;
+        if ($newMonth > self::MONTH_COUNT) {
+            $this->setYear($this->getYear() + floor($newMonth / self::MONTH_COUNT));
+            $newMonth %= self::MONTH_COUNT;
+        }
+        $this->setMonth($newMonth);
+        return $this;
+    }
+
 	public static function isTrueFormat($format) {
 		return (in_array($format, array(
 			self::ISO_DATE,
@@ -149,6 +160,10 @@ class RM_Date_Date {
 			$this->_year
 		);
 	}
+
+    public function isValid() {
+        return $this->getTimestamp() !== false;
+    }
 
     public function compare(self $withDate) {
         return $this->getTimestamp() === $withDate->getTimestamp();
