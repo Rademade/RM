@@ -136,7 +136,7 @@ class RM_Date_Date {
 	}
 
 	public function getRangeDaysCount(RM_Date_Date $fromDate) {
-		return ceil( ( $this->getTimestamp() - $fromDate->getTimestamp() ) / self::DAY );
+		return round( ( $this->getTimestamp() - $fromDate->getTimestamp() ) / self::DAY );
 	}
 
 	public function getTimestamp() {
