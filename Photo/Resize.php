@@ -170,4 +170,8 @@ class Resize {
         return !is_null( $height ) ? min($height, self::RESOLUTION_MAX_HEIGHT) : $this->getSize()[1];
     }
 
+    public function exists() {
+        return file_exists($this->getPathLoader()->getFullResizedImagePath());
+    }
+
 }
