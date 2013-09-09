@@ -198,7 +198,7 @@ class RM_Block
             $this->getContentManager()->save()->getId()
         );
         $this->_dataWorker->save();
-//        $this->__refreshCache();
+        $this->__refreshCache();
 	}
 	
 	public function remove() {
