@@ -18,14 +18,15 @@ abstract class RM_Entity_Search_Repository {
     abstract protected function __getConditionClass();
 
     /**
-     * @param RM_Entity_Search_Condition $condition
+     * RM_Entity_Search_Condition $condition [, RM_Entity_Search_Condition $... ]
+     *
      * @return RM_Entity_Search_Entity
      */
-    protected function __getEntitySearch(
-        RM_Entity_Search_Condition $condition
-    ) {
+    protected function __getEntitySearch() {
         $search = new RM_Entity_Search_Entity( $this->__getEntityClassName() );
-        $search->addCondition( $condition );
+        foreach (func_get_args() as $condition) {
+            $search->addCondition($condition);
+        }
         return $search;
     }
 
