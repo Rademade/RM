@@ -44,7 +44,8 @@ class RM_Content_Field_Process_Html
         'style',
         'target',
         'data-id',
-        'rel'
+        'rel',
+        'title'
 	);
 
     private $_allowedCssAttr = array(
