@@ -54,20 +54,20 @@ trait RM_Trait_Alias {
     }
 
     protected function __refreshAliasCache() {
-        static::getCacher()->cache($this, static::_prepareAlias($this->getAlias()));
+        static::getCacher()->cache($this, self::_prepareAlias($this->getAlias()));
     }
 
     protected function __cleanAliasCache() {
-        static::getCacher()->remove(static::_prepareAlias($this->getAlias()));
+        static::getCacher()->remove(self::_prepareAlias($this->getAlias()));
+    }
+
+    private static function _prepareAlias($alias) {
+        return preg_replace('/[^\w\d\_]+/', '_', $alias);
     }
 
     private function _isUniqueAlias($alias) {
         $aliasModel = static::getByAlias($alias);
         return !($aliasModel instanceof static && $aliasModel->getId() !== $this->getId());
-    }
-
-    private static function _prepareAlias($alias) {
-        return preg_replace('/[^\w\d\_]+/', '_', $alias);
     }
 
     private function _updateAlias($alias) {

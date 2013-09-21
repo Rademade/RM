@@ -4,7 +4,7 @@ class RM_View_Form  {
 	/**
 	 * @var Zend_View
 	 */
-	private $_view;
+	protected $_view;
 	/**
 	 * @var RM_View_Form_Langs
 	 */
@@ -115,8 +115,11 @@ class RM_View_Form  {
 		}
 		return '';
 	}
-	
-	public function render() {
+
+    /**
+     * @return string
+     */
+    public function render() {
 		return $this->_view->partial( self::TABLE_TPL, array(
 			'form' => $this
 		));

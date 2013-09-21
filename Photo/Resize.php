@@ -138,6 +138,8 @@ class Resize {
 	}
 
     /**
+     * Method left only for compatibility with old interface
+     * Will be removed
      * @deprecated
      */
     public function echoImage() {
