@@ -20,7 +20,7 @@ class RM_Entity_Attribute {
 		} elseif ($type === 'decimal' || $type === 'float') {
 			return $value - 0.0;
 		} else {
-			throw new Exception("Unknow '{$this->_properties->getFieldName()}' value type");
+			throw new Exception("Unknown '{$this->_properties->getFieldName()}' value type");
 		}
 	}
 
