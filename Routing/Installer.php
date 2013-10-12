@@ -133,7 +133,7 @@ class RM_Routing_Installer {
      * @return void
      */
     public function install() {
-        if (($routes = $this->__getCachedRouter()) !== false) {
+        if ($routes = $this->__getCachedRouter()) {
             $this->getRouter()->addRoutes( $routes );
         } else {
             $this->__installFileRouter();
