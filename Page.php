@@ -131,6 +131,11 @@ class RM_Page
 		$this->saveRoteDate();
 	}
 
+    public function __refreshCache() {
+        parent::__refreshCache();
+        $this->getRoute()->__refreshCache();
+    }
+
 	public function getIdPage() {
 		return $this->_dataWorker->getValue('id');
 	}

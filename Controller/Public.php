@@ -5,6 +5,7 @@ class RM_Controller_Public
 
     protected $_page;
     protected $_metaAutoAppend = true;
+    protected $_displayCheck = true;
     private $_idPage;
 
     public function preDispatch() {
@@ -13,7 +14,7 @@ class RM_Controller_Public
         if ($this->_idPage !== 0) {
             $pageModel = RM_Dependencies::getInstance()->pageClass;
             $this->_page = $pageModel::getById( $this->_idPage );
-            if ($this->_page instanceof RM_Interface_Hideable && !$this->_page->isShow()) {
+            if ($this->_page instanceof RM_Interface_Hideable && $this->_displayCheck && !$this->_page->isShow()) {
                 $this->redirect('/');
             }
             if ($this->_metaAutoAppend && $this->_page instanceof RM_Interface_Contentable) {

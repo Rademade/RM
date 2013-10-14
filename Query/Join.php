@@ -15,7 +15,6 @@ class RM_Query_Join
         return new self();
     }
 
-
     /**
      * @param string $type
      * @param string|RM_Query_Join_Object $to
