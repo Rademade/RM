@@ -100,7 +100,10 @@ class RM_View_Table {
 	}
 	
 	public function addRecord($id, $name) {
-		$row = new RM_View_Table_Row($id, $this->_view->CutText($name, 45));
+        if (strlen($name) == strlen(strip_tags($name))) {
+            $name = $this->_view->CutText($name, 45);
+        }
+		$row = new RM_View_Table_Row($id, $name);
 		if ( $this->isEditble() ):
 			$row->setEditRouteName(
 				$this->getEditRoute()
