@@ -101,7 +101,7 @@ class RM_View_Table {
 	
 	public function addRecord($id, $name) {
         if (strlen($name) == strlen(strip_tags($name))) {
-            $name = (strlen($name) > 45) ? substr($name, 0, 45) . '...' : $name;
+            $name = (strlen($name) > 45) ? mb_substr($name, 0, 45) . '...' : $name;
         }
 		$row = new RM_View_Table_Row($id, $name);
 		if ( $this->isEditble() ):
