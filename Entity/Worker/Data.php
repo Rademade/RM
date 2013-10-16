@@ -118,7 +118,7 @@ class RM_Entity_Worker_Data
 			$this->_changes = array();
 			return true;
 		} else {
-			if (!empty($this->_changes)) {
+            if (!empty($this->_changes)) {
 				RM_Entity::getDb()->update(
 					$this->_table,
 					$this->_changes,
