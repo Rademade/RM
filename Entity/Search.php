@@ -47,9 +47,12 @@ class RM_Entity_Search
         $where = new RM_Query_Where();
         foreach ($this->_getMatchConditions() as $condition) {
             $condition->joinAutocompleteTable();
-            $where->addSubOr( $condition->getWhereCondition( $this->getPhrase() ) );
+            $subWhere = $condition->getWhereCondition( $this->getPhrase() );
+            if ($subWhere instanceof RM_Query_Where) {
+                $where->addSubOr( $subWhere );
+            }
         }
-        parent::__installQueryCondition($select );
+        parent::__installQueryCondition( $select );
         $where->improveQuery( $select );
         $this->_groupSelectRows( $select );
     }

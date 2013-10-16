@@ -27,7 +27,9 @@ abstract class RM_Query_Where_Abstract
     }
 
     public function improveQuery(Zend_Db_Select $select) {
-        $select->where( $this->_getConditionSQL() );
+        if (!empty($select)) {
+            $select->where($this->_getConditionSQL());
+        }
     }
 
     abstract protected function _getConditionSQL();

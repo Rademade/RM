@@ -62,7 +62,7 @@ class RM_Query_Where
                 $sqlParts[] =  $conditionSQL;
             }
 		}
-		return '(' . join(' ', $sqlParts) . ')';
+        return '(' . join(' ', $sqlParts) . ')';
 	}
 
 }
