@@ -14,10 +14,17 @@ abstract class RM_Entity_Search_Abstract_Abstract {
      */
     abstract public function getResults();
 
+    public function unshiftCondition(RM_Entity_Search_Condition $condition) {
+        array_unshift($this->_conditions, $condition);
+    }
+    
     public function addCondition(RM_Entity_Search_Condition $condition) {
         $this->_conditions[] = $condition;
     }
 
+    /**
+     * @param RM_Entity_Search_Condition[] $conditions
+     */
     public function setConditions(array $conditions) {
         $this->_conditions = array();
         foreach ($conditions as $condition) {
@@ -55,8 +62,8 @@ abstract class RM_Entity_Search_Abstract_Abstract {
      * @param RM_Entity_Search_Abstract_Abstract $search
      */
     public function __copyFrom(RM_Entity_Search_Abstract_Abstract $search) {
-        $this->setPhrase( $search->getPhrase() );
-        $this->setConditions( $search->getConditions() );
+        $this->_searchPhrase = $search->_searchPhrase;
+        $this->_conditions = $search->_conditions;
     }
 
     /**

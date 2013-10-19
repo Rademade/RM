@@ -32,7 +32,10 @@ class RM_Query_Join
         $fromKey = null,
         array $fields = array()
     ) {
-        $this->_joins[ strval( $to ) ] = array(
+        if ( isset($this->_joins[ strval( $to ) ]) ) {
+            return $this;
+        }
+        $this->_joins[ strval($to) ] = array(
             'type'      => $this->_formatJoinType( $type ),
             'to'        => $to,                                     //joining table name
             'from'      => $from,                                   //base table name

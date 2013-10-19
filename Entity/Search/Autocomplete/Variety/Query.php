@@ -3,11 +3,6 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
     extends
         RM_Entity_Search_Autocomplete_Variety {
 
-    /**
-     * @var RM_Entity_Search_Condition_Autocomplete
-     */
-    private $_autocompleteCondition;
-
     const FIELD_NAME = 'autocompleteValue';
 
     /**
@@ -44,6 +39,10 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
      * @throws Exception
      */
     protected final function __installQueryCondition(Zend_Db_Select $select) {
+        $baseConditions = $this->__getBaseConditions();
+        if ($baseConditions instanceof RM_Entity_Search_Condition) {
+            $this->unshiftCondition( $baseConditions );
+        }
         $this->addCondition( $this->_getCompleteCondition() );
         parent::__installQueryCondition( $select );
         $select->limit(5);
@@ -75,6 +74,11 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
         }
         return $result;
     }
+
+    protected function __getBaseConditions() {
+        return null;
+    }
+    
 
     /**
      * @throws Exception
