@@ -7,7 +7,7 @@ class RM_System_Browser_DownloadStrategy_CustomProxy
 
     private function _getProxyUrl($url) {
         return join('', array(
-            'http://api-booky.com.ua/proxy.php?',
+            'http://parse-booky.com.ua/proxy.php?',
             join('&', array(
                 'API_KEY=' . self::API_KEY,
                 'url=' . base64_encode($url)
