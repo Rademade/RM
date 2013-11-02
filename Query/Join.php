@@ -32,10 +32,11 @@ class RM_Query_Join
         $fromKey = null,
         array $fields = array()
     ) {
-        if ( isset($this->_joins[ strval( $to ) ]) ) {
+        $key = is_array($to) ? key($to) : strval($to);
+        if ( isset($this->_joins[$key]) ) {
             return $this;
         }
-        $this->_joins[ strval($to) ] = array(
+        $this->_joins[$key] = array(
             'type'      => $this->_formatJoinType( $type ),
             'to'        => $to,                                     //joining table name
             'from'      => $from,                                   //base table name
@@ -68,11 +69,11 @@ class RM_Query_Join
                 $this->_extractJoinObject( $joinData['to'] ),
                 join(' = ', array(
                     join('.', array(
-                        $joinData['from'],
+                        is_array($joinData['from']) ? key($joinData['from']) : $joinData['from'],
                         $joinData['fromKey']
                     )),
                     join('.', array(
-                        $joinData['to'],
+                        is_array($joinData['to']) ? key($joinData['to']) : $joinData['to'],
                         $joinData['toKey']
                     ))
                 )),
