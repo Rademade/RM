@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class RM_Interface_Element
+ * @deprecated
+ */
 interface RM_Interface_Element {
 	
 //	const ACTION_STATUS = 1;

@@ -98,7 +98,7 @@ class RM_Content_Lang
 		return $this->fields;
 	}
 	
-	public function setFieldContent($name, $value, $processType) {
+	public function setFieldContent($name, $value, $processType = RM_Content_Field_Process::PROCESS_TYPE_LINE) {
 		$name = mb_strtolower($name, 'utf-8');
 		$this->checkField($name);
 		$field = $this->fields[ $name ];
@@ -135,7 +135,8 @@ class RM_Content_Lang
 		if (preg_match('/^(set|get)([a-z]+)$/i', strtolower($name), $result)) {
 			switch ($result[1]) {
 				case 'set':
-					$this->setFieldContent($result[2], $arguments[0], $arguments[1]);
+                    array_unshift($arguments, $result[2]);
+                    call_user_func_array(array($this, 'setFieldContent'), $arguments);
 					break;
 				case 'get':
 					return $this->getFieldContent($result[2]);

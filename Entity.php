@@ -269,11 +269,15 @@ abstract class RM_Entity
 	public static function _initItem(Zend_Db_Select $select) {
 		$select->limit(1);
 		if (($data = self::getDb()->fetchRow($select)) !== false) {
-			return new static( $data );
+			return static::_initItemFromData( $data );
 		} else {
 			return null;
 		}
 	}
+
+    protected static function _initItemFromData($data) {
+        return new static($data);
+    }
 
     /**
      * @param RM_Query_Where $where
@@ -306,7 +310,7 @@ abstract class RM_Entity
 	) {
 		$list = RM_Query_Exec::select($select, $queryComponents);
         foreach ($list as &$item) {
-			$item = new static( $item );
+			$item = static::_initItemFromData($item);
 		}
 		return $list;
 	}

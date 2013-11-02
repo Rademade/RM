@@ -54,8 +54,7 @@ abstract class RM_Entity_ToMany_Abstract_Collection {
             if (array_key_exists(
                 $intermediateItemId,
                 $this->_itemRemove
-            )
-            ) {
+            ) ) {
                 unset($this->_itemRemove[$intermediateItemId]);
             }
             $this->_items[$intermediateItemId] = $item;

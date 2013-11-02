@@ -83,7 +83,7 @@ abstract class RM_Controller_Admin
     public function ajaxAction() {
         $this->__disableView();
         /* @var stdClass $data */
-        $data = (object)array_merge($this->getRequest()->getPost(), $_GET);
+        $data = (object)array_merge($this->getRequest()->getPost(), $this->getAllParams());
         if ( is_null($this->_ajaxResponse) ) $this->_ajaxResponse = new stdClass();
         $this->_ajaxResponse = $this->_getAjaxService()->processRequest($data);
     }
