@@ -114,10 +114,10 @@ class RM_Page
 
 	public function saveRoteDate() {
 		if (intval($this->getRoute()->idPage) != $this->getIdPage()) {
-			if ($this->getRoute()->getName() === RM_Routing::TMP_ROUTE_NAME) {
+            if ($this->getRoute()->getName() === RM_Routing::TMP_ROUTE_NAME) {
 				$this->getRoute()->setName( $this->getIdPage() );
 			}
-			$this->getRoute()->idPage = $this->getIdPage();
+            $this->getRoute()->idPage = $this->getIdPage();
 			$this->getRoute()->save();
 		}
 	}
@@ -125,6 +125,7 @@ class RM_Page
 	public function save() {
         $this->_dataWorker->setValue('idContent', $this->getContentManager()->save()->getId());
         $this->_dataWorker->setValue('idRoute', $this->getRoute()->save()->getId());
+        $this->_dataWorker->save();
 		if ($this->_dataWorker->save() && static::AUTO_CACHE) {
 			$this->__refreshCache();
 		}
