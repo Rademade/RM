@@ -289,7 +289,9 @@ class RM_Photo
             $dirPath .= $segment . '/';
             $i += $step;
         }
+        $old = umask(0);
         mkdir(PUBLIC_PATH . self::SAVE_PATH . $dirPath, 0777, true);
+        umask($old);
         $this->setPhotoPath( $dirPath . substr($randomPath, $i, $step) );
     }
 
