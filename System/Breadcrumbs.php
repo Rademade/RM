@@ -65,13 +65,16 @@ class RM_System_Breadcrumbs implements Iterator, Countable {
         return $this;
     }
 
-
     public function getBack() {
 		return $this->_breadcrumbs[sizeof($this->_breadcrumbs)-2]['url'];
 	}
 
     public function getLastName() {
         return $this->_breadcrumbs[sizeof($this->_breadcrumbs)-1]['name'];
+    }
+
+    public function getLastUrl() {
+        return $this->current();
     }
 
 	public function addPageBack($idPage, array $params = array()) {
