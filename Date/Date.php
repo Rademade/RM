@@ -6,6 +6,9 @@ class RM_Date_Date {
 	private $_day;
 	
 	const DAY = 86400;
+    const HOUR = 3600;
+    const MIN = 60;
+
     const MONTH_COUNT = 12;
 
 	const ISO_DATE = 1;         // Y-m-d
@@ -31,7 +34,14 @@ class RM_Date_Date {
 			throw new Exception('Wrong date format given');
 		}
 	}
-	
+
+    /**
+     * @return RM_Date_Date
+     */
+    public static function now() {
+        return self::initFromTimestamp( time() );
+    }
+    
 	public static function initFromTimestamp($t) {
 		return new self(
 			date('Y', $t),

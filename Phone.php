@@ -2,13 +2,18 @@
 class RM_Phone {
 
 	private $_phone;
-	
+
+    public static function clearPhoneNumber($phone) {
+        $uselessChars = ['-', '–', '(', ')', ' '];
+        return trim( str_replace($uselessChars, '', $phone) );
+    }
+
 	public function __construct($phone) {
 		$this->_phone = $phone;
 	}
 	
 	public function setPhoneNumber($phoneNumber) {
-		$this->_phone = trim( $phoneNumber );
+		$this->_phone = self::clearPhoneNumber($phoneNumber);
 		$this->validate();
 	}
 	
@@ -44,7 +49,6 @@ class RM_Phone {
             '${1} (${2}) ${3} ${4} ${5}',
             $this->getPhoneNumber()
         );
-
     }
-	
+
 }
