@@ -3,14 +3,13 @@ abstract class RM_Controller_Admin
     extends
         RM_Controller_Base_Abstract {
 
+    use RM_Admin_BreadCrumb;
+
     const LOGIN_ROUTE = 'admin-login';
 
-    protected $_listRoute;
-    protected $_listTitle = 'list';
-
-    protected $_editRoute;
     protected $_addRoute;
-    protected $_addName;
+    protected $_editRoute;
+    protected $_listRoute;
 
     protected $_addButton = true;
 
@@ -46,24 +45,24 @@ abstract class RM_Controller_Admin
     public function listAction() {
         $this->view->headTitle()->append( $this->_listTitle );
         if ($this->_addButton) {
-            $addButton = new RM_View_Element_Button($this->_addRoute, [], 'Add ' . $this->_getAddName());
+            $addButton = new RM_View_Element_Button($this->_addRoute, [], $this->getAddCrumbName());
             RM_View_Top::getInstance()->addButton($addButton);
         }
     }
 
     public function addAction() {
         static::__configureParser();
-        $action = 'Add ' . $this->_getAddName();
-        $this->__getCrumbs()->add($action, array(), $this->_addRoute);
-        $this->view->headTitle()->append( $action );
+        $crumbName = $this->getAddCrumbName();
+        $this->__getCrumbs()->add($crumbName, array(), $this->_addRoute);
+        $this->view->headTitle()->append( $crumbName );
         $this->view->assign('tabs', [ RM_Lang::getDefault() ]);
     }
 
     public function editAction() {
         static::__configureParser();
-        $action = 'Edit ' . $this->_getAddName();
-        $this->view->headTitle()->append( $action );
-        $this->__getCrumbs()->add($action, ['id' => 0], $this->_editRoute);
+        $crumbName = $this->getEditCrumbName();
+        $this->view->headTitle()->append( $crumbName );
+        $this->__getCrumbs()->add($crumbName, ['id' => 0], $this->_editRoute);
         $this->view->assign( array(
             'tabs' => [ RM_Lang::getDefault() ],
             'edit' => true
@@ -116,19 +115,13 @@ abstract class RM_Controller_Admin
         $this->redirect( $this->view->url([], self::LOGIN_ROUTE) );
     }
 
-    protected function __setTitle( $title ) {
-        RM_View_Top::getInstance()->setTitle( $title );
-        $this->view->headTitle( $title );
-    }
-
     protected function __getCrumbs() {
         return RM_View_Top::getInstance()->getBreadcrumbs();
     }
 
     protected function __buildCrumbs() {
         if (is_string( $this->_listRoute )) {
-            $crumbName = $this->_itemName . ' ' . mb_strtolower($this->_listTitle, 'utf-8');
-            $this->__getCrumbs()->add($crumbName, [], $this->_listRoute );
+            $this->__getCrumbs()->add($this->getListCrumbName(), [], $this->_listRoute );
         }
     }
 
@@ -171,10 +164,6 @@ abstract class RM_Controller_Admin
         call_user_func( [$this->_entity, $prefix . $methodSuffix] );
     }
 
-    protected function _getAddName() {
-        $name = (is_string($this->_addName)) ? $this->_addName : $this->_itemName;
-        return mb_strtolower( $name, 'utf-8' );
-    }
 
     protected function __goBack() {
         $this->redirect( RM_View_Top::getInstance()->getBreadcrumbs()->getBack() );

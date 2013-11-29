@@ -117,5 +117,9 @@ class RM_System_Breadcrumbs implements Iterator, Countable {
     public function count() {
         return sizeof($this->_breadcrumbs);
     }
+
+    public function removeLast() {
+        array_pop($this->_breadcrumbs);
+    }
     
 }

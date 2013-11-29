@@ -125,7 +125,8 @@ class RM_Date_Date {
 			case self::STRONG_DATE:
 				return new self($p[3], $p[2], $p[1]);
             case self::JS_DATE:
-                throw new Exception('Not yet implementated');
+            default:
+                throw new Exception('Not yet implemented');
 		}
 	}
 
@@ -140,6 +141,8 @@ class RM_Date_Date {
 				return '/^' . $day . '\.' . $month . '\.' . $year . '$/';
 			case self::STRONG_DATE:
 				return '/^' . $day . '\/' . $month . '\/' . $year . '$/';
+            default:
+                throw new Exception('Wrong format given');
 		}
 	}
 	
@@ -153,6 +156,8 @@ class RM_Date_Date {
 				return date('d/m/Y', $this->getTimestamp());
             case self::JS_DATE:
                 return date('D, d M Y H:i:s', $this->getTimestamp())." +0000";
+            default:
+                throw new Exception('Wrong format given');
 		}
 	}
 

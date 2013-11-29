@@ -8,7 +8,13 @@ class RM_Query_Where
 	 */
 	protected $_conditions = array();
 
-	public function add($field, $type, $value) {
+    /**
+     * @param $field
+     * @param $type
+     * @param $value
+     * @return RM_Query_Where
+     */
+    public function add($field, $type, $value) {
         $condition = new RM_Query_Where_Condition($field, $type, $value);
 		$this->_conditions[] =  new RM_Query_Where_Glue($condition, RM_Query_Where_Glue::SQL_AND);
 		return $this;
