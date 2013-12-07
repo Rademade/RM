@@ -56,6 +56,7 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
         $select->from( $this->__getAutocompleteTableName(), array(
             self::FIELD_NAME => $this->__getAutocompleteFieldName()
         ) );
+        $select->group(self::FIELD_NAME);
         return $select;
     }
 

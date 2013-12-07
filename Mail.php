@@ -2,9 +2,11 @@
 abstract class RM_Mail {
 	
 	protected $_cnf;
-	private $transport;
+    protected $_viewData = array();
 
-	public function __construct() {
+    private $transport;
+
+    public function __construct() {
 		$this->_cnf = Zend_Registry::get("cfg");
         $transport = 'Zend_Mail_Transport_Smtp';
         if ( isset($this->_cnf['mail']['transport']['type']) ) {
@@ -36,6 +38,10 @@ abstract class RM_Mail {
 		$view = new Zend_View();
 		$view->setScriptPath($this->_cnf['mail']['viewPath']);
 		$view->setHelperPath($this->_cnf['view']['helperPath']);
+
+        if (!empty($this->_viewData)) {
+            $view->assign( $this->_viewData );
+        }
 		return $view;
 	}
 	
