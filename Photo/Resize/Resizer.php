@@ -13,7 +13,30 @@ class RM_Photo_Resize_Resizer {
     }
 
     public function cropImage($width, $height) {
-        $this->_getImagick()->cropThumbnailImage($width, $height);
+        $this->_getImagick()->cropthumbnailimage($width, $height);
+        return $this;
+    }
+
+    public function unSharpedCrop($width, $height) {
+        $originWidth = $this->_getImagick()->getImageWidth();
+        $originHeight = $this->_getImagick()->getImageHeight();
+        $originProportion = $originWidth / $originHeight;
+        $resizeProportion = $width / $height;
+
+        if ($originProportion != $resizeProportion) {
+            if ($originProportion > 1) {
+                $cropHeight = $originHeight;
+                $cropWidth = $cropHeight * $resizeProportion;
+            } else {
+                $cropWidth = $originWidth;
+                $cropHeight = $cropWidth / $resizeProportion;
+            }
+            $x = ($originWidth - $cropWidth) / 2;
+            $y = ($originHeight - $cropHeight) / 2;
+            $this->_getImagick()->cropImage($cropWidth, $cropHeight, $x, $y);
+        }
+        $this->_getImagick()->resizeImage($width, $height, Imagick::FILTER_LANCZOS, 0);
+
         return $this;
     }
 
