@@ -6,6 +6,7 @@ class RM_View_Form_Field_MultiList
     private $_data = [];
     private $_options = [];
     private $_defaultKeys = [];
+    private $_buttonsEnabled = true;
 
     const TPL = 'multi-list.phtml';
 
@@ -17,6 +18,11 @@ class RM_View_Form_Field_MultiList
         Head::getInstance()->getJS()->add('multi-list');
     }
 
+    public function disableButtons() {
+        $this->_buttonsEnabled = false;
+        return $this;
+    }
+
     public function render($idLang) {
         $row = new RM_View_Form_Row();
         $row->setDesc( $this->getDesc() );
@@ -25,7 +31,8 @@ class RM_View_Form_Field_MultiList
             $this->addFieldData($idLang, array(
                 'value' => array(),
                 'defaultKeys' => $this->_defaultKeys,
-                'options' => $this->_options
+                'options' => $this->_options,
+                'buttonsEnabled' => $this->_buttonsEnabled
             ) )
         ));
         return $this->renderRow($row);

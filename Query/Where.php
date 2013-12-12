@@ -20,17 +20,31 @@ class RM_Query_Where
 		return $this;
 	}
 
-	public function addOr($field, $type, $value) {
+    /**
+     * @param $field
+     * @param $type
+     * @param $value
+     * @return RM_Query_Where
+     */
+    public function addOr($field, $type, $value) {
         $condition = new RM_Query_Where_Condition($field, $type, $value);
         $this->_conditions[] =  new RM_Query_Where_Glue($condition, RM_Query_Where_Glue::SQL_OR);
         return $this;
 	}
 
-	public function addSub(self $subCondition) {
+    /**
+     * @param RM_Query_Where $subCondition
+     * @return RM_Query_Where
+     */
+    public function addSub(self $subCondition) {
         $this->_conditions[] =  new RM_Query_Where_Glue($subCondition, RM_Query_Where_Glue::SQL_AND);
         return $this;
 	}
 
+    /**
+     * @param RM_Query_Where $subCondition
+     * @return RM_Query_Where
+     */
     public function addSubOr(self $subCondition) {
         $this->_conditions[] =  new RM_Query_Where_Glue($subCondition, RM_Query_Where_Glue::SQL_OR);
         return $this;

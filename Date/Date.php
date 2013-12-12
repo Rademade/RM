@@ -98,6 +98,10 @@ class RM_Date_Date {
 		return $this;
 	}
 
+    /**
+     * @param int $month
+     * @return RM_Date_Date
+     */
     public function addMonth($month = 1) {
         $newMonth = $this->getMonth() + $month;
         if ($newMonth > self::MONTH_COUNT) {

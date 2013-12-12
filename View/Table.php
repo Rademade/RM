@@ -11,6 +11,7 @@ class RM_View_Table {
 	private $_autoAdd = false;
 	private $_statusUrl = '';
 	private $_view;
+    private $_isControllable = true;
 
 	public function __construct() {
 		$this->_view = Zend_Layout::getMvcInstance()->getView();
@@ -115,10 +116,16 @@ class RM_View_Table {
 	
 	public function renderThead() {
 		return $this->_view->partial('blocks/table/head.phtml', array(
-			'thead' => $this->_headData
+			'thead' => $this->_headData,
+            'isControllable' => $this->_isControllable
 		));
 	}
-	
+
+    public function setControllable($controllable) {
+        $this->_isControllable = $controllable;
+        return $this;
+    }
+
 	public function hasFooter() {
 		return ($this->hasPaginator());
 	}
