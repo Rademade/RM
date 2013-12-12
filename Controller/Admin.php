@@ -32,8 +32,8 @@ abstract class RM_Controller_Admin
         $this->__initParams();
         $this->__onlyAdmin();
         $this->view->assign('page', !is_null($this->_getParam('page')) ? (int)$this->_getParam('page') : 1);
+        $this->__setTitle($this->_itemName);
         $this->__buildCrumbs();
-        $this->__setTitle( $this->_itemName );
     }
 
     private function __initParams() {
@@ -43,7 +43,7 @@ abstract class RM_Controller_Admin
     }
 
     public function listAction() {
-        $this->view->headTitle()->append( $this->_listTitle );
+        $this->view->headTitle()->append( ucfirst($this->_listTitle) );
         if ($this->_addButton) {
             $addButton = new RM_View_Element_Button($this->_addRoute, [], $this->getAddCrumbName());
             RM_View_Top::getInstance()->addButton($addButton);
@@ -52,17 +52,15 @@ abstract class RM_Controller_Admin
 
     public function addAction() {
         static::__configureParser();
-        $crumbName = $this->getAddCrumbName();
-        $this->__getCrumbs()->add($crumbName, array(), $this->_addRoute);
-        $this->view->headTitle()->append( $crumbName );
+        $this->__getCrumbs()->add($this->getAddCrumbName(), array(), $this->_addRoute);
+        $this->view->headTitle()->append( ucfirst($this->_addTitle) );
         $this->view->assign('tabs', [ RM_Lang::getDefault() ]);
     }
 
     public function editAction() {
         static::__configureParser();
-        $crumbName = $this->getEditCrumbName();
-        $this->view->headTitle()->append( $crumbName );
-        $this->__getCrumbs()->add($crumbName, ['id' => 0], $this->_editRoute);
+        $this->view->headTitle()->append( ucfirst($this->_editTitle) );
+        $this->__getCrumbs()->add($this->getEditCrumbName(), ['id' => 0], $this->_editRoute);
         $this->view->assign( array(
             'tabs' => [ RM_Lang::getDefault() ],
             'edit' => true
