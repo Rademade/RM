@@ -1,31 +1,8 @@
 <?php
-class RM_System_Sitemap {
-
-    private $_urlPrefix;
-    /**
-     * @var RM_System_Sitemap_Item[]
-     */
-    private $_items = [];
-    /**
-     * @var SimpleXMLElement
-     */
-    private $_xml;
-
-    public function __construct($prefix = '') {
-        $this->_urlPrefix = $prefix;
-        $this->_xml = new SimpleXMLElement(join('', array(
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-            '</urlset>'
-        )));
-    }
-
-    public function setItems(array $items) {
-        $this->_items = $items;
-    }
-    
-    public function addItem(RM_System_Sitemap_Item $item) {
-        $this->_items[] = $item;
-    }
+//RM_TODO Rename to RM_System_Sitemap_Core
+class RM_System_Sitemap
+    extends
+        RM_System_Sitemap_Abstract {
 
     public function initXmlItems() {
         foreach ($this->_items as $item) {
@@ -35,13 +12,11 @@ class RM_System_Sitemap {
         }
     }
 
-    public function getXmlElement() {
-        return $this->_xml;
-    }
-
-    public function getXML() {
-        $this->initXmlItems();
-        return $this->_xml->asXML();
+    protected function __getRootElement() {
+        return new SimpleXMLElement(join('', array(
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+            '</urlset>'
+        )));
     }
 
 }
