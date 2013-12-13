@@ -83,6 +83,7 @@ abstract class RM_Controller_Admin
         $data = (object)array_merge($this->getRequest()->getPost(), $this->getAllParams());
         if ( is_null($this->_ajaxResponse) ) $this->_ajaxResponse = new stdClass();
         $this->_ajaxResponse = $this->_getAjaxService()->processRequest($data);
+        if (!$this->_ajaxResponse) $this->_ajaxResponse = new stdClass();
     }
 
     public function postDispatch() {

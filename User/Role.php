@@ -62,6 +62,10 @@ class RM_User_Role
 		return ($this->getHierarchy() < $role->getHierarchy());
 	}
 
+    public function isHigherRoleThen(RM_User_Role $role) {
+        return $this->getHierarchy() > $role->getHierarchy();
+    }
+
 	public function isAdmin() {
 		return in_array($this->adminAccess, array(
 			self::ADMIN_ACCESS_BASE,
