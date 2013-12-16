@@ -154,9 +154,7 @@ class Resize {
      * @param $arguments
      */
     protected function _resizeProcessor($arguments) {
-        $width = $arguments[0];
-        $height = $arguments[1];
-        $isCrop = $arguments[2];
+        list($width, $height, $isCrop) = $arguments;
         if ($isCrop) {
             $this->getResizer()->cropImage($width, $height);
         } else {
