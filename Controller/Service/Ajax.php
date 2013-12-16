@@ -41,16 +41,18 @@ class RM_Controller_Service_Ajax {
         if (isset($data->ids)) foreach ($data->ids as $position => $id) {
             /* @var stdClass $positionData*/
             $positionData = (object)['id' => $id, 'position' => $position];
-            $this->position($positionData);
+            $status = $this->position($positionData);
+            if ($status == self::RESPONSE_STATUS_FAIL) {
+                break;
+            }
         }
         return ['status' => $status];
     }
 
     public function position(stdClass $data) {
         return $this->__itemProcessWrapper($data, 'RM_Interface_Sortable', function ($item) use ($data) {
-            /* @var RM_Interface_Sortable $item */
+            /* @var RM_Interface_Sortable|RM_Entity $item */
             $item->setPosition($data->position);
-            /* @var RM_Entity $item */
             $item->save();
         });
     }

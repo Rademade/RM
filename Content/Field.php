@@ -219,7 +219,7 @@ class RM_Content_Field
         $select->where('idContent = ?', $idContent);
         $select->where('idLang = ?', $idLang);
         $select->where('idFieldName = ?', $idFieldName);
-        return self::_initItem($select );
+        return self::_initItem($select);
     }
 
 	public function remove() {
