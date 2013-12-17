@@ -154,7 +154,7 @@ class RM_User_Profile
     private function _createUser() {
         if ($this->getIdUser() === 0) {
             $userModel = RM_Dependencies::getInstance()->userClass;
-            $this->__setUser( new $userModel() );
+            $this->__setUser( new $userModel(new RM_Compositor(array())) );
         }
     }
 

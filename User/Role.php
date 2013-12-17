@@ -9,7 +9,9 @@
 */
 class RM_User_Role
 	extends
-		RM_Entity {
+		RM_Entity
+    implements
+        RM_Interface_Roleable {
 
 	const CACHE_NAME = 'role';
 
@@ -58,7 +60,11 @@ class RM_User_Role
 		return $this->hierarchy;
 	}
 
-	public function isSubordinate(RM_User_Role $role) {
+    /**
+     * @param \RM_Interface_Roleable|\RM_User_Role $role
+     * @return bool
+     */
+    public function isSubordinate(RM_Interface_Roleable $role) {
 		return ($this->getHierarchy() < $role->getHierarchy());
 	}
 
@@ -97,5 +103,9 @@ class RM_User_Role
 	public function getDesc() {
 		return $this->shortDesc;
 	}
+
+    public function hasAccess($accessLevel) {
+        return $this->getHierarchy() <= $accessLevel;
+    }
 
 }

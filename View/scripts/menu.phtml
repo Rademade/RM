@@ -1,12 +1,13 @@
 <div class="menu">
     <ul><?
         foreach ($this->menuItems as $menuItem) :
-            if ($this->HasAccess($this->currentUser, $menuItem)) :
+            if ($this->hasAccess($this->currentUser, $menuItem)) :
                 if (isset($menuItem['subItems'])) :
                     echo $this->partial('menu/sub-items.phtml', array(
                         'subItems' => $menuItem['subItems'],
                         'menuItem' => $menuItem,
-                        'currentMenu' => $this->currentMenu
+                        'currentMenu' => $this->currentMenu,
+                        'currentUser' => $this->currentUser
                     ));
                 else :
                     echo $this->partial('menu/item.phtml', array(

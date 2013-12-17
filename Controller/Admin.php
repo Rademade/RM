@@ -36,7 +36,7 @@ abstract class RM_Controller_Admin
         $this->__buildCrumbs();
     }
 
-    private function __initParams() {
+    protected function __initParams() {
         if ($this->_ajaxRoute) {
             $this->_ajaxUrl = $this->view->url( $this->getAllParams(), $this->_ajaxRoute);
         }
@@ -103,10 +103,14 @@ abstract class RM_Controller_Admin
 
     protected function __onlyAdmin() {
         $this->__initSession();
-        $hasNotProgrammerAccess = $this->_programmerAccessOnly && !$this->_user->getRole()->isProgrammer();
-        if (!$this->__isAdmin() || $hasNotProgrammerAccess) {
+        if (!$this->__hasAccess()) {
             $this->__redirectToLogin();
         }
+    }
+
+    protected function __hasAccess() {
+        $hasNotProgrammerAccess = $this->_programmerAccessOnly && !$this->_user->getRole()->isProgrammer();
+        return $this->__isAdmin() && !$hasNotProgrammerAccess;
     }
 
     protected function __redirectToLogin() {

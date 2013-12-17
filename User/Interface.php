@@ -12,7 +12,7 @@ interface RM_User_Interface
 
 	/**
 	 * @abstract
-	 * @return RM_User_Role
+	 * @return RM_Interface_Roleable
 	 */
 	public function getRole();
 

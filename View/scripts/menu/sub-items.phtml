@@ -7,10 +7,12 @@
     ?></a>
     <ul class="submenu"><?
         foreach ($this->subItems as $subItem) :
-            echo $this->partial('menu/item.phtml', array(
-                'menuItem' => $subItem,
-                'currentMenu' => $this->currentMenu
-            ));
+            if ($this->hasAccess($this->currentUser, $subItem)) :
+                echo $this->partial('menu/item.phtml', array(
+                    'menuItem' => $subItem,
+                    'currentMenu' => $this->currentMenu
+                ));
+            endif;
         endforeach;
     ?></ul>
 </li>

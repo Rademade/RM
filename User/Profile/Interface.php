@@ -4,7 +4,6 @@ interface RM_User_Profile_Interface
         RM_Interface_Hideable,
         RM_Interface_Deletable {
 
-
     /**
      * @return RM_User_Interface
      */

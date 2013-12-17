@@ -43,6 +43,10 @@ class RM_Entity_Attribute_Properties {
         return $this->_ai;
     }
 
+    public function removeAutoIncrement() {
+        $this->_ai = false;
+    }
+
 	public function getDefault(){
 		return $this->_default;
 	}
