@@ -32,29 +32,41 @@ class RM_Query_Join
         $fromKey = null,
         array $fields = array()
     ) {
+        $condition = join(' = ', array(
+            join('.', [$from,  $fromKey ?: $toKey]),
+            join('.', [$to, $toKey])
+        ));
+        $this->addWithCondition($type, $to, $from, $condition, $fields);
+        return $this;
+    }
+
+    public function addWithCondition(
+        $type,
+        $to,
+        $from,
+        $condition,
+        array $fields = array()
+    ) {
         $key = is_array($to) ? key($to) : strval($to);
-        if ( isset($this->_joins[$key]) ) {
-            return $this;
-        }
+        if (isset($this->_joins[$key])) return $this;
+
         $this->_joins[$key] = array(
-            'type'      => $this->_formatJoinType( $type ),
-            'to'        => $to,                                     //joining table name
-            'from'      => $from,                                   //base table name
-            'toKey'     => $toKey,                                  //joining table key
-            'fromKey'   => is_null($fromKey) ? $toKey : $fromKey,    //base table key
-            'fields'    => $fields
+            'type' => $this->_formatJoinType($type),
+            'to' => $to,
+            'from' => $from,
+            'joinCondition' => $condition,
+            'fields' => $fields
         );
         return $this;
     }
 
     public function mergeWith(self $join) {
         foreach ($join->_joins as $joinData) {
-            $this->add(
+            $this->addWithCondition(
                 $joinData['type'],
                 $joinData['to'],
                 $joinData['from'],
-                $joinData['toKey'],
-                $joinData['fromKey'],
+                $joinData['joinCondition'],
                 $joinData['fields']
             );
         }
@@ -67,16 +79,7 @@ class RM_Query_Join
                 $this->_getJoinMethod( $joinData['type'] )
             ), array(
                 $this->_extractJoinObject( $joinData['to'] ),
-                join(' = ', array(
-                    join('.', array(
-                        is_array($joinData['from']) ? key($joinData['from']) : $joinData['from'],
-                        $joinData['fromKey']
-                    )),
-                    join('.', array(
-                        is_array($joinData['to']) ? key($joinData['to']) : $joinData['to'],
-                        $joinData['toKey']
-                    ))
-                )),
+                $joinData['joinCondition'],
                 $joinData['fields']
             ));
         }
