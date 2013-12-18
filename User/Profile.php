@@ -79,15 +79,17 @@ class RM_User_Profile
     }
 
     public static function _setSelectRules(Zend_Db_Select $select) {
+        /* @var RM_Entity $userModel */
+        $userModel = RM_Dependencies::getInstance()->userClass;
         $select->where('rmProfiles.profileStatus != ?', self::STATUS_DELETED);
         $select->join(
-            RM_User_Base::TABLE_NAME,
+            $userModel::TABLE_NAME,
             join(' = ', array(
-                RM_User_Base::TABLE_NAME . '.idUser',
+                $userModel::TABLE_NAME . '.idUser',
                 self::TABLE_NAME . '.idUser',
             ))
         );
-        RM_User_Base::_setSelectRules( $select );
+        $userModel::_setSelectRules( $select );
     }
 
     public function __get($name) {
