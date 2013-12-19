@@ -32,9 +32,11 @@ class RM_Query_Join
         $fromKey = null,
         array $fields = array()
     ) {
+        $fromTable = is_array($from) ? key($from) : $from;
+        $toTable = is_array($to) ? key($to) : $to;
         $condition = join(' = ', array(
-            join('.', [$from,  $fromKey ?: $toKey]),
-            join('.', [$to, $toKey])
+            join('.', [$fromTable,  $fromKey ?: $toKey]),
+            join('.', [$toTable, $toKey])
         ));
         $this->addWithCondition($type, $to, $from, $condition, $fields);
         return $this;
