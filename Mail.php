@@ -37,9 +37,11 @@ abstract class RM_Mail {
 	protected function getView() {
 		$view = new Zend_View();
 		$view->setScriptPath($this->_cnf['mail']['viewPath']);
-        if ( isset($this->_cnf['mail']['view']['helperPath']) ) {
-			$view->setHelperPath($this->_cnf['mail']['view']['helperPath']);
-		}
+        if (isset($this->_cnf['mail']['view']['helperPath'])) {
+			$view->setHelperPath( $this->_cnf['mail']['view']['helperPath'] );
+		} else {
+            $view->setHelperPath( APPLICATION_PATH . "/modules/admin/views/helpers" );
+        }
         if (!empty($this->_viewData)) {
             $view->assign( $this->_viewData );
         }
