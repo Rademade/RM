@@ -93,7 +93,7 @@ abstract class RM_Entity_Search_Condition
     /**
      * @return RM_Query_Interface_ImproveSelect[]
      */
-    private function _getQueryParts() {
+    protected function _getQueryParts() {
         return array(
             $this->_getJoin(),
             $this->_getWhere(),
@@ -101,6 +101,10 @@ abstract class RM_Entity_Search_Condition
             $this->_getHaving(),
             $this->_getGroup()
         );
+    }
+
+    protected function __beforeMerge() {
+        //empty
     }
 
 }

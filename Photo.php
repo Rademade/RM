@@ -202,7 +202,7 @@ class RM_Photo
         }
         return self::getProportionPath($width, $height) . $this->_getSavePath();
     }
-    
+
 	public function getPath($width = null, $height = null) {
 		if (is_null($width) && is_null($height)) {//original
 			return $this->_getSavePath();
