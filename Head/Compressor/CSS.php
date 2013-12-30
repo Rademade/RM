@@ -63,9 +63,8 @@ class RM_Head_Compressor_CSS {
 			'type' => 'css'
 		));
         $html = curl_exec($curl);
-		preg_match_all('/\<textarea rows=\"20\" cols=\"80\" class=\"span8\" style=\"margin-bottom: 20px\" readonly=\"readonly\">(.*)\<\/textarea\>/i', $html, $data);
-		curl_close($curl);
-		return $data[1][0];
+        $DomParser = RM_System_Parser_SimpleHtmlDom::strGetHtml($html);
+        return $DomParser->find('textarea', 1)->innertext;
 	}
 
 	public function compress() {
