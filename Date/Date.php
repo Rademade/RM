@@ -82,6 +82,10 @@ class RM_Date_Date {
 		return $this->getTimestamp() >= $then->getTimestamp();
 	}
 
+    public function isLess(RM_Date_Date $then) {
+        return $this->getTimestamp() <= $then->getTimestamp();
+    }
+
 	public function minusDay() {
 		$prev = self::initFromTimestamp( $this->getTimestamp() - self::DAY );
 		$this->setYear( $prev->getYear() );
