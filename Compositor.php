@@ -32,10 +32,11 @@ class RM_Compositor extends stdClass {
 	public function __set($name, $value)  {
 		foreach($this->composite as &$object) {
 			if (isset($object->$name)) {
-				return $object->$name = $value;
-				break;
+				$object->$name = $value;
+				return ;
 			}
 		}
+        $this->composite[] = (object)[$name => $value];
 	}
 	
 	public function __get($name) {
