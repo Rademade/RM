@@ -36,7 +36,7 @@ class RM_Compositor extends stdClass {
 				return ;
 			}
 		}
-        $this->composite[] = (object)[$name => $value];
+        $this->composite[] = (object)array($name => $value);
 	}
 	
 	public function __get($name) {
