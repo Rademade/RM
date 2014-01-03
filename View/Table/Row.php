@@ -9,27 +9,28 @@ class RM_View_Table_Row {
 	 * @var string
 	 */
 	private $_name;
-	private $_url;
-	private $_editRoute;
-	private $_tds = array();
-	private $_showUrl;
+    private $_url;
+    private $_editRoute;
+    private $_editUrl;
+    private $_tds = array();
+    private $_showUrl;
     private $_manualPosition;
-	private $_isDeleteble = false;
-	private $_isHideble = false;
-	private $_isStockable = false;
-	private $_withCheckBox = false;
-	private $_stockStatus;
+    private $_isDeleteble = false;
+    private $_isHideble = false;
+    private $_isStockable = false;
+    private $_withCheckBox = false;
+    private $_stockStatus;
     private $_stockPrice;
     private $_stockIsSaved = false;
-	private $_currentStatus;
-	private $_position;
-	private $_index;
+    private $_currentStatus;
+    private $_position;
+    private $_index;
     private $_color;
-	private $_icons = array();
 
-	private static $_number = 0;
+    private $_icons = array();
+    private static $_number = 0;
 
-	public function __construct($id, $name) {
+    public function __construct($id, $name) {
 		$this->_id = (float)$id;
 		$this->_name = $name;
 	}
@@ -66,7 +67,7 @@ class RM_View_Table_Row {
 	}
 	
 	public function isEditble() {
-		return is_string($this->_editRoute);
+		return is_string($this->_editRoute) || $this->_editUrl;
 	}
 
 	public function setEditRouteName($routeName) {
@@ -77,15 +78,21 @@ class RM_View_Table_Row {
 	public function getEditRouteName() {
 		return $this->_editRoute;
 	}
-	
+
+    public function setEditUrl($url) {
+        $this->_editUrl = $url;
+        return $this;
+    }
+
 	public function getEditUrl() {
-		return Zend_Layout::getMvcInstance()->getView()->url(
-			$this->_mergeParams(array(
-				'id' => $this->getId()
-			)),
-			$this->getEditRouteName()
-		);
-	}
+        if (!$this->_editUrl) {
+            $this->_editUrl = Zend_Layout::getMvcInstance()->getView()->url(
+                $this->_mergeParams(['id' => $this->getId()]),
+                $this->getEditRouteName()
+            );
+        }
+        return $this->_editUrl;
+    }
 	
 	public function hasPreview() {
 		return is_string($this->_showUrl);

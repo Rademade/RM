@@ -50,12 +50,12 @@ class RM_Page
     /**
 	 * @var RM_Content
 	 */
-	private $_content;
+    protected $_content;
 
     /**
 	 * @var RM_Routing
 	 */
-	private $_route;
+	protected $_route;
 
     /**
      * @var RM_Block[]

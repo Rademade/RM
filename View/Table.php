@@ -27,7 +27,7 @@ class RM_View_Table {
 		$this->_editRouteName = $name;
 		return $this;
 	}
-	
+
 	public function getEditRoute() {
 		return $this->_editRouteName;
 	}
@@ -106,9 +106,7 @@ class RM_View_Table {
         }
 		$row = new RM_View_Table_Row($id, $name);
 		if ( $this->isEditble() ):
-			$row->setEditRouteName(
-				$this->getEditRoute()
-			);
+			$row->setEditRouteName( $this->getEditRoute() );
 		endif;
 		$this->_records[] = $row;
 		return $row;
