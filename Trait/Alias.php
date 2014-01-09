@@ -28,6 +28,9 @@ trait RM_Trait_Alias {
      * @return static
      */
     final public static function getByAlias($alias) {
+        if (is_null($alias)) {
+            return null;
+        }
         $preparedAlias = self::_prepareAlias($alias);
         $result = static::getCacher()->load($preparedAlias);
         if (!$result instanceof static) {
