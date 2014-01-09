@@ -26,18 +26,6 @@ class RM_Entity_Search_Entity
     }
 
     /**
-     * @return Zend_Db_Select
-     */
-    protected function __getSelect() {
-        $select = call_user_func( array(
-            $this->_entityName,
-            '_getSelect'
-        ) );
-        $this->__installQueryCondition( $select );
-        return $select;
-    }
-
-    /**
      * @return RM_Entity[]|RM_Entity_Search_Result_Interface[]
      */
     public function getResults() {
@@ -72,6 +60,18 @@ class RM_Entity_Search_Entity
                 $model::getKeyAttributeField()
             ) )
         );
+    }
+
+    /**
+     * @return Zend_Db_Select
+     */
+    public function __getSelect() {
+        $select = call_user_func( array(
+            $this->_entityName,
+            '_getSelect'
+        ) );
+        $this->__installQueryCondition( $select );
+        return $select;
     }
 
 }

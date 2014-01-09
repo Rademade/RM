@@ -3,6 +3,7 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
     extends
         RM_Entity_Search_Autocomplete_Variety {
 
+    const FIELD_ID = 'autocompleteId';
     const FIELD_NAME = 'autocompleteValue';
 
     /**
@@ -53,9 +54,13 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
      */
     protected function __getSelect() {
         $select = RM_Entity::getDb()->select();
-        $select->from( $this->__getAutocompleteTableName(), array(
-            self::FIELD_NAME => $this->__getAutocompleteFieldName()
-        ) );
+        $select->from(
+            $this->__getAutocompleteTableName(),
+            array_merge(
+                [self::FIELD_NAME => $this->__getAutocompleteFieldName()],
+                $this->__getAutocompleteItemFields()
+            )
+        );
         $select->group(self::FIELD_NAME);
         return $select;
     }
@@ -69,15 +74,21 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
     protected function __initAutocompleteResults(Zend_Db_Select $select) {
         $result = array();
         foreach ( RM_Entity::getDb()->fetchAll( $select ) as $row ) {
-            $result[] = $this->__initResultRow(
-                $row->{ self::FIELD_NAME }
-            );
+            $autoCompleteItem = $this->__initResultRow( $row->{ self::FIELD_NAME } );
+            if ( isset( $row->{ self::FIELD_ID } ) ) {
+                $autoCompleteItem->setId( $row->{ self::FIELD_ID } );
+            }
+            $result[] = $autoCompleteItem;
         }
         return $result;
     }
 
     protected function __getBaseConditions() {
         return null;
+    }
+
+    protected function __getAutocompleteItemFields() {
+        return array();
     }
     
 
