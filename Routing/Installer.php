@@ -27,7 +27,7 @@ class RM_Routing_Installer {
 
     /**
      * @static
-     * @return RM_Routing_Installer
+     * @return static
      */
     public static function getInstance() {
         if (!self::$_self instanceof self) {

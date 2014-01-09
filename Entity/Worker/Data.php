@@ -101,7 +101,7 @@ class RM_Entity_Worker_Data
                 $this->_callClassName . '::getById',
                 $this->_getKey()->getValue()
             );
-            $inserted = ($entity instanceof RM_Entity);
+            $inserted = ($entity instanceof RM_Entity && $entity->getId() != 0);
         }
         return $inserted;
     }

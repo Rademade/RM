@@ -36,6 +36,14 @@ abstract class RM_Entity_Search_Condition
         $this->_group = new RM_Query_Group();
     }
 
+    public function __clone() {
+        $this->_where = clone $this->_where;
+        $this->_order = clone $this->_order;
+        $this->_join = clone $this->_join;
+        $this->_having = clone $this->_having;
+        $this->_group = clone $this->_group;
+    }
+
     /**
      * @param Zend_Db_Select $select
      * @return void

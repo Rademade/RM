@@ -76,7 +76,7 @@ class RM_Query_Limits
 			if ($this->getLimit() !== 0) {
 				$select->limit( $this->getLimit() );
 			}
-			$items =  Zend_Registry::get('db')->fetchAll( $select );
+			$items = Zend_Registry::get('db')->fetchAll( $select );
 		}
 		return $items;
 	}

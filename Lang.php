@@ -142,6 +142,16 @@ class RM_Lang
 		return self::$current;
 	}
 
+    //RM_TODO cache
+    public static function getRegexForLangUrls() {
+        $langUrls = array();
+        foreach (RM_Lang::getList() as $lang) {
+            /* @var RM_Lang $lang */
+            $langUrls[] = $lang->getUrl();
+        }
+        return join('|', $langUrls);
+    }
+
 	public function getIsoName() {
 		return $this->isoName;
 	}
