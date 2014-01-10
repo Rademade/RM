@@ -1,7 +1,7 @@
 <?php
 trait RM_Trait_Cache {
 
-    private $_cache;
+    private $_traitCacheManager;
 
     protected function __getCachedValue($key, Closure $function) {
         $validKey = $this->_removeInvalidCharacters($key);
@@ -22,10 +22,10 @@ trait RM_Trait_Cache {
     }
 
     private function _getCache() {
-        if (!$this->_cache instanceof Zend_Cache_Core) {
-            $this->_cache = Zend_Registry::get('cachemanager')->getCache($this->__getCacheName());
+        if (!$this->_traitCacheManager instanceof Zend_Cache_Core) {
+            $this->_traitCacheManager = Zend_Registry::get('cachemanager')->getCache($this->__getCacheName());
         }
-        return $this->_cache;
+        return $this->_traitCacheManager;
     }
 
 }
