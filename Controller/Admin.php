@@ -82,7 +82,7 @@ abstract class RM_Controller_Admin
         /* @var stdClass $data */
         $data = (object)array_merge($this->getRequest()->getPost(), $this->getAllParams());
         if ( is_null($this->_ajaxResponse) ) $this->_ajaxResponse = new stdClass();
-        $this->_ajaxResponse = $this->__getAjaxService()->processRequest($data);
+        $this->_ajaxResponse = $this->_getAjaxService()->processRequest($data);
         if (!$this->_ajaxResponse) $this->_ajaxResponse = new stdClass();
     }
 
@@ -184,16 +184,8 @@ abstract class RM_Controller_Admin
     /**
      * @return RM_Controller_Service_Ajax
      */
-    protected function __getAjaxService() {
-        return new RM_Controller_Service_Ajax($this->_itemClassName );
-    }
-
-    /**
-     * @deprecated
-     * @return RM_Controller_Service_Ajax
-     */
     protected function _getAjaxService() {
-        return $this->__getAjaxService();
+        return new RM_Controller_Service_Ajax($this->_itemClassName );
     }
 
 }
