@@ -37,13 +37,13 @@ class RM_Entity_Search_Autocomplete
      * @return RM_Entity_Search_Autocomplete_Result[]
      */
     public function getResults() {
-        $result = array();
-        foreach ($this->getAutocompleteVarieties() as $autocompleteVariety) {
-            if ($autocompleteVariety->isMatch()) {
-                $result += $autocompleteVariety->getResults();
+        $results = [];
+        foreach ($this->getAutocompleteVarieties() as $autoCompleteVariety) {
+            if ($autoCompleteVariety->isMatch()) {
+                $results[] = $autoCompleteVariety->getResults();
             }
         }
-        return $result;
+        return call_user_func_array('array_merge', $results);
     }
 
 }
