@@ -13,6 +13,11 @@ trait RM_Trait_Cache {
         return $cachedValue;
     }
 
+    protected function __cleanCachedValue($key) {
+        $validKey = $this->_removeInvalidCharacters($key);
+        $this->_getCache()->remove($validKey);
+    }
+
     protected function __getCacheName() {
         return 'default';
     }
