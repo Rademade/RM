@@ -45,6 +45,7 @@ class RM_Content_Field_Process_Html
         'target',
         'data-id',
         'rel',
+        'id',
         'name',
         'title'
 	);
@@ -99,6 +100,7 @@ class RM_Content_Field_Process_Html
         $config->set('CSS.AllowedProperties', $this->_allowedCssAttr);
         $config->set('Attr.AllowedFrameTargets', array('_blank'));
         $config->set('Attr.DefaultImageAlt', '');
+        $config->set('Attr.EnableID', true);
         return $config;
     }
 
