@@ -45,6 +45,7 @@ class RM_Content_Field_Process_Html
         'target',
         'data-id',
         'rel',
+        'name',
         'title'
 	);
 
@@ -94,6 +95,7 @@ class RM_Content_Field_Process_Html
         $config->set('HTML.Doctype', 'XHTML 1.0 Transitional');
         $config->set('HTML.Allowed', join(',', $this->_allowedTags));
         $config->set('HTML.AllowedAttributes', $this->_allowedAttr);
+        $config->set('HTML.Attr.Name.UseCDATA', false);
         $config->set('CSS.AllowedProperties', $this->_allowedCssAttr);
         $config->set('Attr.AllowedFrameTargets', array('_blank'));
         $config->set('Attr.DefaultImageAlt', '');
