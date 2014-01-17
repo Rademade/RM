@@ -35,7 +35,7 @@ class RM_Photo_Resize_Resizer {
             $y = ($originHeight - $cropHeight) / 2;
             $this->_getImagick()->cropImage($cropWidth, $cropHeight, $x, $y);
         }
-            $this->_getImagick()->resizeImage($width, $height, Imagick::FILTER_MITCHELL, 0);
+            $this->_getImagick()->resizeImage($width, $height, Imagick::FILTER_LANCZOS, 0);
 
         return $this;
     }
