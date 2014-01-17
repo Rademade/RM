@@ -1,4 +1,6 @@
 <?php
+use RM_Interface_Contentable as Contentable;
+
 class RM_Controller_Public
     extends
         RM_Controller_Base_Abstract {
@@ -17,16 +19,14 @@ class RM_Controller_Public
             if ($this->_page instanceof RM_Interface_Hideable && $this->_displayCheck && !$this->_page->isShow()) {
                 $this->redirect('/');
             }
-            if ($this->_metaAutoAppend) $this->_initMeta( $this->_page);
+            if ($this->_metaAutoAppend && $this->_page instanceof Contentable) $this->_initMeta( $this->_page);
         }
     }
 
-    protected function _initMeta($page) {
-        if ($page instanceof RM_Interface_Contentable) {
-            $this->view->headTitle( $page->getContent()->getPageTitle() );
-            $this->view->headMeta()->appendName('keywords', $page->getContent()->getPageKeywords());
-            $this->view->headMeta()->appendName('description', $page->getContent()->getPageDesc());
-        }
+    protected function _initMeta(Contentable $page) {
+		$this->view->headTitle( $page->getContent()->getPageTitle() );
+        $this->view->headMeta()->appendName('keywords', $page->getContent()->getPageKeywords());
+        $this->view->headMeta()->appendName('description', $page->getContent()->getPageDesc());
     }
 
     public function postDispatch() {
