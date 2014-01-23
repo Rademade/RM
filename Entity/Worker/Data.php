@@ -73,13 +73,24 @@ class RM_Entity_Worker_Data
 		return isset($this->_attributes[ $name ]);
 	}
 
+    /**
+     * @return stdClass
+     */
+    public function getAllData() {
+        $data = array();
+        foreach ($this->_attributes as $name => $value) {
+            $data[ $name ] = $value->getValue();
+        }
+        return (object)$data;
+    }
+
 	public function getValue($name) {
         if ($this->_isExistAttribute( $name )) {
 			return $this->_attributes[ $name ]->getValue();
 		}
         return null;
 	}
-
+    
 	public function setValue($name, $value) {
 		if ($this->_isExistAttribute( $name )) {
             if ($this->_attributes[$name]->getValue() !== $value) {

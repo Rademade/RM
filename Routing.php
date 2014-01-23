@@ -96,6 +96,10 @@ class RM_Routing
         $this->_calledClass = get_called_class();
         $this->_dataWorker = new RM_Entity_Worker_Data($this->_calledClass, $data);
 	}
+
+    public function getData() {
+        return $this->_dataWorker->getAllData();
+    }
 	
 	public static function create(
 		$routeName,
