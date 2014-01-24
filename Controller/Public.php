@@ -24,7 +24,7 @@ class RM_Controller_Public
     }
 
     protected function _initMeta(Contentable $page) {
-		$this->view->headTitle( $page->getContent()->getPageTitle() );
+		$this->view->headTitle( strip_tags( htmlspecialchars_decode( $page->getContent()->getPageTitle() ) ) );
         $this->view->headMeta()->appendName('keywords', $page->getContent()->getPageKeywords());
         $this->view->headMeta()->appendName('description', $page->getContent()->getPageDesc());
     }
