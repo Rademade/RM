@@ -9,15 +9,8 @@ class RM_System_Browser {
     private $_downloadStrategy;
 
 	public function __construct() {
-		$this->_curl = curl_init();
-		curl_setopt($this->_curl, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($this->_curl, CURLOPT_VERBOSE, false);
-        curl_setopt($this->_curl, CURLOPT_HEADER, false);
-        curl_setopt($this->_curl, CURLOPT_NOSIGNAL, false);
-        curl_setopt($this->_curl, CURLINFO_HEADER_OUT, false);
-        curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->_curl, CURLOPT_NOPROGRESS, true);
-        curl_setopt($this->_curl, CURLOPT_FOLLOWLOCATION, true);
+        $this->__initCurl();
+        $this->__initCurlParams();
     }
 
     public function setMaxWaiting($seconds) {
@@ -25,7 +18,7 @@ class RM_System_Browser {
     }
 
 	public function likeBrowser() {
-		curl_setopt($this->_curl, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0)");
+		curl_setopt($this->_curl, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)");
 		curl_setopt($this->_curl, CURLOPT_REFERER, "http://google.com");
 	}
 
@@ -41,6 +34,9 @@ class RM_System_Browser {
 		));
 	}
 
+    /**
+     * @param RM_System_Browser_DownloadStrategy $downloadStrategy
+     */
     public function setDownloadStrategy(RM_System_Browser_DownloadStrategy $downloadStrategy) {
         $this->_downloadStrategy = $downloadStrategy;
     }
@@ -57,13 +53,25 @@ class RM_System_Browser {
 
 	public function download($url) {
         if (filter_var($url, FILTER_VALIDATE_URL)) {
-            return $this->getDownloadStrategy()->download(
-                $this->_curl,
-                $url
-            );
+            return $this->getDownloadStrategy()->download( $this->_curl, $url );
         } else {
             throw new Exception('Wrong url given');
         }
+    }
+
+    protected function __initCurl() {
+        $this->_curl = curl_init();
+    }
+
+    protected function __initCurlParams() {
+        curl_setopt($this->_curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($this->_curl, CURLOPT_VERBOSE, false);
+        curl_setopt($this->_curl, CURLOPT_HEADER, false);
+        curl_setopt($this->_curl, CURLOPT_NOSIGNAL, false);
+        curl_setopt($this->_curl, CURLINFO_HEADER_OUT, false);
+        curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->_curl, CURLOPT_NOPROGRESS, true);
+        curl_setopt($this->_curl, CURLOPT_FOLLOWLOCATION, true);
     }
 	
 }
