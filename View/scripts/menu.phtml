@@ -1,18 +1,20 @@
 <div class="menu">
     <ul><?
         foreach ($this->menuItems as $menuItem) :
-            if ($this->hasAccess($this->currentUser, $menuItem)) :
+            if ($this->hasAccess($this->currentUser, $menuItem, $this->defaultRole)) :
                 if (isset($menuItem['subItems'])) :
                     echo $this->partial('menu/sub-items.phtml', array(
                         'subItems' => $menuItem['subItems'],
                         'menuItem' => $menuItem,
                         'currentMenu' => $this->currentMenu,
-                        'currentUser' => $this->currentUser
+                        'currentUser' => $this->currentUser,
+                        'defaultRole' => isset($menuItem['minRole']) ? $menuItem['minRole'] : $this->defaultRole
                     ));
                 else :
                     echo $this->partial('menu/item.phtml', array(
                         'menuItem' => $menuItem,
-                        'currentMenu' => $this->currentMenu
+                        'currentMenu' => $this->currentMenu,
+                        'defaultRole' => $this->defaultRole
                     ));
                 endif;
             endif;

@@ -3,11 +3,12 @@ class RM_View_Helper_Menu {
 
     private $_view;
 
-    public function getMenuHTML(RM_User_Interface $currentUser, $currentMenu, array $menuItems) {
+    public function getMenuHTML(RM_User_Interface $currentUser, $currentMenu, array $menuItems, $defaultRole = null) {
         return $this->_getView()->assign(array(
             'menuItems' => $menuItems,
             'currentMenu' => $currentMenu,
-            'currentUser' => $currentUser
+            'currentUser' => $currentUser,
+            'defaultRole' => $defaultRole
         ))->render('menu.phtml');
     }
 

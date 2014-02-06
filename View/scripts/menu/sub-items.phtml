@@ -7,10 +7,11 @@
     ?></a>
     <ul class="submenu"><?
         foreach ($this->subItems as $subItem) :
-            if ($this->hasAccess($this->currentUser, $subItem)) :
+            if ($this->hasAccess($this->currentUser, $subItem, $this->defaultRole)) :
                 echo $this->partial('menu/item.phtml', array(
                     'menuItem' => $subItem,
-                    'currentMenu' => $this->currentMenu
+                    'currentMenu' => $this->currentMenu,
+                    'defaultRole' => $this->defaultRole
                 ));
             endif;
         endforeach;
