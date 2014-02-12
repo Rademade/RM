@@ -68,4 +68,11 @@ abstract class RM_Controller_Base_Abstract
         ));
     }
 
+    /**
+     * @return Zend_Controller_Request_Http
+     */
+    public function getRequest() {
+        return parent::getRequest();
+    }
+
 }
