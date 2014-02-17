@@ -190,7 +190,7 @@ abstract class RM_Entity
      * @static
      * @param $id
      * @param array $options
-     * @return static
+     * @return self
      */
 	public static function getById($id, array $options = array()) {
 		$id = (int)$id;
