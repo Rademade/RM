@@ -51,16 +51,17 @@ class RM_Content_Lang
         parent::destroy();
     }
 
+    /**
+     * @return RM_Content_Lang
+     */
     public function duplicate() {
         $data = $this->toArray();
         $data['idContentLang'] = 0;
-        $self = new self((object)$data);
-        $self->save();
+        $self = new self( new RM_Compositor($data) );
         foreach ($this->fields as $field) {
-            $fieldCopy = $field->duplicate();
-            $self->fields[$fieldCopy->getName()] = $fieldCopy;
+            $self->fields[ $field->getName() ] = $field->duplicate();
         }
-        $self->loaded = true;
+        $self->save();
         return $self;
     }
 

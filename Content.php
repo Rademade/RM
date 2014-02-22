@@ -60,16 +60,11 @@ class RM_Content
     public function duplicate() {
         $self = new self($this->_dataWorker->getAllData());
         $self->_dataWorker->_getKey()->setValue(0);
-        $self->save();
+        //todo extract protected method duplicate contentLang
         foreach ($this->getAllContentLangs() as $contentLang) {
-            $contentLangCopy = $contentLang->duplicate();
-            foreach ($contentLangCopy->getAllFields() as $field) {
-                $field->setIdContent($self->getId());
-                $field->save();
-            }
-            $contentLangCopy->setIdContent($self->getId());
-            $contentLangCopy->save();
+            $self->_contentLangs[ $contentLang->getIdLang() ] = $contentLang->duplicate();
         }
+        $self->save();
         return $self;
     }
 

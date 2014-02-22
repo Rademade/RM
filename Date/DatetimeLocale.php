@@ -71,9 +71,10 @@ class RM_Date_DatetimeLocale {
     }
 
     protected function __initTranslate() {
-        #rm_todo check
-        $this->_tr = $this->_view->translate || new Zend_Translate([
+        #rm_todo extract class RM_Translate::getDefault()
+        $this->_tr = $this->_view->translate ?: new Zend_Translate([
             'adapter' => 'gettext',
+            'disableNotices' => true
         ]);
     }
 

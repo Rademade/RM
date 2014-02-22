@@ -91,7 +91,7 @@ class RM_Content_Field
     public function duplicate() {
         $data = $this->toArray();
         $data['idField'] = 0;
-        $self = new self((object)$data);
+        $self = new self(new RM_Compositor($data));
         $self->save();
         return $self;
     }
