@@ -8,6 +8,8 @@ class RM_Page
 		RM_Interface_Deletable,
 		RM_Interface_Contentable {
 
+	use RM_Trait_MultiName;
+
 	const CACHE_NAME = 'page';
 
 	const TABLE_NAME = 'pages';

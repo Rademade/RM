@@ -1,4 +1,5 @@
 <?php
+// todo redo to trait
 abstract class RM_System_Sitemap_ObjectItem {
 
     private static $_urlHelper;

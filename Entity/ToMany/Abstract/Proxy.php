@@ -21,6 +21,10 @@ abstract class RM_Entity_ToMany_Abstract_Proxy
      */
     private $_collection;
 
+    /**
+     * @param RM_Entity_ToMany_Intermediate $intermediate
+     * @return RM_Entity
+     */
     abstract protected function __getIntermediateEntity(RM_Entity_ToMany_Intermediate $intermediate);
     abstract protected function __getCollectionClassName();
     abstract protected function __getIntermediateEntityField();
@@ -99,6 +103,10 @@ abstract class RM_Entity_ToMany_Abstract_Proxy
      */
     public function getItems() {
         return $this->_getCollection()->getIntermediateEntities();
+    }
+
+    public function isEmpty() {
+        return sizeof($this->getItems()) == 0;
     }
 
     /**

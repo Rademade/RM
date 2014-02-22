@@ -190,7 +190,7 @@ abstract class RM_Entity
      * @static
      * @param $id
      * @param array $options
-     * @return static
+     * @return self
      */
 	public static function getById($id, array $options = array()) {
 		$id = (int)$id;
@@ -239,7 +239,7 @@ abstract class RM_Entity
         foreach ($conditions as $field => $value) {
             $select->where($field . ' = ?', $value);
         }
-        if ($limit === 0) {
+        if ($limit !== 0) {
             $select->limit( $limit );
         }
         return static::_initList( $select, array() );

@@ -5,10 +5,10 @@ class RM_System_Cache {
 	private $isCached = false;
 	private $baseCM;
 	
-	public function __construct($additionalPrefix = '') {
+	public function __construct($domain = '') {
 		$cfg = Zend_Registry::get('cfg');
 		$this->cfg = (object)$cfg['cache'];
-        $this->cfg->prefix .= $additionalPrefix;
+        $this->cfg->prefix .= md5($domain);
 		$this->isCached = intval($this->cfg->enableCache) === 1;
 		$this->baseCM = $this->createBaseCM();
 	}

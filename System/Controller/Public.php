@@ -21,7 +21,7 @@ abstract class RM_System_Controller_Public
      */
     protected $_userSession;
 
-	public function preDispatch() {
+    public function preDispatch() {
         parent::preDispatch();
 		$this->_cart = Application_Model_User_Cart::getInstance();
 		$this->_userWatcher = Application_Model_Watcher::getInstance();

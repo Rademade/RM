@@ -12,7 +12,8 @@ trait RM_Trait_MultiName {
         if ( is_string($this->_cachedName) ) {
             return $this->_cachedName;
         }
-        $name = $this->getContentManager()->getDefaultContentLang()->getFieldContent('name');
+        $name = $this->__getCurrentName();
+        if ($name == '') $name = $this->__getDefaultName();
         if ($name == '') $name = $this->getAnyName();
         $this->_cachedName = $name;
         return $name;
@@ -25,6 +26,14 @@ trait RM_Trait_MultiName {
             }
         }
         return '';
+    }
+
+    protected function __getCurrentName() {
+        return $this->getContentManager()->getCurrentContentLang()->getFieldContent('name');
+    }
+
+    protected function __getDefaultName() {
+        return $this->getContentManager()->getDefaultContentLang()->getFieldContent('name');
     }
 
 }
