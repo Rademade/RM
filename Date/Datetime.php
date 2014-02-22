@@ -1,5 +1,5 @@
 <?php
-class RM_Datetime
+class RM_Date_Datetime
     extends
         DateTime {
 
@@ -10,7 +10,7 @@ class RM_Datetime
     const FULL_TIME_FORMAT = 'H:i:s';
 
     /**
-     * @var RM_DatetimeLocale
+     * @var RM_Date_DatetimeLocale
      */
     private static $_locale;
 
@@ -128,12 +128,12 @@ class RM_Datetime
     }
 
     public function getTimestampOfTime() {
-        return $this->getHours() * RM_Time::HOUR + $this->getMinutes() * RM_Time::MINUTE + $this->getSeconds();
+        return $this->getHours() * RM_Date_Time::HOUR + $this->getMinutes() * RM_Date_Time::MINUTE + $this->getSeconds();
     }
 
     /**
      * @param $count
-     * @return RM_Datetime
+     * @return RM_Date_Datetime
      */
     public function addYears($count) {
         return $this->add(new DateInterval('P' . $count . 'Y'));
@@ -141,7 +141,7 @@ class RM_Datetime
 
     /**
      * @param $count
-     * @return RM_Datetime
+     * @return RM_Date_Datetime
      */
     public function addMonths($count) {
         return $this->add(new DateInterval('P' . $count . 'M'));
@@ -149,7 +149,7 @@ class RM_Datetime
 
     /**
      * @param $count
-     * @return RM_Datetime
+     * @return RM_Date_Datetime
      */
     public function addDays($count) {
         return $this->add(new DateInterval('P' . $count . 'D'));
@@ -157,7 +157,7 @@ class RM_Datetime
 
     /**
      * @param $count
-     * @return RM_Datetime
+     * @return RM_Date_Datetime
      */
     public function addHours($count) {
         return $this->add(new DateInterval('PT' . $count . 'H'));
@@ -165,7 +165,7 @@ class RM_Datetime
 
     /**
      * @param $count
-     * @return RM_Datetime
+     * @return RM_Date_Datetime
      */
     public function addMinutes($count) {
         return $this->add(new DateInterval('PT' . $count . 'M'));
@@ -173,7 +173,7 @@ class RM_Datetime
 
     /**
      * @param $count
-     * @return RM_Datetime
+     * @return RM_Date_Datetime
      */
     public function addSeconds($count) {
         return $this->add(new DateInterval('PT' . $count . 'S'));
@@ -206,7 +206,7 @@ class RM_Datetime
     }
 
     public function getTimeInstance() {
-        return RM_Time::fromTimestamp( $this->getTimestampOfTime() );
+        return RM_Date_Time::fromTimestamp( $this->getTimestampOfTime() );
     }
 
     public function toString() {
@@ -223,7 +223,7 @@ class RM_Datetime
     }
 
     protected static function __initDatetimeLocale() {
-        self::$_locale = new RM_DatetimeLocale();
+        self::$_locale = new RM_Date_DatetimeLocale();
     }
 
 }

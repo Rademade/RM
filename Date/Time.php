@@ -1,5 +1,5 @@
 <?php
-class RM_Time {
+class RM_Date_Time {
 
     const HOUR = 3600;
     const MINUTE = 60;
@@ -11,16 +11,16 @@ class RM_Time {
     }
 
     /**
-     * @return RM_Time
+     * @return RM_Date_Time
      */
     public static function now() {
-        $now = RM_Datetime::now();
+        $now = RM_Date_Datetime::now();
         return new self($now->getHours(), $now->getMinutes(), $now->getSeconds());
     }
 
     /**
      * @param int $time
-     * @return RM_Time
+     * @return RM_Date_Time
      */
     public static function fromString($time) {
         $tokens = explode(':', $time) + array(0, 0, 0);
@@ -29,7 +29,7 @@ class RM_Time {
 
     /**
      * @param int $timestamp
-     * @return RM_Time
+     * @return RM_Date_Time
      */
     public static function fromTimestamp($timestamp) {
         return (new self(0, 0, 0))->setTimestamp($timestamp);
@@ -37,7 +37,7 @@ class RM_Time {
 
     /**
      * @param int $timestamp
-     * @return RM_Time
+     * @return RM_Date_Time
      */
     public function setTimestamp($timestamp) {
         $this->_timestamp = $timestamp;

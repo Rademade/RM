@@ -1,5 +1,5 @@
 <?php
-class RM_DatetimeLocale {
+class RM_Date_DatetimeLocale {
 
     const WEEKDAY_MONDAY = 1;
     const WEEKDAY_TUESDAY = 2;
@@ -71,7 +71,10 @@ class RM_DatetimeLocale {
     }
 
     protected function __initTranslate() {
-        $this->_tr = $this->_view->translate;
+        #rm_todo check
+        $this->_tr = $this->_view->translate || new Zend_Translate([
+            'adapter' => 'gettext',
+        ]);
     }
 
     protected function __initWeekdays() {
