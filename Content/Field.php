@@ -88,6 +88,14 @@ class RM_Content_Field
         }
     }
 
+    public function duplicate() {
+        $data = $this->toArray();
+        $data['idField'] = 0;
+        $self = new self((object)$data);
+        $self->save();
+        return $self;
+    }
+
 	public function getIdName() {
 		return $this->idFieldName;
 	}
@@ -213,6 +221,18 @@ class RM_Content_Field
 		}
 		return $field;
 	}
+
+    public function toArray() {
+        return array(
+            'idField' => $this->idField,
+            'idContent' => $this->idContent,
+            'idLang' => $this->idLang,
+            'idFieldName' => $this->idFieldName,
+            'processType' => $this->processType,
+            'fieldContent' => $this->getContent(),
+            'fieldStatus' => $this->fieldStatus
+        );
+    }
 
     private static function _getFromDB($idContent, $idLang, $idFieldName) {
         $select = self::_getSelect();

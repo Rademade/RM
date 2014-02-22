@@ -51,6 +51,19 @@ class RM_Content_Lang
         parent::destroy();
     }
 
+    public function duplicate() {
+        $data = $this->toArray();
+        $data['idContentLang'] = 0;
+        $self = new self((object)$data);
+        $self->save();
+        foreach ($this->fields as $field) {
+            $fieldCopy = $field->duplicate();
+            $self->fields[$fieldCopy->getName()] = $fieldCopy;
+        }
+        $self->loaded = true;
+        return $self;
+    }
+
 	public function loadFields() {
 		if (!$this->loaded) {
 			$this->loaded = true;
@@ -213,5 +226,14 @@ class RM_Content_Lang
             $fields[ $field->getName() ] = $field->getContent();
         }
         return $fields;
+    }
+
+    public function toArray() {
+        return array(
+            'idContentLang' => $this->idContentLang,
+            'idContent' => $this->idContent,
+            'idLang' => $this->idLang,
+            'contentLangStatus' => $this->contentLangStatus
+        );
     }
 }

@@ -57,6 +57,22 @@ class RM_Content
         parent::destroy();
     }
 
+    public function duplicate() {
+        $self = new self($this->_dataWorker->getAllData());
+        $self->_dataWorker->_getKey()->setValue(0);
+        $self->save();
+        foreach ($this->getAllContentLangs() as $contentLang) {
+            $contentLangCopy = $contentLang->duplicate();
+            foreach ($contentLangCopy->getAllFields() as $field) {
+                $field->setIdContent($self->getId());
+                $field->save();
+            }
+            $contentLangCopy->setIdContent($self->getId());
+            $contentLangCopy->save();
+        }
+        return $self;
+    }
+
 	public static function _setSelectRules(Zend_Db_Select $select) {
 		$select->where('contents.contentStatus != ?', self::STATUS_DELETED);
 	}
