@@ -239,7 +239,7 @@ abstract class RM_Entity
         foreach ($conditions as $field => $value) {
             $select->where($field . ' = ?', $value);
         }
-        if ($limit === 0) {
+        if ($limit !== 0) {
             $select->limit( $limit );
         }
         return static::_initList( $select, array() );
