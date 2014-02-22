@@ -49,6 +49,6 @@ abstract class RM_Mail {
 	}
 	
 	abstract public function getText();
-	abstract public function send($toEmail);
+	abstract public function send($email);
 		
 }
