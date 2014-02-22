@@ -76,7 +76,8 @@ abstract class RM_XLS_Abstract {
         $fileExtension = is_null($fileExtension) ? $this->getFileExtension() : trim($fileExtension, '/');
         $path = trim($path, '/');
         $objWriter = new PHPExcel_Writer_Excel5($this->_document);
-        $objWriter->save( $path . '/' . $fileName . '.' . $fileExtension );
+        $path = '/' . $path . '/' . $fileName . '.' . $fileExtension;
+        $objWriter->save( $path );
         return $path;
     }
 
