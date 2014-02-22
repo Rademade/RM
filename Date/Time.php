@@ -138,6 +138,30 @@ class RM_Date_Time {
         return $this;
     }
 
+    public function lesser(RM_Date_Time $other) {
+        return $this->getTimestamp() < $other->getTimestamp();
+    }
+
+    public function greater(RM_Date_Time $other) {
+        return $this->getTimestamp() > $other->getTimestamp();
+    }
+
+    public function equal(RM_Date_Time $other) {
+        return $this->getTimestamp() == $other->getTimestamp();
+    }
+
+    public function lesserEqual(RM_Date_Time $other) {
+        return $this->lesser($other) || $this->equal($other);
+    }
+
+    public function greaterEqual(RM_Date_Time $other) {
+        return $this->greater($other) || $this->equal($other);
+    }
+
+    public function between(RM_Date_Time $lhs, RM_Date_Time $rhs) {
+        return $this->greaterEqual($lhs) && $this->lesser($rhs);
+    }
+
     private function _addLeadingZero($value) {
         return ($value < 10 ? '0' : '') . $value;
     }
