@@ -84,6 +84,10 @@ class RM_Entity_Worker_Data
         return (object)$data;
     }
 
+    public function isChanged($fieldName) {
+        return isset( $this->_changes[ $fieldName ] );
+    }
+    
 	public function getValue($name) {
         if ($this->_isExistAttribute( $name )) {
 			return $this->_attributes[ $name ]->getValue();

@@ -44,6 +44,7 @@ class RM_Query_Exec {
 
     public static function getRowCount(Zend_Db_Select $select, $idFieldName) {
         $db = Zend_Registry::get('db');
+        //RM_TODO refactoring
         /* @var  Zend_Db_Adapter_Abstract $db */
         $sqlQuery = preg_replace(
             '/^(SELECT)(.*?)(FROM)/i',
