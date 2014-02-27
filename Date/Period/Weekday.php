@@ -2,7 +2,7 @@
 use RM_Date_Time as RM_Time;
 use RM_Date_Datetime as RM_Datetime;
 
-class RM_Date_WeekdayPeriod {
+class RM_Date_Period_Weekday {
 
     protected $_weekday;
 
@@ -51,15 +51,27 @@ class RM_Date_WeekdayPeriod {
     }
 
     public function includesDate(RM_Date_Datetime $date) {
-        return $this->getWeekday() == $date->getWeekday();
+        $passed = $this->getWeekday() == $date->getWeekday();
+        if ($this->_coversNextDay()) {
+            $nextWeekday = RM_Date_Datetime::getLocale()->getNextWeekdayNumber($this->getWeekday());
+            $passed = $passed || $nextWeekday == $date->getWeekday();
+        }
+        return $passed;
     }
 
     public function includesTime(RM_Time $time) {
-        if ( $this->getTimeBegin()->greater($this->getTimeEnd()) ) {
+        if ($this->_coversNextDay()) {
             return $this->getTimeBegin()->lesserEqual($time) || $time->lesser($this->getTimeEnd());
         } else {
             return $time->between($this->getTimeBegin(), $this->getTimeEnd());
         }
+    }
+
+    /**
+     * if we have time begin = 23:45, and time end = 03:00 (night time, next day)
+     */
+    private function _coversNextDay() {
+        return $this->getTimeBegin()->greater($this->getTimeEnd());
     }
 
     private function _validateWeekday($weekday) {

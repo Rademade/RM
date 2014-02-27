@@ -1,6 +1,8 @@
 <?php
 class RM_Date_Time {
 
+    //RM_TODO add aligning
+
     const HOUR = 3600;
     const MINUTE = 60;
 
@@ -160,6 +162,10 @@ class RM_Date_Time {
 
     public function between(RM_Date_Time $lhs, RM_Date_Time $rhs) {
         return $this->greaterEqual($lhs) && $this->lesser($rhs);
+    }
+
+    public function align() {
+        //RM_TODO implement
     }
 
     private function _addLeadingZero($value) {

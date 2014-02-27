@@ -66,6 +66,10 @@ class RM_Date_DatetimeLocale {
         return $this->getDeclinationMonths()[$month];
     }
 
+    public function getNextWeekdayNumber($weekday) {
+        return ($weekday + 1) % 7; //RM_TODO fix SUNDAY = 7
+    }
+
     protected function __initView() {
         $this->_view = Zend_Layout::getMvcInstance()->getView();
     }

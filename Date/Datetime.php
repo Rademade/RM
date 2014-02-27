@@ -195,6 +195,18 @@ class RM_Date_Datetime
         return $this->addHours(1);
     }
 
+    /**
+     * @param $count
+     * @return RM_Date_Datetime
+     */
+    public function subDays($count) {
+        return $this->sub(new DateInterval('P' . $count . 'D'));
+    }
+
+    public function subDay() {
+        return $this->subDays(1);
+    }
+
     public function resetTime() {
         $this->setTime(0, 0, 0);
         return $this;
