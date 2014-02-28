@@ -128,7 +128,7 @@ class RM_Date_Datetime
     }
 
     public function getTimestampOfTime() {
-        return $this->getHours() * RM_Date_Time::HOUR + $this->getMinutes() * RM_Date_Time::MINUTE + $this->getSeconds();
+        return $this->getHours() * RM_Date_Time::SECONDS_PER_HOUR + $this->getMinutes() * RM_Date_Time::SECONDS_PER_MINUTE + $this->getSeconds();
     }
 
     /**

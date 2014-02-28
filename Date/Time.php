@@ -1,15 +1,21 @@
 <?php
 class RM_Date_Time {
 
-    //RM_TODO add aligning
+    const HOURS_PER_DAY = 24;
+    const MINUTES_PER_HOUR = 60;
+    const SECONDS_PER_HOUR = 3600;
+    const SECONDS_PER_MINUTE = 60;
+    const SECONDS_PER_DAY = 86400;
 
-    const HOUR = 3600;
-    const MINUTE = 60;
+    const LAST_HOUR = 23;
+    const LAST_MINUTE = 59;
+    const LAST_SECOND = 59;
 
     private $_timestamp;
 
     public function __construct($hours = 0, $minutes = 0, $seconds = 0) {
-        $this->_timestamp = $hours * self::HOUR + $minutes * self::MINUTE + $seconds;
+        $this->_timestamp = $hours * self::SECONDS_PER_HOUR + $minutes * self::SECONDS_PER_MINUTE + $seconds;
+        $this->_correctTimestamp();
     }
 
     /**
@@ -47,27 +53,27 @@ class RM_Date_Time {
     }
 
     public function setHours($count) {
-        return $this->subHours($this->getHours())->addHours($count % self::MINUTE);
+        return $this->subHours($this->getHours())->addHours($count % self::SECONDS_PER_MINUTE);
     }
 
     public function setMinutes($count) {
-        return $this->subMinutes($this->getMinutes())->addMinutes($count % self::MINUTE);
+        return $this->subMinutes($this->getMinutes())->addMinutes($count % self::SECONDS_PER_MINUTE);
     }
 
     public function setSeconds($count) {
-        return $this->subSeconds($this->getSeconds())->addSeconds($count % self::MINUTE);
+        return $this->subSeconds($this->getSeconds())->addSeconds($count % self::SECONDS_PER_MINUTE);
     }
 
     public function getHours() {
-        return (int)($this->_timestamp / self::HOUR);
+        return (int)($this->_timestamp / self::SECONDS_PER_HOUR);
     }
 
     public function getMinutes() {
-        return (int)($this->_timestamp % self::HOUR / self::MINUTE);
+        return (int)($this->_timestamp % self::SECONDS_PER_HOUR / self::SECONDS_PER_MINUTE);
     }
 
     public function getSeconds() {
-        return $this->_timestamp % self::HOUR % self::MINUTE;
+        return $this->_timestamp % self::SECONDS_PER_HOUR % self::SECONDS_PER_MINUTE;
     }
 
     public function getTimestamp() {
@@ -75,33 +81,33 @@ class RM_Date_Time {
     }
 
     public function addHours($count) {
-        $this->_timestamp += $count * self::HOUR;
-        return $this;
+        $this->_timestamp += $count * self::SECONDS_PER_HOUR;
+        return $this->_correctTimestamp();
     }
 
     public function addMinutes($count) {
-        $this->_timestamp += $count * self::MINUTE;
-        return $this;
+        $this->_timestamp += $count * self::SECONDS_PER_MINUTE;
+        return $this->_correctTimestamp();
     }
 
     public function addSeconds($count) {
         $this->_timestamp += $count;
-        return $this;
+        return $this->_correctTimestamp();
     }
 
     public function subHours($count) {
-        $this->_timestamp -= $count * self::HOUR;
-        return $this;
+        $this->_timestamp -= $count * self::SECONDS_PER_HOUR;
+        return $this->_correctTimestamp();
     }
 
     public function subMinutes($count) {
-        $this->_timestamp -= $count * self::MINUTE;
-        return $this;
+        $this->_timestamp -= $count * self::SECONDS_PER_MINUTE;
+        return $this->_correctTimestamp();
     }
 
     public function subSeconds($count) {
         $this->_timestamp -= $count;
-        return $this;
+        return $this->_correctTimestamp();
     }
 
     public function toArray() {
@@ -133,7 +139,7 @@ class RM_Date_Time {
     public function round() {
         $this->setSeconds(0);
         if ($this->getMinutes() > 30) {
-            $this->addMinutes(60 - $this->getMinutes());
+            $this->addMinutes(self::MINUTES_PER_HOUR - $this->getMinutes());
         } elseif ($this->getMinutes() > 0) {
             $this->addMinutes(30 - $this->getMinutes());
         }
@@ -164,12 +170,37 @@ class RM_Date_Time {
         return $this->greaterEqual($lhs) && $this->lesser($rhs);
     }
 
-    public function align() {
-        //RM_TODO implement
+    public function isLastHour() {
+        return $this->getHours() == self::LAST_HOUR;
+    }
+
+    public function isLastMinute() {
+        return $this->getMinutes() == self::LAST_MINUTE;
+    }
+
+    public function isLastSecond() {
+        return $this->getSeconds() == self::LAST_SECOND;
+    }
+
+    public function isBeginOfDay() {
+        return !$this->getHours() && !$this->getMinutes();
+    }
+
+    public function isEndOfDay() {
+        return $this->isLastHour() && $this->isLastMinute();
+    }
+
+    public function __clone() {
+        return self::fromTimestamp($this->getTimestamp());
     }
 
     private function _addLeadingZero($value) {
         return ($value < 10 ? '0' : '') . $value;
+    }
+
+    private function _correctTimestamp() {
+        $this->_timestamp = $this->_timestamp % self::SECONDS_PER_DAY;
+        return $this;
     }
 
 }
