@@ -6,6 +6,7 @@ class RM_Query_Limits
 	private $_limit;
 	private $_pageRange = 10;
 	private $_page;
+    private $_offset;
 
     public static function get( $limit ) {
         return new self( $limit );
@@ -24,6 +25,10 @@ class RM_Query_Limits
 		$this->_page = (int)$page;
 		return $this;
 	}
+
+    public function setOffset($offset) {
+        $this->_offset = $offset;
+    }
 	
 	public function getHash() {
 		return join('_', array(
@@ -40,6 +45,10 @@ class RM_Query_Limits
 	public function getLimit() {
 		return $this->_limit;
 	}
+
+    public function getOffset() {
+        return $this->_offset;
+    }
 	
 	public function getPageRange() {
 		return $this->_pageRange;
@@ -73,9 +82,9 @@ class RM_Query_Limits
 			$items = Zend_Paginator::factory( $select );
 			$this->_setPaginatorParams( $items );
 		} else {
-			if ($this->getLimit() !== 0) {
-				$select->limit( $this->getLimit() );
-			}
+            if ($this->getLimit() || $this->getOffset()) {
+                $select->limit( $this->getLimit(), $this->getOffset() );
+            }
 			$items = Zend_Registry::get('db')->fetchAll( $select );
 		}
 		return $items;
