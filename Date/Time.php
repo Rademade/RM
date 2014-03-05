@@ -1,5 +1,7 @@
 <?php
-class RM_Date_Time {
+class RM_Date_Time
+    implements
+        JsonSerializable {
 
     const HOURS_PER_DAY = 24;
     const MINUTES_PER_HOUR = 60;
@@ -132,10 +134,6 @@ class RM_Date_Time {
         return $this->toShortString();
     }
 
-    public function __toString() {
-        return $this->toString();
-    }
-
     public function round() {
         $this->setSeconds(0);
         if ($this->getMinutes() > 30) {
@@ -192,6 +190,14 @@ class RM_Date_Time {
 
     public function __clone() {
         return self::fromTimestamp($this->getTimestamp());
+    }
+
+    public function __toString() {
+        return $this->toString();
+    }
+
+    public function jsonSerialize() {
+        return $this->toString();
     }
 
     private function _addLeadingZero($value) {

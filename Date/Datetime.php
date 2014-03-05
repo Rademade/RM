@@ -1,7 +1,9 @@
 <?php
 class RM_Date_Datetime
     extends
-        DateTime {
+        DateTime
+    implements
+        JsonSerializable {
 
     const SHORT_DATE_FORMAT = 'd.m.Y';
     const SEARCH_DATE_FORMAT = 'Y-m-d';
@@ -227,6 +229,10 @@ class RM_Date_Datetime
 
     public function __toString() {
         return $this->toString();
+    }
+
+    public function jsonSerialize() {
+        return $this->getShortDate();
     }
 
     public function setDay($day) {
