@@ -13,6 +13,9 @@ class RM_Date_Time
     const LAST_MINUTE = 59;
     const LAST_SECOND = 59;
 
+    const MOON_00 = 1;
+    const MOON_24 = 2;
+
     private $_timestamp;
 
     public function __construct($hours = 0, $minutes = 0, $seconds = 0) {
@@ -112,26 +115,39 @@ class RM_Date_Time
         return $this->_correctTimestamp();
     }
 
-    public function toArray() {
-        return array(
-            $this->_addLeadingZero($this->getHours()),
-            $this->_addLeadingZero($this->getMinutes()),
-            $this->_addLeadingZero($this->getSeconds())
-        );
+    public function toArray($moon = self::MOON_00) {
+        if ($moon == self::MOON_24) {
+            $isEndOfDay = $this->isEndOfDay();
+            $parts = array(
+                $isEndOfDay ? 24 : $this->getHours(),
+                $isEndOfDay ? 0 : $this->getMinutes(),
+                $isEndOfDay ? 0 : $this->getSeconds()
+            );
+        } else {
+            $parts = array(
+                $this->getHours(),
+                $this->getMinutes(),
+                $this->getSeconds()
+            );
+        }
+        foreach ($parts as &$part) {
+            $part = $this->_addLeadingZero($part);
+        }
+        return $parts;
     }
 
-    public function toShortString() {
-        $array = $this->toArray();
+    public function toShortString($moon = self::MOON_00) {
+        $array = $this->toArray($moon);
         array_pop($array);
         return join(':', $array);
     }
 
-    public function toFullString() {
-        return join(':', $this->toArray());
+    public function toFullString($moon = self::MOON_00) {
+        return join(':', $this->toArray($moon));
     }
 
-    public function toString() {
-        return $this->toShortString();
+    public function toString($moon = self::MOON_00) {
+        return $this->toShortString($moon);
     }
 
     public function round() {
