@@ -7,6 +7,12 @@ class RM_Head
      * @var RM_Head
      */
     private static $_self;
+
+    /**
+     * @var array
+     */
+    protected static $_links = array();
+
     /**
      * @var RM_Head_JS
      */
@@ -23,6 +29,13 @@ class RM_Head
         return self::$_self;
     }
 
+    public static function getModuleName() {
+        if (isset(static::$_links[Layouts::$moduleName])) {
+            return static::$_links[Layouts::$moduleName];
+        }
+        return Layouts::$moduleName;
+    }
+
     public function dispatchLoopStartup(Zend_Controller_Request_Abstract $request) {
         $this->_init();
         $this->_load();
@@ -30,7 +43,7 @@ class RM_Head
     }
 
     public function _init() {
-        $cfg = new Zend_Config_Ini( APPLICATION_PATH . '/configs/views/' . Layouts::$moduleName . '.ini' );
+        $cfg = new Zend_Config_Ini( APPLICATION_PATH . '/configs/views/' . static::getModuleName() . '.ini' );
         $this->_js = new RM_Head_JS( $cfg->js );
         $this->_css = new RM_Head_CSS( $cfg->css );
     }
