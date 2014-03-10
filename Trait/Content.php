@@ -4,7 +4,7 @@ trait RM_Trait_Content {
     /**
      * @var RM_Content
      */
-    private $_content;
+    protected $_content;
 
     abstract public function getIdContent();
 

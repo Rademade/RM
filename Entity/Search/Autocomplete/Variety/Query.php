@@ -6,6 +6,10 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
     const FIELD_ID = 'autocompleteId';
     const FIELD_NAME = 'autocompleteValue';
 
+    protected static function __getDb() {
+        return RM_Entity_Db::getInstance()->getConnection( get_called_class() );
+    }
+
     /**
      * @return RM_Entity_Search_Autocomplete_Result[]
      */
@@ -53,7 +57,7 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
      * @return Zend_Db_Select
      */
     protected function __getSelect() {
-        $select = RM_Entity::getDb()->select();
+        $select = self::__getDb()->select();
         $select->from(
             $this->__getAutocompleteTableName(),
             array_merge(
@@ -73,7 +77,7 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
      */
     protected function __initAutocompleteResults(Zend_Db_Select $select) {
         $result = array();
-        foreach ( RM_Entity::getDb()->fetchAll( $select ) as $row ) {
+        foreach ( $select->getAdapter()->fetchAll( $select ) as $row ) {
             $autoCompleteItem = $this->__initResultRow( $row->{ self::FIELD_NAME } );
             if ( isset( $row->{ self::FIELD_ID } ) ) {
                 $autoCompleteItem->setId( $row->{ self::FIELD_ID } );

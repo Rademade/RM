@@ -122,19 +122,21 @@ class RM_Entity_Worker_Data
     }
 
 	public function save() {
+        /* @var RM_Entity $className */
+        $className = $this->_callClassName;
         if (!$this->isInserted()) {
-			RM_Entity::getDb()->insert(
+            $className::getDb()->insert(
 				$this->_table,
 				$this->_getInsertData()
 			);
             if ($this->_getKey()->isAutoIncrement()) {
-    			$this->_getKey()->setValue( RM_Entity::getDb()->lastInsertId() );
+    			$this->_getKey()->setValue($className::getDb()->lastInsertId() );
             }
 			$this->_changes = array();
 			return true;
 		} else {
             if (!empty($this->_changes)) {
-				RM_Entity::getDb()->update(
+                $className::getDb()->update(
 					$this->_table,
 					$this->_changes,
 					$this->_getKey()->getFieldName() . ' = ' . $this->_getKey()->getValue()

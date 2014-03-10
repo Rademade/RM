@@ -73,10 +73,9 @@ class RM_Query_Limits
 			$items = Zend_Paginator::factory( $items );
 			$this->_setPaginatorParams( $items );
 		}
-		//TODO limit
 		return $items;
 	}
-	
+
 	public function getResult(Zend_Db_Select $select) {
 		if (is_int($this->getPage())) {
 			$items = Zend_Paginator::factory( $select );
@@ -85,7 +84,7 @@ class RM_Query_Limits
             if ($this->getLimit() || $this->getOffset()) {
                 $select->limit( $this->getLimit(), $this->getOffset() );
             }
-			$items = Zend_Registry::get('db')->fetchAll( $select );
+			$items = $select->getAdapter()->fetchAll( $select );
 		}
 		return $items;
 	}

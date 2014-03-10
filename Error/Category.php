@@ -43,11 +43,11 @@ class RM_Error_Category
 	public static function getErrorsCount(
 		RM_Query_Where $conditions
 	) {
-		$select = self::getDb()->select()->from('_errorLogRow', array(
+		$select = static::getDb()->select()->from('_errorLogRow', array(
 			'count'=> 'COUNT(idLogRow)'
 		));
 		$conditions->improveQuery($select);
-		return (int)self::getDb()->fetchRow($select)->count;
+		return (int)static::getDb()->fetchRow($select)->count;
 	}
 
 	public function getErrorCount() {

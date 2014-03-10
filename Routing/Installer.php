@@ -79,15 +79,16 @@ class RM_Routing_Installer {
     protected function __installFileRouter() {
         $dir = APPLICATION_PATH . self::ROUTER_CONFIG_DIR;
         $handle = opendir($dir);
-        while ( false !== ($file = readdir($handle)) ) {
+        while (false !== ($file = readdir($handle))) {
             if (preg_match('/\.ini/', $file)) {
-                $config = new Zend_Config_Ini(
-                    $dir . $file,
-                    APPLICATION_ENV
-                );
-                $this->getRouter()->addConfig($config);
+                $this->__addRouteFile($dir . $file);
             }
         }
+    }
+
+    protected function __addRouteFile($file) {
+        $config = new Zend_Config_Ini($file, APPLICATION_ENV);
+        $this->getRouter()->addConfig($config);
     }
 
     /**

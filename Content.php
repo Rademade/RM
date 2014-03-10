@@ -46,8 +46,8 @@ class RM_Content
     protected $_cacheWorker;
 
     public function __construct(stdClass $data) {
-        $this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
-        $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
+        $this->_dataWorker = new RM_Entity_Worker_Data(get_called_class(), $data);
+        $this->_cacheWorker = new RM_Entity_Worker_Cache(get_called_class());
     }
 
     public function destroy() {
@@ -58,7 +58,7 @@ class RM_Content
     }
 
     public function duplicate() {
-        $self = new self($this->_dataWorker->getAllData());
+        $self = new static($this->_dataWorker->getAllData());
         $self->_dataWorker->_getKey()->setValue(0);
         //todo extract protected method duplicate contentLang
         foreach ($this->getAllContentLangs() as $contentLang) {
@@ -96,7 +96,8 @@ class RM_Content
 			$this->_loadedContentLangs = true;
 			$where = new RM_Query_Where();
 			$where->add('idContent', RM_Query_Where::EXACTLY, (int)$this->getId());
-			foreach (RM_Content_Lang::getList( $where ) as $contentLang) {
+            $contentLangClassName = $this->__getContentLangClassName();
+			foreach ($contentLangClassName::getList($where) as $contentLang) {
 				/* @var $contentLang RM_Content_Lang */
 				if (!isset($this->_contentLangs[ $contentLang->getIdLang() ])) {
 					$this->_contentLangs[ $contentLang->getIdLang() ] = $contentLang;
@@ -172,7 +173,8 @@ class RM_Content
 	public function addContentLang(RM_Lang $lang) {
 		$idLang = $lang->getId();
 		if (!isset( $this->_contentLangs[ $idLang ] )) {
-			$this->_contentLangs[ $idLang ] = RM_Content_Lang::getByContent($this->getId(), $idLang);
+            $contentLangClassName = $this->__getContentLangClassName();
+			$this->_contentLangs[ $idLang ] = $contentLangClassName::getByContent($this->getId(), $idLang);
 			$this->_settedLangs[] = $idLang;
 		}
 		return $this->getContentLangByLangId( $idLang );
@@ -195,7 +197,8 @@ class RM_Content
 			if ($this->isLoadedContentLangs()) {
 				return false;
 			} else {
-				$contentLang = RM_Content_Lang::getByContent($this->getId(), $idLang);
+                $contentLangClassName = $this->__getContentLangClassName();
+				$contentLang = $contentLangClassName::getByContent($this->getId(), $idLang);
 				$this->_contentLangs[ $idLang ] = $contentLang;
 				return $contentLang;
 			}
@@ -262,5 +265,12 @@ class RM_Content
 		$this->save();
 		$this->__cleanCache();
 	}
+
+    /**
+     * @return RM_Content_Lang
+     */
+    protected function __getContentLangClassName() {
+        return 'RM_Content_Lang';
+    }
 
 }

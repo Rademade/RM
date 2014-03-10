@@ -43,7 +43,6 @@ class RM_Query_Exec {
 	}
 
     public static function getRowCount(Zend_Db_Select $select, $idFieldName) {
-        $db = Zend_Registry::get('db');
         //RM_TODO refactoring
         /* @var  Zend_Db_Adapter_Abstract $db */
         $sqlQuery = preg_replace(
@@ -51,7 +50,7 @@ class RM_Query_Exec {
             '$1 COUNT(' . $idFieldName . ') as count $3',
             $select->assemble()
         );
-        $resultRow = $db->fetchRow( $sqlQuery );
+        $resultRow = $select->getAdapter()->fetchRow( $sqlQuery );
         return $resultRow ? (int)$resultRow->count : 0;
     }
 

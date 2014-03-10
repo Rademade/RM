@@ -157,11 +157,10 @@ abstract class RM_Entity
 	/* Load entities block */
 
 	/**
-	 * @static
 	 * @return Zend_Db_Adapter_Abstract
 	 */
 	public static function getDb() {
-		return Zend_Registry::get('db');
+        return RM_Entity_Db::getInstance()->getConnection(get_called_class());
 	}
 
 	public static function _setSelectRules(Zend_Db_Select $select) {}
@@ -177,7 +176,7 @@ abstract class RM_Entity
 		if (is_null(static::TABLE_NAME)) {
 			throw new Exception('Table name not setted');
 		}
-		$select = self::getDb()->select();
+		$select = static::getDb()->select();
 		/* @var $select Zend_Db_Select */
 		$select->from(static::TABLE_NAME, static::_getDbAttributes());
         if (!(isset($options['no_rule']) && $options['no_rule'])) {
@@ -268,7 +267,7 @@ abstract class RM_Entity
 
 	public static function _initItem(Zend_Db_Select $select) {
 		$select->limit(1);
-		if (($data = self::getDb()->fetchRow($select)) !== false) {
+		if (($data = static::getDb()->fetchRow($select)) !== false) {
 			return static::_initItemFromData( $data );
 		} else {
 			return null;

@@ -57,7 +57,7 @@ class RM_Content_Lang
     public function duplicate() {
         $data = $this->toArray();
         $data['idContentLang'] = 0;
-        $self = new self( new RM_Compositor($data) );
+        $self = new static( new RM_Compositor($data) );
         foreach ($this->fields as $field) {
             $self->fields[ $field->getName() ] = $field->duplicate();
         }
@@ -72,7 +72,8 @@ class RM_Content_Lang
 			$where = new RM_Query_Where();
 			$where->add('idContent', '=', $this->getIdContent());
 			$where->add('idLang', '=', $this->getIdLang());
-            $fields = RM_Content_Field::getList($where);
+            $contentFieldClassName = $this->__getContentFieldClassName();
+            $fields = $contentFieldClassName::getList($where);
 			foreach ($fields as $field) {
 				/* @var $field RM_Content_Field */
 				$this->fields[ $field->getName() ] = $field;
@@ -99,7 +100,8 @@ class RM_Content_Lang
 
 	private function checkField($name) {
 		if ( !isset( $this->fields[ $name ] ) ) {
-			$this->fields[ $name ] = RM_Content_Field::getByName(
+            $contentFieldClassName = $this->__getContentFieldClassName();
+			$this->fields[ $name ] = $contentFieldClassName::getByName(
 				$name,
 				$this->getIdContent(),
 				$this->getIdLang()
@@ -191,12 +193,12 @@ class RM_Content_Lang
 	 * @return RM_Content_Lang
 	 */
 	public static function getByContent($idContent, $idLang) {
-		$select = self::_getSelect();
+		$select = static::_getSelect();
 		$select->where('idContent = ?', $idContent);
 		$select->where('idLang = ?', $idLang);
-		$contentLang = self::_initItem($select );
+		$contentLang = static::_initItem($select );
 		if (!($contentLang instanceof self)) {
-			$contentLang = new self( new RM_Compositor( array(
+			$contentLang = new static( new RM_Compositor( array(
                 'idContent' => $idContent,
                 'idLang' => $idLang,
             ) ) );
@@ -237,4 +239,12 @@ class RM_Content_Lang
             'contentLangStatus' => $this->contentLangStatus
         );
     }
+
+    /**
+     * @return RM_Content_Field
+     */
+    protected function __getContentFieldClassName() {
+        return 'RM_Content_Field';
+    }
+
 }

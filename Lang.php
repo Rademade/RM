@@ -216,14 +216,14 @@ class RM_Lang
 	}
 
 	private function checkUnique() {
-		$select = self::getDb()->select()
+		$select = static::getDb()->select()
 			->from('langs',array(
 				'count'=>'COUNT(idLang)'
 			))
 			->where('langUrl = ? ', $this->getUrl())
 			->where('langStatus != ?', self::STATUS_DELETED)
 			->where('idLang != ? ', $this->getId());
-		if (self::getDb()->fetchRow($select)->count === 0) {
+		if (static::getDb()->fetchRow($select)->count === 0) {
 			return true;
 		} else {
 			throw new Exception('URL ' . $this->getUrl() . ' NOT EXIST');

@@ -91,7 +91,7 @@ class RM_Content_Field
     public function duplicate() {
         $data = $this->toArray();
         $data['idField'] = 0;
-        $self = new self(new RM_Compositor($data));
+        $self = new static(new RM_Compositor($data));
         $self->save();
         return $self;
     }
@@ -203,10 +203,10 @@ class RM_Content_Field
 		    $idContent,
 		    $idLang
         ));
-		if (is_null($field = self::_getStorage()->getData($key))) {//get from storage
-			if (is_null($field = self::__load($key))) {//get from cache
-				if (is_null($field = self::_getFromDB($idContent, $idLang, $idFieldName))) {//get from db
-					$field =  new self( new RM_Compositor( array(//create
+		if (is_null($field = static::_getStorage()->getData($key))) {//get from storage
+			if (is_null($field = static::__load($key))) {//get from cache
+				if (is_null($field = static::_getFromDB($idContent, $idLang, $idFieldName))) {//get from db
+					$field =  new static( new RM_Compositor( array(//create
 		                'idContent' =>$idContent,
 		                'idLang' => $idLang,
 					    'idFieldName' => $idFieldName
@@ -216,7 +216,7 @@ class RM_Content_Field
                 }
 			}
             if ($idContent !== 0) {
-                self::_getStorage()->setData($field, $key);
+                static::_getStorage()->setData($field, $key);
             }
 		}
 		return $field;
@@ -235,11 +235,11 @@ class RM_Content_Field
     }
 
     private static function _getFromDB($idContent, $idLang, $idFieldName) {
-        $select = self::_getSelect();
+        $select = static::_getSelect();
         $select->where('idContent = ?', $idContent);
         $select->where('idLang = ?', $idLang);
         $select->where('idFieldName = ?', $idFieldName);
-        return self::_initItem($select);
+        return static::_initItem($select);
     }
 
 	public function remove() {

@@ -43,8 +43,8 @@ class RM_Gallery_Photo
 
 	public function __construct($data) {
 		parent::__construct($data);
-		$this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
-		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
+		$this->_dataWorker = new RM_Entity_Worker_Data(get_called_class(), $data);
+		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_called_class());
 	}
 
     public function destroy() {
@@ -69,7 +69,7 @@ class RM_Gallery_Photo
 		$position,
 		RM_Photo $photo
 	) {
-		$galleryPhoto = new self( new RM_Compositor( array(
+		$galleryPhoto = new static( new RM_Compositor( array(
             'idGallery' => $idGallery,
 		    'idPhoto' => $photo->getIdPhoto(),
 		    'idContent' => $photo->getIdContent(),

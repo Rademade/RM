@@ -50,8 +50,8 @@ class RM_Gallery
 	}
 
     public function __construct($data) {
-        $this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
-        $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
+        $this->_dataWorker = new RM_Entity_Worker_Data(get_called_class(), $data);
+        $this->_cacheWorker = new RM_Entity_Worker_Cache(get_called_class());
     }
 
     public function destroy() {
@@ -92,7 +92,8 @@ class RM_Gallery
 
 	public function addPhoto(RM_Photo $photo) {
         if ( !$this->_isPhotoAdded($photo) ) {
-            $this->_photos[] = RM_Gallery_Photo::createGalleryPhoto(
+            $galleryPhotoClassName = $this->__getGalleryPhotoClassName();
+            $this->_photos[] = $galleryPhotoClassName::createGalleryPhoto(
                 $this->getId(),
                 ($this->getMaxPosition() + 1),
                 $photo
@@ -136,7 +137,8 @@ class RM_Gallery
 	 */
 	public function getPhotos() {
 		if (!$this->_isPhotosLoaded) {
-			$this->_photos = RM_Gallery_Photo::getGalleryPhotos(
+            $galleryPhotoClassName = $this->__getGalleryPhotoClassName();
+			$this->_photos = $galleryPhotoClassName::getGalleryPhotos(
 				$this->getId(),
 				new RM_Query_Limits(0)
 			);
@@ -150,7 +152,8 @@ class RM_Gallery
 	 */
 	public function getPosterPhoto() {
 		if (!($this->_poster instanceof RM_Photo)) {
-			$photos = RM_Gallery_Photo::getGalleryPhotos(
+            $galleryPhotoClassName = $this->__getGalleryPhotoClassName();
+			$photos = $galleryPhotoClassName::getGalleryPhotos(
 				$this->getId(),
 				new RM_Query_Limits(1)
 			);
@@ -220,6 +223,13 @@ class RM_Gallery
             }
         }
         return false;
+    }
+
+    /**
+     * @return RM_Gallery_Photo
+     */
+    protected function __getGalleryPhotoClassName() {
+        return 'RM_Gallery_Photo';
     }
 	
 }

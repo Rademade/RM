@@ -54,13 +54,13 @@ class RM_Photo
 	
 	const NO_IMAGE = 'no.jpg';
 	
-	const ERROR_NO_PHOTO = 'Photo not upload';
-	const ERROR_NOT_FOUND = 'Photo not found';
+	const ERROR_NO_PHOTO = 'Photo was not uploaded';
+	const ERROR_NOT_FOUND = 'Photo was not found';
 	const ERROR_WRONG_FILE = 'You can upload only images';
 
 	public function __construct($data) {
-		$this->_dataWorker = new RM_Entity_Worker_Data(get_class(), $data);
-		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
+		$this->_dataWorker = new RM_Entity_Worker_Data(get_called_class(), $data);
+		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_called_class());
 	}
 
     public function destroy() {
@@ -70,7 +70,7 @@ class RM_Photo
     }
 
 	public static function create(RM_User_Interface $user) {
-		$photo = new self(new stdClass());
+		$photo = new static(new stdClass());
 		$photo->_dataWorker->setValue('idUser', $user->getId());
 		return $photo;
 	}
@@ -99,7 +99,8 @@ class RM_Photo
 	
 	private function createContent() {
 		if ($this->getIdContent() === 0) {
-			$this->_content = RM_Content::create();
+            $contentClassName = $this->__getContentClassName();
+			$this->_content = $contentClassName::create();
 			$this->_content->save();
 		}
 	}
@@ -121,7 +122,8 @@ class RM_Photo
 			if ($this->getIdContent() === 0) {			
 				$this->createContent();
 			} else {
-				$this->_content = RM_Content::getById( $this->getIdContent() );
+                $contentClassName = $this->__getContentClassName();
+				$this->_content = $contentClassName::getById( $this->getIdContent() );
 			}
 		}
 		return $this->_content;
@@ -301,6 +303,13 @@ class RM_Photo
 //            'width' => $this->getWidth(),
 //            'height' => $this->getHeight()
         );
+    }
+
+    /**
+     * @return RM_Content
+     */
+    protected function __getContentClassName() {
+        return 'RM_Content';
     }
 
 }
