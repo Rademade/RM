@@ -35,19 +35,14 @@ class RM_Content
      * @var RM_Content_Lang[]
      */
     private $_settedLangs = array();
-
     /**
      * @var RM_Entity_Worker_Data
      */
-    private $_dataWorker;
-    /**
-     * @var RM_Entity_Worker_Cache
-     */
-    protected $_cacheWorker;
+    protected $_rmContentDataWorker;
 
     public function __construct(stdClass $data) {
-        $this->_dataWorker = new RM_Entity_Worker_Data(get_called_class(), $data);
-        $this->_cacheWorker = new RM_Entity_Worker_Cache(get_called_class());
+        $this->_rmContentDataWorker = new RM_Entity_Worker_Data(get_class(), $data);
+        $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
     }
 
     public function destroy() {
@@ -58,8 +53,9 @@ class RM_Content
     }
 
     public function duplicate() {
-        $self = new static($this->_dataWorker->getAllData());
-        $self->_dataWorker->_getKey()->setValue(0);
+        /* @var self $self */
+        $self = new static($this->_rmContentDataWorker->getAllData());
+        $self->_rmContentDataWorker->_getKey()->setValue(0);
         //todo extract protected method duplicate contentLang
         foreach ($this->getAllContentLangs() as $contentLang) {
             $self->_contentLangs[ $contentLang->getIdLang() ] = $contentLang->duplicate();
@@ -73,18 +69,18 @@ class RM_Content
 	}
 
     public function getId() {
-        return $this->_dataWorker->_getKey()->getValue();
+        return $this->_rmContentDataWorker->_getKey()->getValue();
     }
 
 	private function getIdDefaultLang() {
-		return $this->_dataWorker->getValue('idDefaultLang');
+		return $this->_rmContentDataWorker->getValue('idDefaultLang');
 	}
 
 	public function setDefaultLang(RM_Lang $lang) {
 		if (!$this->getContentLang($lang)) {
 			throw new Exception('Such content in content manager not exist');
 		}
-        $this->_dataWorker->setValue('idDefaultLang', $lang->getId());
+        $this->_rmContentDataWorker->setValue('idDefaultLang', $lang->getId());
 	}
 
 	public function isLoadedContentLangs() {
@@ -254,14 +250,14 @@ class RM_Content
 	}
 
 	public function save() {
-        $this->_dataWorker->save();
+        $this->_rmContentDataWorker->save();
         $this->_saveContent();
         $this->__refreshCache();
         return $this;
 	}
 
 	public function remove() {
-		$this->_dataWorker->setValue('contentStatus', self::STATUS_DELETED);
+		$this->_rmContentDataWorker->setValue('contentStatus', self::STATUS_DELETED);
 		$this->save();
 		$this->__cleanCache();
 	}

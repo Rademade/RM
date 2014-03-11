@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Путь состоит из 4 сегментов
  * - root_dir
@@ -6,9 +7,7 @@
  * - image_dir
  * - image_name
  *  В данном классе описана работа с этими сегментами
- *
  * Class RM_Photo_Resize_PathLoader
- *
  */
 class RM_Photo_Resize_PathLoader {
 
@@ -26,7 +25,7 @@ class RM_Photo_Resize_PathLoader {
 
     public function __construct($rootDir, $imagePath) {
         $this->_rootDir = $rootDir;
-        $this->_imageFullPath =  $rootDir . $imagePath;
+        $this->_imageFullPath = $rootDir . $imagePath;
         $this->_checkImage();
     }
 
@@ -55,8 +54,8 @@ class RM_Photo_Resize_PathLoader {
     }
 
     public function getResizedImageDir() {
-        if ( is_null($this->_resizedImageDirPath) ) {
-            $this->_resizedImageDirPath = $this->_convertHashInPath( md5( $this->getOriginFullPath() ) );
+        if (is_null($this->_resizedImageDirPath)) {
+            $this->_resizedImageDirPath = $this->_convertHashInPath(md5($this->getOriginFullPath()));
         }
         return $this->_resizedImageDirPath;
     }
@@ -66,8 +65,10 @@ class RM_Photo_Resize_PathLoader {
     }
 
     public function getResizeImageName() {
-        if ( is_null($this->_resizedImageFileName) ) {
-            if (empty($this->_resizeImageFileNameParams)) throw new Exception('Set resize image file name params!');
+        if (is_null($this->_resizedImageFileName)) {
+            if (empty($this->_resizeImageFileNameParams)) {
+                throw new Exception('Set resize image file name params!');
+            }
             $this->_resizedImageFileName = join('.', $this->_resizeImageFileNameParams);
         }
         return $this->_resizedImageFileName;
@@ -86,10 +87,12 @@ class RM_Photo_Resize_PathLoader {
 
     public function createDirForResizedImage() {
         $dir = join('', [$this->_rootDir, $this->getCacheDir(), $this->getResizedImageDir()]);
-        if ( !is_dir($dir) ) mkdir($dir, 0777, true);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
     }
 
-    private function _convertHashInPath( $hash ) {
+    private function _convertHashInPath($hash) {
         $i = 0;
         $stepLength = 11;
         $implodedHash = '';
@@ -102,11 +105,11 @@ class RM_Photo_Resize_PathLoader {
     }
 
     private function _checkImage() {
-        if ( !is_file($this->getOriginFullPath()) ) {
-            throw new Exception('Wrong image path given');
+        if (!is_file($this->getOriginFullPath())) {
+            throw new Exception('Wrong image path was given');
         }
-        if ( getimagesize($this->getOriginFullPath()) === false ) {
-            throw new Exception('Wrong image file given');
+        if (getimagesize($this->getOriginFullPath()) === false) {
+            throw new Exception('Wrong image file was given');
         }
     }
 

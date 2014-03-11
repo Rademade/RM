@@ -26,21 +26,15 @@ class RM_Gallery
      * @var RM_Gallery_Photo[]
      */
     private $_photos = array();
-
 	/**
 	 * @var RM_Gallery_Photo
 	 */
 	private $_poster;
-
     /**
      * @var RM_Entity_Worker_Data
      */
-    private $_dataWorker;
-    /**
-     * @var RM_Entity_Worker_Cache
-     */
-    protected $_cacheWorker;
-
+    protected $_rmGalleryDataWorker;
+    
     /**
      * @return RM_Gallery
      */
@@ -50,8 +44,8 @@ class RM_Gallery
 	}
 
     public function __construct($data) {
-        $this->_dataWorker = new RM_Entity_Worker_Data(get_called_class(), $data);
-        $this->_cacheWorker = new RM_Entity_Worker_Cache(get_called_class());
+        $this->_rmGalleryDataWorker = new RM_Entity_Worker_Data(get_class(), $data);
+        $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
     }
 
     public function destroy() {
@@ -68,16 +62,16 @@ class RM_Gallery
     }
 
     public function getIdGallery() {
-        return $this->_dataWorker->getValue('idGallery');
+        return $this->_rmGalleryDataWorker->getValue('idGallery');
     }
 
 	public function setStatus($statusGallery) {
         $statusGallery = (int)$statusGallery;
-		$this->_dataWorker->setValue('galleryStatus', $statusGallery);
+		$this->_rmGalleryDataWorker->setValue('galleryStatus', $statusGallery);
 	}
 
 	public function getStatus() {
-		return $this->_dataWorker->getValue('galleryStatus');
+		return $this->_rmGalleryDataWorker->getValue('galleryStatus');
 	}
 
 	public function getMaxPosition() {
@@ -172,7 +166,7 @@ class RM_Gallery
 
 
     public function save() {
-        $this->_dataWorker->save();
+        $this->_rmGalleryDataWorker->save();
         $this->__cache();
         return $this;
     }

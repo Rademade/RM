@@ -4,7 +4,6 @@ class RM_Gallery_Photo
 		RM_Photo {
 
 	const CACHE_NAME = 'galleriesPhotos';
-
 	const TABLE_NAME = 'galleriesPhotos';
 
 	protected static $_properties = array(
@@ -30,12 +29,7 @@ class RM_Gallery_Photo
 	/**
 	 * @var RM_Entity_Worker_Data
 	 */
-	private $_dataWorker;
-	/**
-	 * @var RM_Entity_Worker_Cache
-	 */
-	protected $_cacheWorker;
-
+	protected $_rmGalleryPhotoDataWorker;
     /**
      * @var RM_Gallery
      */
@@ -43,8 +37,8 @@ class RM_Gallery_Photo
 
 	public function __construct($data) {
 		parent::__construct($data);
-		$this->_dataWorker = new RM_Entity_Worker_Data(get_called_class(), $data);
-		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_called_class());
+		$this->_rmGalleryPhotoDataWorker = new RM_Entity_Worker_Data(get_class(), $data);
+		$this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
 	}
 
     public function destroy() {
@@ -54,12 +48,12 @@ class RM_Gallery_Photo
     }
 
 	public function __get($name) {
-		$val = $this->_dataWorker->getValue($name);
+		$val = $this->_rmGalleryPhotoDataWorker->getValue($name);
 		return (is_null($val)) ? parent::__get($name) : $val;
 	}
 
 	public function __set($name, $value) {
-		if (is_null($this->_dataWorker->setValue($name, $value))) {
+		if (is_null($this->_rmGalleryPhotoDataWorker->setValue($name, $value))) {
 			parent::__set($name, $value);
 		}
 	}
@@ -82,11 +76,11 @@ class RM_Gallery_Photo
 	}
 
 	public function getIdRelation() {
-		return $this->_dataWorker->getValue('idGalleryPhoto');
+		return $this->_rmGalleryPhotoDataWorker->getValue('idGalleryPhoto');
 	}
 	
 	public function getIdGallery() {
-		return $this->_dataWorker->getValue('idGallery');
+		return $this->_rmGalleryPhotoDataWorker->getValue('idGallery');
 	}
 
     /**
@@ -112,34 +106,34 @@ class RM_Gallery_Photo
 		$idGallery,
 		RM_Query_Limits $limit
 	) {
-		$select = self::_getSelect();
+		$select = static::_getSelect();
 		$select->where('galleriesPhotos.idGallery = ?', intval($idGallery));
 		$order = new RM_Query_Order();
 		$order->add('galleryPhotoPosition', RM_Query_Order::ASC);
 		$order->improveQuery($select);
 		$list = $limit->getResult($select);
 		foreach ($list as &$photo) {
-			$photo = new self($photo);
+			$photo = new static($photo);
 		}
 		return $list;
 	}
 
 	public function setPosition($position) {
         $position = (int)$position;
-		$this->_dataWorker->setValue('galleryPhotoPosition', $position);
+		$this->_rmGalleryPhotoDataWorker->setValue('galleryPhotoPosition', $position);
 	}
 	
 	public function getPosition() {
-		return $this->_dataWorker->getValue('galleryPhotoPosition');
+		return $this->_rmGalleryPhotoDataWorker->getValue('galleryPhotoPosition');
 	}
 	
 	public function getStatus() {
-		return $this->_dataWorker->getValue('galleryPhotoStatus');
+		return $this->_rmGalleryPhotoDataWorker->getValue('galleryPhotoStatus');
 	}
 	
 	public function setStatus($status) {
         $status = (int)$status;
-		$this->_dataWorker->setValue('galleryPhotoStatus', $status);
+		$this->_rmGalleryPhotoDataWorker->setValue('galleryPhotoStatus', $status);
 	}
 
 	public function __refreshCache() {
@@ -154,8 +148,8 @@ class RM_Gallery_Photo
 
 	public function save() {
 		parent::save();
-		$this->_dataWorker->setValue('idPhoto', $this->getIdPhoto());
-		$this->_dataWorker->save();
+		$this->_rmGalleryPhotoDataWorker->setValue('idPhoto', $this->getIdPhoto());
+		$this->_rmGalleryPhotoDataWorker->save();
 		$this->getGallery()->__refreshCache();
 	}
 
