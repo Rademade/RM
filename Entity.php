@@ -19,7 +19,7 @@ abstract class RM_Entity
 	/**
 	 * @var RM_Entity_Worker_Data
 	 */
-	private $_dataWorker;
+	protected $_entityDataWorker;
 
 	private $_calledClass;
 
@@ -30,7 +30,7 @@ abstract class RM_Entity
 
 	public function __construct($data = null) {
         $this->_calledClass = get_called_class();
-		$this->_dataWorker = new RM_Entity_Worker_Data(
+		$this->_entityDataWorker = new RM_Entity_Worker_Data(
             $this->_calledClass,
             is_null($data) ? new stdClass() : $data
         );
@@ -49,7 +49,7 @@ abstract class RM_Entity
 	}
 
 	public function __get($name) {
-		$val = $this->_dataWorker->getValue($name);
+		$val = $this->_entityDataWorker->getValue($name);
 		if (is_null($val)) {
 			throw new Exception("Try to get unexpected attribute {$name}");
 		} else {
@@ -58,13 +58,13 @@ abstract class RM_Entity
 	}
 
 	public function __set($name, $value) {
-        if (is_null($this->_dataWorker->setValue($name, $value))) {
+        if (is_null($this->_entityDataWorker->setValue($name, $value))) {
             throw new Exception("Try to set unexpected attribute {$name}");
         }
 	}
 
 	public function save() {
-		if ($this->_dataWorker->save()) {
+		if ($this->_entityDataWorker->save()) {
 			if (static::AUTO_CACHE) {
 				$this->__refreshCache();
 			}
