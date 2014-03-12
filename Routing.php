@@ -72,9 +72,7 @@ class RM_Routing
     /**
      * @var RM_Entity_Worker_Data
      */
-    private $_dataWorker;
-
-    private $_calledClass;
+    protected $_routingDataWorker;
 
 	const TYPE_ROUTE  = 1;
 	const TYPE_STATIC = 2;
@@ -90,15 +88,14 @@ class RM_Routing
 	const TMP_ROUTE_NAME = '~tmp';
 
 	public function __construct(stdClass $data) {
-        parent::__construct($data);
+        parent::__construct( $data );
         $this->_url = new RM_Routing_Url( $data->url );
         $this->_defaultParams = new RM_Routing_DefaultParams($data->defaultParams);
-        $this->_calledClass = get_called_class();
-        $this->_dataWorker = new RM_Entity_Worker_Data($this->_calledClass, $data);
+        $this->_routingDataWorker = new RM_Entity_Worker_Data(get_called_class(), $data);
 	}
 
     public function getData() {
-        return $this->_dataWorker->getAllData();
+        return $this->_routingDataWorker->getAllData();
     }
 	
 	public static function create(
@@ -219,7 +216,7 @@ class RM_Routing
 	}
 
     public function __get($name) {
-        $val = $this->_dataWorker->getValue($name);
+        $val = $this->_routingDataWorker->getValue($name);
         if (is_null($val)) {
             return $this->_defaultParams->__get($name);
         } else {
@@ -228,14 +225,14 @@ class RM_Routing
     }
 
     public function __set($name, $value) {
-        if (is_null($this->_dataWorker->setValue($name, $value))) {
+        if (is_null($this->_routingDataWorker->setValue($name, $value))) {
             $this->_defaultParams->__set($name, $value);
             $this->defaultParams = $this->_defaultParams->__toString();
         }
     }
 
     public function save() {
-        if ($this->_dataWorker->save()) {
+        if ($this->_routingDataWorker->save()) {
             static::clearCache();
             if (static::AUTO_CACHE) {
                 $this->__refreshCache();
