@@ -147,7 +147,9 @@ abstract class RM_Entity_ToMany_Abstract_Proxy
     public function getIntermediateEntityItems() {
         $list = array();
         foreach ($this->getItems() as $intermediate) {
-            $list[] = $this->__getIntermediateEntity($intermediate);
+            if ( ($entity = $this->__getIntermediateEntity($intermediate)) instanceof RM_Entity ) {
+                $list[] = $entity;
+            }
         }
         return $list;
     }
