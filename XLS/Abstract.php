@@ -130,7 +130,7 @@ abstract class RM_XLS_Abstract {
     }
 
     protected function __getAutoDate() {
-        return date('d.m.Y');
+        return RM_Date_Datetime::now()->getShortDate();
     }
 
     private function _renderHead() {

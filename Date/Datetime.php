@@ -201,6 +201,18 @@ class RM_Date_Datetime
      * @param $count
      * @return RM_Date_Datetime
      */
+    public function subMonths($count) {
+        return $this->sub(new DateInterval('P' . $count . 'M'));
+    }
+
+    public function subMonth() {
+        return $this->subMonths(1);
+    }
+
+    /**
+     * @param $count
+     * @return RM_Date_Datetime
+     */
     public function subDays($count) {
         return $this->sub(new DateInterval('P' . $count . 'D'));
     }
