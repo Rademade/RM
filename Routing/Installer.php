@@ -1,29 +1,29 @@
 <?php
 class RM_Routing_Installer {
 
-    const ROUTER_CACHE_CORE_NAME = 'routing';
+    const DEFAULT_ROUTER_CACHE_CORE_NAME = 'routing';
+    const DEFAULT_ROUTE_CACHE_NAME = 'ALL';
 
     const ROUTER_CONFIG_DIR = '/configs/routes/';
-
-    const ROUTE_CACHE_NAME = 'ALL';
 
     /**
      * @var RM_Routing_Installer
      */
     private static $_self;
-
     /**
      * @var Zend_Controller_Router_Rewrite
      */
     private $_router;
-
     /**
      * @var Zend_Cache_Core
      */
     private $_cacheCore;
+    private $_routerCacheCoreName;
+    private $_routeCacheName;
 
+    private function __construct() {
 
-    private function __construct() {}
+    }
 
     /**
      * @static
@@ -61,7 +61,7 @@ class RM_Routing_Installer {
         if (!$this->_cacheCore instanceof Zend_Cache_Core) {
             $cacheManager = Zend_Registry::get('cachemanager');
             /* @var Zend_Cache_Manager $cacheManager */
-            $this->_cacheCore = $cacheManager->getCache( self::ROUTER_CACHE_CORE_NAME );
+            $this->_cacheCore = $cacheManager->getCache($this->_getRouterCacheCoreName());
         }
         return $this->_cacheCore;
     }
@@ -70,7 +70,7 @@ class RM_Routing_Installer {
      * @return Zend_Controller_Router_Route_Abstract[]
      */
     protected function __getCachedRouter() {
-        return $this->__getCacheCore()->load( self::ROUTE_CACHE_NAME );
+        return $this->__getCacheCore()->load($this->_getRouteCacheName());
     }
 
     /**
@@ -104,12 +104,12 @@ class RM_Routing_Installer {
      */
     protected function __installDbRouter() {
         foreach ($this->__getRoutes() as $route) {
-            switch($route->getType()) {
+            switch ($route->getType()) {
                 case RM_Routing::TYPE_ROUTE:
-                    $this->__addTypeRoute( $route );
+                    $this->__addTypeRoute($route);
                     break;
                 default:
-                    throw new Exception( RM_Routing::ERROR_INVALID_ROUTE_TYPE );
+                    throw new Exception(RM_Routing::ERROR_INVALID_ROUTE_TYPE);
                     break;
             }
         }
@@ -135,16 +135,32 @@ class RM_Routing_Installer {
      */
     public function install() {
         if ($routes = $this->__getCachedRouter()) {
-            $this->getRouter()->addRoutes( $routes );
+            $this->getRouter()->addRoutes($routes);
         } else {
             $this->__installFileRouter();
             $this->__installDbRouter();
-            $this->__getCacheCore()->save( $this->getRouter()->getRoutes() );
+            $this->__getCacheCore()->save($this->getRouter()->getRoutes());
         }
     }
 
     public function clear() {
-        self::__getCacheCore()->remove( self::ROUTE_CACHE_NAME );
+        self::__getCacheCore()->remove($this->_getRouteCacheName());
+    }
+
+    public function setRouterCacheCoreName($name) {
+        $this->_routerCacheCoreName = $name;
+    }
+
+    private function _getRouterCacheCoreName() {
+        return $this->_routerCacheCoreName ? : static::DEFAULT_ROUTER_CACHE_CORE_NAME;
+    }
+
+    public function setRouteCacheName($name) {
+        $this->_routeCacheName = $name;
+    }
+
+    private function _getRouteCacheName() {
+        return $this->_routeCacheName ? : static::DEFAULT_ROUTE_CACHE_NAME;
     }
 
 }

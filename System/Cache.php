@@ -1,30 +1,87 @@
 <?php
 class RM_System_Cache {
 
-    private $cfg = null;
-    private $isCached = false;
-    private $baseCM;
+    /**
+     * @var object
+     */
+    protected $_cfg = null;
+    protected $_isCached = false;
+    protected $_baseCM;
+    protected $_domain;
 
     public function __construct($domain = '') {
+        $this->_domain = $domain;
+        $this->_initCfg();
+        $this->_isCached = intval($this->_cfg->enableCache) === 1;
+        $this->_baseCM = $this->createBaseCM();
+    }
+
+    public function load() {
+        if (($cm = $this->loadFromCache()) === false) {
+            $cm = $this->__loadCacheParams();
+        }
+        $this->saveCache($cm);
+        return $cm;
+    }
+
+    public static function cleanAll() {
+        $cache = new self();
+        $cache->clear();
+    }
+
+    public function clear() {
+        if ($this->_isCached) {
+            $this->_baseCM->clean();
+        }
+    }
+
+    protected function _initCfg() {
         $cfg = Zend_Registry::get('cfg');
-        $this->cfg = (object)$cfg['cache'];
-        $this->cfg->prefix .= md5($domain);
-        $this->isCached = intval($this->cfg->enableCache) === 1;
-        $this->baseCM = $this->createBaseCM();
+        $this->_cfg = (object)$cfg['cache'];
+        $this->_cfg->prefix .= md5($this->_domain);
+    }
+
+    protected function __loadCacheParams() {
+        $cm = new Zend_Cache_Manager();
+        $this->__loadFromDirectory($cm, $this->_cfg->cacheIniDir);
+        return $cm;
+    }
+
+    protected function __loadFromDirectory(Zend_Cache_Manager $cm, $dir) {
+        $handle = opendir($dir);
+        while (false !== ($file = readdir($handle))) {
+            if (preg_match('/\.ini/', $file)) {
+                $this->_loadFromFile($cm, $dir . $file);
+            }
+        }
+    }
+
+    protected function saveCache(Zend_Cache_Manager $cm) {
+        if ($this->_isCached) {
+            $this->_baseCM->save($cm, $this->_cfg->cacheName);
+        }
+    }
+
+    protected function loadFromCache() {
+        if ($this->_isCached) {
+            return $this->_baseCM->load($this->_cfg->cacheName);
+        }
+        return false;
     }
 
     private function createBaseCM() {
-        if ($this->isCached) {
+        if ($this->_isCached) {
             $data = new stdClass();
-            $data->cacheName = $this->cfg->cacheName;
+            $data->cacheName = $this->_cfg->cacheName;
             $this->prepareParams($data);
             return Zend_Cache::factory(
                 'Core',
-                $this->cfg->type,
+                $this->_cfg->type,
                 $this->getFrontOptions($data),
                 $this->getBackOptions($data)
             );
         }
+        return null;
     }
 
     private function _getOptions() {
@@ -40,7 +97,7 @@ class RM_System_Cache {
         /* @var Zend_Config $config */
         $config = isset($config->{$key}) ? $config->{$key} : self::_getOptions();
         $data = array_merge(
-            $this->cfg->front,
+            $this->_cfg->front,
             $config->toArray()
         );
         return $data;
@@ -58,14 +115,14 @@ class RM_System_Cache {
 
     private function getFrontOptions($options) {
         $frontConfig = self::_mergeOptions($options, 'front');
-        $frontConfig['caching'] = $this->isCached;
-        $frontConfig['cache_id_prefix'] = $this->cfg->prefix . $options->cacheName;
+        $frontConfig['caching'] = $this->_isCached;
+        $frontConfig['cache_id_prefix'] = $this->_cfg->prefix . $options->cacheName;
         return $frontConfig;
     }
 
     private function getBackOptions($options) {
         $backConfig = self::_mergeOptions($options, 'back');
-        $backConfig['cache_id_prefix'] = $this->cfg->prefix;
+        $backConfig['cache_id_prefix'] = $this->_cfg->prefix;
         return $backConfig;
     }
 
@@ -78,7 +135,7 @@ class RM_System_Cache {
 
     private function getBack($options) {
         return array(
-            'name' => $this->cfg->type,
+            'name' => $this->_cfg->type,
             'options' => $this->getBackOptions($options)
         );
     }
@@ -94,47 +151,6 @@ class RM_System_Cache {
         ));
     }
 
-    public function load() {
-        if (($cm = $this->loadFromCache()) === false) {
-            $cm = $this->__loadCacheParams();
-        }
-        $this->saveCache($cm);
-        return $cm;
-    }
-
-    public static function cleanAll() {
-        $cache = new self();
-        $cache->clear();
-    }
-
-    public function clear() {
-        if ($this->isCached) {
-            $this->baseCM->clean();
-        }
-    }
-
-    protected function __loadCacheParams() {
-        $cm = new Zend_Cache_Manager();
-        $this->__loadFromDirectory($cm, $this->cfg->cacheIniDir);
-        return $cm;
-    }
-
-    protected function __loadFromDirectory(Zend_Cache_Manager $cm, $dir) {
-        $handle = opendir($dir);
-        while (false !== ($file = readdir($handle))) {
-            if (preg_match('/\.ini/', $file)) {
-                $this->_loadFromFile($cm, $dir . $file);
-            }
-        }
-    }
-
-    private function loadFromCache() {
-        if ($this->isCached) {
-            return $this->baseCM->load($this->cfg->cacheName);
-        }
-        return false;
-    }
-
     private function _loadFromFile(Zend_Cache_Manager $cm, $file) {
         foreach ($this->_parse($file) as $routeName => $options) {
             $this->prepareParams($options);
@@ -145,12 +161,6 @@ class RM_System_Cache {
                     'backend' => $this->getBack($options)
                 )
             );
-        }
-    }
-
-    private function saveCache(Zend_Cache_Manager $cm) {
-        if ($this->isCached) {
-            $this->baseCM->save($cm, $this->cfg->cacheName);
         }
     }
 
