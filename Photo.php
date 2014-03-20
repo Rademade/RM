@@ -167,7 +167,7 @@ class RM_Photo
         return PUBLIC_PATH . $this->_getSavePath();
     }
 
-    private static function getProportionPath($width, $height, $imagePath) {
+    protected static function getProportionPath($width, $height, $imagePath) {
         return join('', array(
             '/image.php?',
             "width={$width}&",
