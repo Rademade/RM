@@ -43,7 +43,7 @@ class RM_Entity_Search_Autocomplete
                 $results[] = $autoCompleteVariety->getResults();
             }
         }
-        return call_user_func_array('array_merge', $results);
+        return empty($results) ? [] : call_user_func_array('array_merge', $results);
     }
 
 }
