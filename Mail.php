@@ -31,7 +31,11 @@ abstract class RM_Mail {
         if ( isset($this->_cnf['mail']['remote-transport']) ) {
             $mail->setRemoteTransportConfig( RM_Mail_Message_RemoteTransport::init( $this->_cnf['mail']['remote-transport'] ) );
         }
-        $mail->send($this->transport);
+        if ( isset($this->_cnf['mail']['in-background']) && $this->_cnf['mail']['in-background'] ) {
+            RM_Mail_Message_Background::add($mail, $this->transport);
+        } else {
+            $mail->send( $this->transport );
+        }
 	}
 	
 	protected function getView() {
