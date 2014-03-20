@@ -7,12 +7,14 @@ class RM_View_Element_Button
 	public function __construct(
 		$routeName,
 		$routeData,
-		$buttonName
+		$buttonName,
+        $elementId = null
 	) {
 		$this->_buttonName = $buttonName;
 		parent::__construct(
 			$routeName,
-			$routeData
+			$routeData,
+            $elementId
 		);
 	}
 

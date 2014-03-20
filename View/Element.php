@@ -4,12 +4,16 @@ abstract class RM_View_Element {
 	private $_routeName;
 	private $_routeData;
 
+    private $_elementId;
+
 	public function __construct(
 		$routeName,
-		array $routeData
+		array $routeData,
+        $elementId = null
 	) {
 		$this->_routeName = $routeName;
 		$this->setRouteDate($routeData);
+        $this->_elementId = $elementId;
 	}
 
 	public function setRouteDate(array $params) {
@@ -33,5 +37,9 @@ abstract class RM_View_Element {
 			$this->getRouteName()
 		);
 	}
+
+    public function getId() {
+        return $this->_elementId;
+    }
 
 }
