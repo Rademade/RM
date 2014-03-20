@@ -1,7 +1,8 @@
 <?php
 class RM_Entity_Search_Autocomplete_Result
     implements
-        RM_Entity_Search_Result_Interface {
+        RM_Entity_Search_Result_Interface,
+        JsonSerializable {
 
     private $_id;
 
@@ -41,6 +42,10 @@ class RM_Entity_Search_Autocomplete_Result
 
     public function getValue() {
         return $this->_value;
+    }
+
+    public function jsonSerialize() {
+        return $this->__toArray();
     }
 
     public function __toArray() {

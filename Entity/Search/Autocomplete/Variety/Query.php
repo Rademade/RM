@@ -50,22 +50,22 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
         }
         $this->addCondition( $this->_getCompleteCondition() );
         parent::__installQueryCondition( $select );
-        $select->limit(5);
     }
 
     /**
      * @return Zend_Db_Select
      */
     protected function __getSelect() {
-        $select = self::__getDb()->select();
+        $select = static::__getDb()->select();
         $select->from(
             $this->__getAutocompleteTableName(),
             array_merge(
-                [self::FIELD_NAME => $this->__getAutocompleteFieldName()],
+                [static::FIELD_NAME => $this->__getAutocompleteFieldName()],
                 $this->__getAutocompleteItemFields()
             )
         );
-        $select->group(self::FIELD_NAME);
+        $select->group(static::FIELD_NAME);
+        $select->limit(10);
         return $select;
     }
 
@@ -78,9 +78,9 @@ abstract class RM_Entity_Search_Autocomplete_Variety_Query
     protected function __initAutocompleteResults(Zend_Db_Select $select) {
         $result = array();
         foreach ( $select->getAdapter()->fetchAll( $select ) as $row ) {
-            $autoCompleteItem = $this->__initResultRow( $row->{ self::FIELD_NAME } );
-            if ( isset( $row->{ self::FIELD_ID } ) ) {
-                $autoCompleteItem->setId( $row->{ self::FIELD_ID } );
+            $autoCompleteItem = $this->__initResultRow( $row->{ static::FIELD_NAME } );
+            if ( isset( $row->{ static::FIELD_ID } ) ) {
+                $autoCompleteItem->setId( $row->{ static::FIELD_ID } );
             }
             $result[] = $autoCompleteItem;
         }
