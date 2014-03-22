@@ -251,21 +251,27 @@ class RM_Photo
     }
 
     public function upload($tmpName) {
-        $this->validate($tmpName);
-        $this->_generateImageSavePath();
+        $extension = $this->validate($tmpName);
+        $savePath = $this->_generateImageSavePath();
+        $this->setPhotoPath($savePath . '.' . $extension);
         copy($tmpName, $this->getFullPhotoPath());
         $this->save();
     }
 
+    /**
+     * is it using somewhere?
+     * @param $imageBinary
+     */
     public function setBinaryImage($imageBinary) {
         //TODO validate binary
-        $this->_generateImageSavePath();
+        $this->setPhotoPath($this->_generateImageSavePath());
         file_put_contents($this->getFullPhotoPath(), $imageBinary);
         $this->save();
     }
 
     public function remove(RM_User_Interface $user) {
-        if ($user->getId() === $this->getIdUser() ||
+        if (
+            $user->getId() === $this->getIdUser() ||
             $user->getRole()->isAdmin()
         ) {
             $this->setStatus(RM_Interface_Deletable::ACTION_DELETE);
@@ -296,7 +302,7 @@ class RM_Photo
         $old = umask(0);
         mkdir(PUBLIC_PATH . static::SAVE_PATH . $dirPath, 0777, true);
         umask($old);
-        $this->setPhotoPath($dirPath . substr($randomPath, $i, $step));
+        return $dirPath . substr($randomPath, $i, $step);
     }
 
     function jsonSerialize() {
