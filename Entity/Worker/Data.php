@@ -107,6 +107,15 @@ class RM_Entity_Worker_Data
         return false;
     }
 
+    public function remove() {
+        /* @var RM_Entity $className */
+        $className = $this->_calledClassName;
+        $className::getDb()->delete(
+            $this->_table,
+            $this->_getKey()->getFieldName() . ' = ' . $this->_getKey()->getValue()
+        );
+    }
+
     public function serialize() {
         $values = array();
         foreach ($this->_attributes as $attribute) {
