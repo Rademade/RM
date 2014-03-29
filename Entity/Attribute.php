@@ -1,18 +1,8 @@
 <?php
 class RM_Entity_Attribute {
 
-	/**
-	 * @var RM_Entity_Attribute_Properties
-	 */
-	private $_properties;
-	private $_value;
-
-	public function __construct(RM_Entity_Attribute_Properties &$properties) {
-		$this->_properties = $properties;
-	}
-
-	protected function _parseValue($value) {
-		$type = $this->_properties->getType();
+	public static function parseValue(RM_Entity_Attribute_Properties $prop, $value) {
+		$type = $prop->getType();
 		if ($type === 'int') {
 			return (int)$value;
 		} elseif ($type === 'string') {
@@ -20,31 +10,8 @@ class RM_Entity_Attribute {
 		} elseif ($type === 'decimal' || $type === 'float') {
 			return $value - 0.0;
 		} else {
-			throw new Exception("Unknown '{$this->_properties->getFieldName()}' value type");
+			throw new Exception("Unknown '{$prop->getFieldName()}' value type");
 		}
-	}
-
-	public function getName() {
-		return $this->_properties->getName();
-	}
-
-	public function getFieldName() {
-		return $this->_properties->getFieldName();
-	}
-
-    public function isAutoIncrement() {
-        return $this->_properties->isAutoIncrement();
-    }
-
-    public function setValue($value) {
-		$this->_value  = $this->_parseValue( $value );
-	}
-
-	public function getValue() {
-		if (is_null($this->_value)) {
-			$this->setValue( $this->_properties->getDefault() );
-		}
-		return $this->_value;
 	}
 
 }
