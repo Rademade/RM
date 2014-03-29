@@ -154,10 +154,9 @@ class RM_Entity_Worker_Data
     }
 
     private function _initKeyName() {
-        $c = sizeof($this->_properties);
-        for ($i = 0; $i < $c; ++$i) {
-            if ($this->_properties[$i]->isKey()) { //set key attribute
-                $this->_keyName = $this->_properties[$i]->getName();
+        foreach ($this->_properties as $property) {
+            if ($property->isKey()) { //set key attribute
+                $this->_keyName = $property->getName();
                 break;
             }
         }
@@ -168,10 +167,7 @@ class RM_Entity_Worker_Data
      * @throws Exception
      */
     private function _initEntity($data) {
-        $c = sizeof($this->_properties);
-        for ($i = 0; $i < $c; ++$i) {
-
-            $property = $this->_properties[$i];
+        foreach ($this->_properties as $property) {
 
             $fieldName = $property->getFieldName();
 
