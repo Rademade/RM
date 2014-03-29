@@ -42,16 +42,17 @@ class RM_Query_Where_Condition
             }
         } else {
             switch ( $this->getInitConditionType() ) {
-                case    self::EXACTLY:      return '=';
-                case    self::LESS:         return '<';
-                case    self::LESS_EXACTLY: return '<=';
-                case    self::MORE:         return '>';
-                case    self::MORE_EXACTLY: return '>=';
-                case    self::NOT:          return '!=';
-                case    self::IS:           return 'IS';
+                case    self::EXACTLY:          return '=';
+                case    self::LESS:             return '<';
+                case    self::LESS_EXACTLY:     return '<=';
+                case    self::MORE:             return '>';
+                case    self::MORE_EXACTLY:     return '>=';
+                case    self::NOT:              return '!=';
+                case    self::IS:               return 'IS';
                 case    self::LIKE:
                 case    self::START_LIKE:
-                case    self::END_LIKE:     return 'LIKE';
+                case    self::END_LIKE:         return 'LIKE';
+                case    self::FULLTEXT_MATCH:   return 'MATCH';
             }
         }
     }
@@ -59,11 +60,22 @@ class RM_Query_Where_Condition
     protected function _getConditionSQL() {
         $sql = '';
         if (!$this->_isEmptyArray()) {
-            $sql =  join(' ', array(
-                $this->getField(),
-                $this->getConditionType(),
-                $this->_getSQLValue()
-            ));
+            if ($this->getInitConditionType() == self::FULLTEXT_MATCH) {
+                $fields = $this->getField();
+                $sql = join(' ', [
+                    'MATCH (',
+                    join(',', is_array($fields) ? $fields : [$fields]),
+                    ') AGAINST (',
+                    $this->_getSQLValue(),
+                    ')'
+                ]);
+            } else {
+                $sql = join(' ', array(
+                    $this->getField(),
+                    $this->getConditionType(),
+                    $this->_getSQLValue()
+                ));
+            }
         }
         return $sql;
     }
@@ -113,6 +125,9 @@ class RM_Query_Where_Condition
                 return self::START_LIKE;
             case self::END_LIKE:
                 return self::END_LIKE;
+            case self::FULLTEXT_MATCH:
+            case 'MATCH':
+                return self::FULLTEXT_MATCH;
             default:
                 throw new Exception('WRONG CONDITION TYPE GIVEN');
         }
