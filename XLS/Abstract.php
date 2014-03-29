@@ -10,6 +10,7 @@ abstract class RM_XLS_Abstract {
     const DEFAULT_DOCUMENT_TITLE = 'Document';
     const DEFAULT_FILE_NAME = 'Report';
     const DEFAULT_FILE_EXTENSION = 'xls';
+    const DEFAULT_DELIMITER = '_';
 
     /** @var RM_Entity[] */
     protected $_entitiesForSheets = array();
@@ -98,7 +99,7 @@ abstract class RM_XLS_Abstract {
     }
 
     public function getFileName() {
-        return $this->_fileName . ($this->_autoDate ? '_' . $this->__getAutoDate() : '');
+        return $this->_fileName . ($this->_autoDate ? static::DEFAULT_DELIMITER . $this->__getAutoDate() : '');
     }
 
     public function getFileExtension() {

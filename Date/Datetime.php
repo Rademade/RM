@@ -7,9 +7,9 @@ class RM_Date_Datetime
 
     const SHORT_DATE_FORMAT = 'd.m.Y';
     const SEARCH_DATE_FORMAT = 'Y-m-d';
-    const FULL_DATE_DELIMITER = ' ';
     const SHORT_TIME_FORMAT = 'H:i';
     const FULL_TIME_FORMAT = 'H:i:s';
+    const DEFAULT_DELIMITER = ' ';
 
     /**
      * @var RM_Date_DatetimeLocale
@@ -54,15 +54,18 @@ class RM_Date_Datetime
         return $this->format(self::SHORT_DATE_FORMAT);
     }
 
-    public function getFullDate($year = true, $delimiter = self::FULL_DATE_DELIMITER) {
-        $pieces = array(
+    public function getFullDate($year = true, $delimiter = self::DEFAULT_DELIMITER) {
+        $date = join(self::DEFAULT_DELIMITER, array(
             $this->format('j'),
             $this->getDeclinationMonthName()
-        );
+        ));
         if ($year) {
-            $pieces[] = $this->format('Y');
+            $date = join($delimiter, array(
+                $date,
+                $this->format('Y')
+            ));
         }
-        return join($delimiter, $pieces);
+        return $date;
     }
 
     public function getSearchDate() {
