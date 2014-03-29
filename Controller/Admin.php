@@ -94,6 +94,10 @@ abstract class RM_Controller_Admin
         }
     }
 
+    public function getQueryParam($paramName) {
+        return RM_Content_Field_Process_Line::init()->getParsedContent($this->getRequest()->getQuery($paramName));
+    }
+
     protected function __setViewParams() {
         $this->view->assign(array(
             'editRoute' => $this->_editRoute,

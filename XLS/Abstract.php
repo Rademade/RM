@@ -12,7 +12,9 @@ abstract class RM_XLS_Abstract {
     const DEFAULT_FILE_EXTENSION = 'xls';
     const DEFAULT_DELIMITER = '_';
 
-    /** @var RM_Entity[] */
+    /**
+     * @var RM_Entity[]
+     */
     protected $_entitiesForSheets = array();
 
     protected $_title = self::DEFAULT_DOCUMENT_TITLE;
@@ -21,6 +23,9 @@ abstract class RM_XLS_Abstract {
     protected $_fileExtension = self::DEFAULT_FILE_EXTENSION;
     protected $_autoDate = true;
 
+    /**
+     * @var PHPExcel
+     */
     private $_document;
     private $_currentRow = self::FIRST_ROW;
     private $_currentColumn = self::FIRST_COLUMN;
