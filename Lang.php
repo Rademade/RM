@@ -155,6 +155,10 @@ class RM_Lang
 	public function getIsoName() {
 		return $this->isoName;
 	}
+
+    public function getHtmlName() {
+        return str_replace('_', '-', $this->getIsoName());
+    }
 	
 	public function setIsoName($iso) {
 		$iso = trim($iso);
