@@ -70,7 +70,7 @@ class RM_Entity_Worker_Data
         if ($this->_isExistAttribute($name)) {
             if ($this->_values[$name] !== $value) {
                 $this->_changes[ $this->_attrNameToField( $name ) ] = $value;
-                $this->_values[$name] = RM_Entity_Attribute::parseValue($this->_properties[$name], $value);
+                $this->_values[$name] = RM_Entity_Attribute_Properties::parseValue($this->_properties[$name], $value);
                 return true;
             }
             return false;
@@ -171,7 +171,7 @@ class RM_Entity_Worker_Data
 
             $fieldName = $property->getFieldName();
 
-            $this->_values[ $property->getName() ] = RM_Entity_Attribute::parseValue(
+            $this->_values[ $property->getName() ] = RM_Entity_Attribute_Properties::parseValue(
                 $property,
                 isset($data->$fieldName) ? $data->$fieldName : null
             );

@@ -102,7 +102,7 @@ class RM_Entity_Storage {
 	public function parse($properties) {
 		$this->_properties = array();
 		foreach ($properties as $attribute => $property) {
-			$this->_properties[] = new RM_Entity_Attribute_Properties(
+			$this->_properties[$attribute] = new RM_Entity_Attribute_Properties(
 				$attribute,
 				$property
 			);
