@@ -39,8 +39,9 @@ class RM_Entity_Worker_Data
 
     public function &_getKey() {
         if (!$this->_key instanceof RM_Entity_Attribute_Key) {
-            $this->_key = new RM_Entity_Attribute_Key( $this->_values[ $this->_keyName ] );
+            $this->_key = new RM_Entity_Attribute_Key();
         }
+        $this->_key->setValue($this->_values[ $this->_keyName ]);
         return $this->_key;
     }
 
@@ -101,7 +102,7 @@ class RM_Entity_Worker_Data
                 $this->_getInsertData()
             );
             if ($this->_properties[ $this->_keyName ]->isAutoIncrement()) {
-                $this->_values[ $this->_keyName ] = $className::getDb()->lastInsertId();
+                $this->_values[ $this->_keyName ] = (int)$className::getDb()->lastInsertId();
             }
             $this->_changes = array();
             return true;
