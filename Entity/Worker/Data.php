@@ -64,6 +64,9 @@ class RM_Entity_Worker_Data
         if ($this->_isExistAttribute($name)) {
             return $this->_values[ $name ];
         }
+        if (isset($this->_properties[$name])) {
+            return $this->_properties[$name]->getDefault();
+        }
         return null;
     }
 
@@ -97,10 +100,8 @@ class RM_Entity_Worker_Data
         /* @var RM_Entity $className */
         $className = $this->_calledClassName;
         if (!$this->isInserted()) {
-            $className::getDb()->insert(
-                $this->_table,
-                $this->_getInsertData()
-            );
+            $this->_values = $this->_getPreSaveData();
+            $className::getDb()->insert( $this->_table, $this->_getInsertData() );
             if ($this->_properties[ $this->_keyName ]->isAutoIncrement()) {
                 $this->_values[ $this->_keyName ] = (int)$className::getDb()->lastInsertId();
             }
@@ -189,6 +190,16 @@ class RM_Entity_Worker_Data
 
     private function _isExistAttribute($name) {
         return isset($this->_values[$name]);
+    }
+
+    private function _getPreSaveData() {
+        $data = $this->_values;
+        foreach ($this->_properties as $name => $property) {
+            if (!$data[$name] && $property->getDefault()) {
+                $data[ $name ] = $property->getDefault();
+            }
+        }
+        return $data;
     }
 
     private function _getInsertData() {
