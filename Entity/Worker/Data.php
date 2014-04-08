@@ -39,8 +39,9 @@ class RM_Entity_Worker_Data
 
     public function &_getKey() {
         if (!$this->_key instanceof RM_Entity_Attribute_Key) {
-            $this->_key = new RM_Entity_Attribute_Key($this->_keyName, $this->_values[ $this->_keyName ] );
+            $this->_key = new RM_Entity_Attribute_Key($this->_keyName);
         }
+        $this->_key->setValue($this->_values[ $this->_keyName ]);
         return $this->_key;
     }
 
@@ -62,6 +63,9 @@ class RM_Entity_Worker_Data
     public function getValue($name) {
         if ($this->_isExistAttribute($name)) {
             return $this->_values[ $name ];
+        }
+        if (isset($this->_properties[$name])) {
+            return $this->_properties[$name]->getDefault();
         }
         return null;
     }
@@ -96,12 +100,10 @@ class RM_Entity_Worker_Data
         /* @var RM_Entity $className */
         $className = $this->_calledClassName;
         if (!$this->isInserted()) {
-            $className::getDb()->insert(
-                $this->_table,
-                $this->_getInsertData()
-            );
+            $this->_values = $this->_getPreSaveData();
+            $className::getDb()->insert( $this->_table, $this->_getInsertData() );
             if ($this->_properties[ $this->_keyName ]->isAutoIncrement()) {
-                $this->_values[ $this->_keyName ] = $className::getDb()->lastInsertId();
+                $this->_values[ $this->_keyName ] = (int)$className::getDb()->lastInsertId();
             }
             $this->_changes = array();
             return true;
@@ -188,6 +190,16 @@ class RM_Entity_Worker_Data
 
     private function _isExistAttribute($name) {
         return isset($this->_values[$name]);
+    }
+
+    private function _getPreSaveData() {
+        $data = $this->_values;
+        foreach ($this->_properties as $name => $property) {
+            if (!$data[$name] && $property->getDefault()) {
+                $data[ $name ] = $property->getDefault();
+            }
+        }
+        return $data;
     }
 
     private function _getInsertData() {

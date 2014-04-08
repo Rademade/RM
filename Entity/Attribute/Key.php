@@ -1,11 +1,14 @@
 <?php
 class RM_Entity_Attribute_Key {
 
-    private $_value;
     private $_name;
+    private $_value;
 
-    public function __construct($name, $value) {
+    public function __construct($name) {
         $this->_name = $name;
+    }
+    
+    public function setValue($value) {
         $this->_value = $value;
     }
 
