@@ -39,7 +39,7 @@ class RM_Entity_Worker_Data
 
     public function &_getKey() {
         if (!$this->_key instanceof RM_Entity_Attribute_Key) {
-            $this->_key = new RM_Entity_Attribute_Key( $this->_values[ $this->_keyName ] );
+            $this->_key = new RM_Entity_Attribute_Key($this->_keyName, $this->_values[ $this->_keyName ] );
         }
         return $this->_key;
     }
