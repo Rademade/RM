@@ -28,8 +28,8 @@ class RM_Entity_Worker_Data
     private $_changes = array();
 
     /**
-     * @param string   $className
-     * @param stdClass $data
+     * @param RM_Entity $className
+     * @param stdClass  $data
      */
     public function __construct($className, stdClass $data) {
         $this->_calledClassName = $className;
@@ -37,11 +37,14 @@ class RM_Entity_Worker_Data
         $this->_initEntity($data);
     }
 
+    /**
+     * @deprecated
+     * @return RM_Entity_Attribute_Key
+     */
     public function &_getKey() {
         if (!$this->_key instanceof RM_Entity_Attribute_Key) {
-            $this->_key = new RM_Entity_Attribute_Key($this->_keyName);
+            $this->_key = new RM_Entity_Attribute_Key($this->_keyName, $this->_values[$this->_keyName]);
         }
-        $this->_key->setValue($this->_values[ $this->_keyName ]);
         return $this->_key;
     }
 
@@ -142,25 +145,19 @@ class RM_Entity_Worker_Data
         $this->_calledClassName = $data['c'];
         $this->_initProperties($data['c']);
         $this->_values = $data['v'];
-        $this->_initKeyName();
     }
 
+    /**
+     * @param RM_Entity $className
+     * @throws Exception
+     */
     private function _initProperties($className) {
         $this->_table = $className::TABLE_NAME;
-        $this->_properties = call_user_func( //TODO refactor
-            $className . '::getAttributesProperties'
-        );
+        $this->_properties = $className::getAttributesProperties();
+        $this->_keyName = $className::getKeyAttributeName();
+
         if (empty($this->_properties)) {
             throw new Exception('Entity properties are not defined');
-        }
-    }
-
-    private function _initKeyName() {
-        foreach ($this->_properties as $property) {
-            if ($property->isKey()) { //set key attribute
-                $this->_keyName = $property->getName();
-                break;
-            }
         }
     }
 

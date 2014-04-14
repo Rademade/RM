@@ -4,8 +4,9 @@ class RM_Entity_Attribute_Key {
     private $_name;
     private $_value;
 
-    public function __construct($name) {
+    public function __construct($name, &$value) {
         $this->_name = $name;
+        $this->_value = &$value;
     }
     
     public function setValue($value) {

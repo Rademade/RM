@@ -132,6 +132,10 @@ abstract class RM_Entity
 		return static::_getStorage()->getProperties();
 	}
 
+    public static function getKeyAttributeName() {
+        return self::_getKeyAttributeProperties()->getName();
+    }
+
     public static function getKeyAttributeField() {
         return self::_getKeyAttributeProperties()->getFieldName();
     }
