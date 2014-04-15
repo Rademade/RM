@@ -76,12 +76,12 @@ class RM_Date_Datetime
         return $this->format($seconds ? self::FULL_TIME_FORMAT : self::SHORT_TIME_FORMAT);
     }
 
-    public function getShortDatetime($seconds = false) {
-        return $this->getShortDate() . ' ' . $this->getTime($seconds);
+    public function getShortDatetime($seconds = false, $delimiter = self::DEFAULT_DELIMITER) {
+        return $this->getShortDate() . $delimiter . $this->getTime($seconds);
     }
 
-    public function getFullDatetime($seconds = false) {
-        return $this->getFullDate() . ' ' . $this->getTime($seconds);
+    public function getFullDatetime($seconds = false, $delimiter = self::DEFAULT_DELIMITER) {
+        return $this->getFullDate() . $delimiter . $this->getTime($seconds);
     }
 
     public function getSearchDatetime() {
