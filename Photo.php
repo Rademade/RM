@@ -73,7 +73,7 @@ class RM_Photo
     }
 
     public static function createPhoto(RM_User_Interface $user) {
-        $photo = new self(new RM_Compositor(array(
+        $photo = new static(new RM_Compositor(array(
             'idUser' => $user->getId()
         )));
         return $photo;
