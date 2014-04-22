@@ -137,20 +137,20 @@ class RM_Gallery_Photo
 	}
 
 	public function __refreshCache() {
-		$this->getGallery()->__refreshCache();
+		if ($this->getGallery() instanceof RM_Gallery) {
+            $this->getGallery()->__refreshCache();
+        }
 	}
 	
 	public function remove(RM_User_Interface $user) {
 		$this->setStatus( RM_Interface_Deletable::STATUS_DELETED );
 		$this->save();
-		$this->getGallery()->__refreshCache();
 	}
 
 	public function save() {
 		parent::save();
 		$this->_rmGalleryPhotoDataWorker->setValue('idPhoto', $this->getIdPhoto());
 		$this->_rmGalleryPhotoDataWorker->save();
-		$this->getGallery()->__refreshCache();
 	}
 
 	public function _toJSON() {
