@@ -67,9 +67,6 @@ class RM_Entity_Worker_Data
         if ($this->_isExistAttribute($name)) {
             return $this->_values[ $name ];
         }
-        if (isset($this->_properties[$name])) {
-            return $this->_properties[$name]->getDefault();
-        }
         return null;
     }
 
@@ -172,7 +169,7 @@ class RM_Entity_Worker_Data
 
             $this->_values[ $property->getName() ] = RM_Entity_Attribute_Properties::parseValue(
                 $property,
-                isset($data->$fieldName) ? $data->$fieldName : null
+                isset($data->$fieldName) ? $data->$fieldName : $property->getDefault()
             );
 
             if ($property->isKey()) { //set key attribute
