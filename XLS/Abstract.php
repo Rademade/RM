@@ -161,7 +161,9 @@ abstract class RM_XLS_Abstract {
                 $this->_writeCurrentRow($value);
             }
             $this->_nextRow();
-            $entity->destroy();
+            if (method_exists($entity, 'destroy')) {
+                $entity->destroy();
+            }
             unset($this->_entitiesForSheets[$sheetIndex]);
         }
         $this->_columnsAutoWidth();
