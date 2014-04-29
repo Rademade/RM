@@ -167,6 +167,7 @@ class RM_Gallery
 
     public function save() {
         $this->_rmGalleryDataWorker->save();
+        $this->_savePhotos();
         $this->__cache();
         return $this;
     }
@@ -217,6 +218,15 @@ class RM_Gallery
             }
         }
         return false;
+    }
+
+    private function _savePhotos() {
+        foreach ($this->getPhotos() as $photo) {
+            if ($photo->getIdGallery() != $this->getId()) {
+                $photo->setIdGallery( $this->getId() );
+                $photo->save();
+            }
+        }
     }
 
     /**

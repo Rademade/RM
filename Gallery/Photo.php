@@ -83,6 +83,10 @@ class RM_Gallery_Photo
 		return $this->_rmGalleryPhotoDataWorker->getValue('idGallery');
 	}
 
+    public function setIdGallery($id) {
+        return $this->_rmGalleryPhotoDataWorker->setValue('idGallery', $id);
+    }
+
     /**
      * @return RM_Gallery
      */
