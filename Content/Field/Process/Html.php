@@ -44,6 +44,7 @@ class RM_Content_Field_Process_Html
         'style',
         'target',
         'data-id',
+        'data-align',
         'rel',
         'id',
         'name',
