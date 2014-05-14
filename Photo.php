@@ -289,6 +289,10 @@ class RM_Photo
         );
     }
 
+    public function setUser(RM_User_Interface $user) {
+        $this->_rmPhotoDataWorker->setValue('idUser', $user->getId());
+    }
+
     private function _generateImageSavePath() {
         $randomPath = md5(uniqid() . microtime(true));
         $i = 0;

@@ -43,6 +43,8 @@ class RM_System_Uploader {
 	}
 
 	function uploadPhoto(RM_Photo &$photo) {
+        if (!$this->file)
+            throw new Exception('File not exists');
 		$size = $this->file->getSize();
 		if ($size == 0)
 			throw new Exception('File is empty');
