@@ -179,29 +179,6 @@ class RM_Lang
 		$this->langName = $name;
 	}
 	
-	/**
-	 * @name validate
-	 * @return array $errors
-	 */
-	private function validate() {
-		if ($this->getIdPhoto() === 0) {
-			throw new Exception( 'Photo no uploaded' );
-		}
-		if ($this->getName() === '') {
-			throw new Exception( 'Language name not defined' );
-		}
-		if ($this->getIsoName() === '') {
-			throw new Exception( 'ISO name not defined' );
-		}
-		if ($this->getUrl() === '') {
-			throw new Exception( 'Url not defined' );
-		} else {
-			if (!$this->checkUnique()) {
-				throw new Exception( 'This url is already used' );
-			}
-		}
-	}
-
 	public function setUrl($url) {
 		$url = $this->langUrl = stripslashes(trim($url));
         if (preg_match(
@@ -217,21 +194,6 @@ class RM_Lang
 
 	public function getUrl() {
 		return $this->langUrl;
-	}
-
-	private function checkUnique() {
-		$select = static::getDb()->select()
-			->from('langs',array(
-				'count'=>'COUNT(idLang)'
-			))
-			->where('langUrl = ? ', $this->getUrl())
-			->where('langStatus != ?', self::STATUS_DELETED)
-			->where('idLang != ? ', $this->getId());
-		if (static::getDb()->fetchRow($select)->count === 0) {
-			return true;
-		} else {
-			throw new Exception('URL ' . $this->getUrl() . ' NOT EXIST');
-		}
 	}
 
 	public function isDefault() {
