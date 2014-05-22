@@ -197,7 +197,8 @@ class RM_User
 	}
 
 	public function setPhone($phoneNumber) {
-		$phone = new RM_Phone($phoneNumber);
+		$phoneClass = RM_Dependencies::getInstance()->phoneClass;
+        $phone = new $phoneClass($phoneNumber);
 		if (!$phone->isEmpty())
 			$phone->validate();
 		$this->_phone = $phone;
@@ -462,14 +463,17 @@ class RM_User
 
 
 	public function getPurchasesAmount() {
+        //RM_TODO full purchase sum
 		$where = new RM_Query_Where();
 		$where->add('idUser', RM_Query_Where::EXACTLY, $this->getId());
 		$where->add('orderStatus', RM_Query_Where::EXACTLY, Application_Model_Order::STATUS_DONE);
-		return Application_Model_Order::getPurseSum($where);
+        return 0;
+//		return Application_Model_Order::getPurseSum($where);
 	}
 
 	public function getDiscount() {
-		if (!($this->_discount instanceof Application_Model_Discount)) {
+        //RM_TODO discount
+        if (!($this->_discount instanceof Application_Model_Discount)) {
 			$this->_discount = Application_Model_Discount::getByPrice( $this->getPurchasesAmount() );
 		}
 		return $this->_discount;

@@ -8,7 +8,8 @@ class RM_Dependencies
     private $_default = array(
         'userClass' => 'RM_User',
         'userProfile' => 'RM_User',
-        'pageClass' => 'RM_Page'
+        'pageClass' => 'RM_Page',
+        'phoneClass' => 'RM_Phone'
     );
 
     /**

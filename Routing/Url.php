@@ -1,7 +1,7 @@
 <?php
 class RM_Routing_Url {
 
-    private $url;
+    protected $url;
 
     /**
      * @access public
