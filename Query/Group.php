@@ -12,6 +12,7 @@ class RM_Query_Group
                 $this->_groupFields[] = $field;
             }
         }
+        return $this;
     }
 
     /**

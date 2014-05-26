@@ -205,6 +205,16 @@ class RM_Gallery
 		$this->save();
 	}
 
+    public function hasOwner() {
+        $photo = $this->getPosterPhoto();
+        return $photo instanceof RM_Photo && $photo->getIdUser();
+    }
+
+    public function belongsTo(RM_User_Interface $user) {
+        $photo = $this->getPosterPhoto();
+        return $photo instanceof RM_Photo ? $photo->getIdUser() == $user->getId() : null;
+    }
+    
 	public function remove() {
 		$this->setStatus( self::STATUS_DELETED );
 		$this->save();
