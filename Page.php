@@ -6,7 +6,8 @@ class RM_Page
 		RM_Interface_Switcher,
 		RM_Interface_Hideable,
 		RM_Interface_Deletable,
-		RM_Interface_Contentable {
+		RM_Interface_Contentable,
+        RM_Interface_OgElement {
 
 	use RM_Trait_MultiName;
 
@@ -258,7 +259,6 @@ class RM_Page
 		$select->where('pages.pageStatus != ?', self::STATUS_DELETED);
 	}
 
-
     public function getRightBlock() {
         if ( !is_array($this->_rightBlock) ) {
             $this->_rightBlock = RM_Block_Repository::getShowedBlocks(
@@ -269,4 +269,15 @@ class RM_Page
         return $this->_rightBlock;
     }
 
+    public function getTitle() {
+        return $this->getContent()->getPageTitle();
+    }
+
+    public function getPhoto() {
+        return null;
+    }
+
+    public function getDescription() {
+        return $this->getContent()->getPageDesc();
+    }
 }
