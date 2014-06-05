@@ -11,11 +11,11 @@ class RM_View_Message
 
 	/**
 	 * @static
-	 * @return RM_View_Message
+	 * @return static
 	 */
 	public static function getInstance() {
 		if (!(self::$_self instanceof self)) {
-			self::$_self = new self();
+			self::$_self = new static();
 		}
 		return self::$_self;
 	}

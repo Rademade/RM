@@ -3,6 +3,10 @@ class RM_System_GlobalFunctions {
 
     public static function init() {
 
+        if (self::$_initialized) return;
+
+        self::$_initialized = true;
+
         function rm_isset(&$data, $key, $default = null) {
             if ( is_array($data) ) {
                 return isset($data[$key]) ? $data[$key] : $default;
@@ -12,13 +16,28 @@ class RM_System_GlobalFunctions {
             return $default;
         }
 
+        function mb_slice_first($string, $encoding = 'utf-8') {
+            return mb_substr($string, 1, mb_strlen($string, $encoding) - 1, $encoding);
+        }
+
+        function mb_first($string, $encoding = 'utf-8') {
+            return mb_substr($string, 0, 1, $encoding);
+        }
+
         function mb_lcfirst($string, $encoding = 'utf-8') {
-            $strlen = mb_strlen($string, $encoding);
-            $firstChar = mb_substr($string, 0, 1, $encoding);
-            $then = mb_substr($string, 1, $strlen - 1, $encoding);
-            return mb_strtolower($firstChar, $encoding) . $then;
+            return mb_strtolower(mb_first($string, $encoding), $encoding) . mb_slice_first($string, $encoding);
+        }
+
+        function mb_ucfirst($string, $encoding = 'utf-8') {
+            return mb_strtoupper(mb_first($string, $encoding), $encoding) . mb_slice_first($string, $encoding);
+        }
+
+        function utf8_tolower($string) {
+            return mb_strtolower($string, 'utf-8');
         }
 
     }
+
+    private static $_initialized = false;
 
 }
