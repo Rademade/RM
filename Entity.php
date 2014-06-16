@@ -235,12 +235,13 @@ abstract class RM_Entity
      * TODO cache
      * @param array $conditions
      * @param int $limit
-     * @return RM_Entity[]
+     * @return static[]
      */
     public static function find(array $conditions = array(), $limit = 0) {
         $select = static::_getSelect();
         foreach ($conditions as $field => $value) {
-            $select->where($field . ' = ?', $value);
+            $operand = is_array($value) ? ' IN (?)' : ' = ?';
+            $select->where($field . $operand, $value);
         }
         if ($limit !== 0) {
             $select->limit( $limit );
@@ -257,7 +258,8 @@ abstract class RM_Entity
     public static function findOne(array $conditions, array $options = array()) {
         $select = static::_getSelect($options);
         foreach ($conditions as $field => $value) {
-            $select->where($field . ' = ?', $value);
+            $operand = is_array($value) ? ' IN (?)' : ' = ?';
+            $select->where($field . $operand, $value);
         }
         return static::_initItem( $select );
     }

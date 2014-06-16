@@ -36,6 +36,10 @@ class RM_System_GlobalFunctions {
             return mb_strtolower($string, 'utf-8');
         }
 
+        function mb_str_replace($needle, $replacement, $haystack) {
+            return implode($replacement, mb_split($needle, $haystack));
+        }
+
     }
 
     private static $_initialized = false;
