@@ -1,6 +1,8 @@
 <?php
 class RM_Phone {
 
+    public static $validationRegex = '/^\+?[0-9]{8,14}$/';
+
 	private $_phone;
 
     public static function clearPhoneNumber($phone) {
@@ -26,7 +28,7 @@ class RM_Phone {
 	}
 	
 	public function validate() {
-		if (!preg_match('/^\+?[0-9]{8,14}$/', $this->getPhoneNumber()))
+		if (!preg_match(static::$validationRegex, $this->getPhoneNumber()))
 			throw new Exception('Wrong phone format');
 		return true;
 	}

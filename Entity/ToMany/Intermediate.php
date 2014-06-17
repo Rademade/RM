@@ -96,6 +96,9 @@ abstract class RM_Entity_ToMany_Intermediate
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function getIdTo() {
         return $this->_dataWorker->getValue( static::FIELD_TO );
     }

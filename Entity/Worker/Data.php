@@ -28,7 +28,7 @@ class RM_Entity_Worker_Data
     private $_changes = array();
 
     /**
-     * @param RM_Entity $className
+     * @param RM_Entity|string $className
      * @param stdClass  $data
      */
     public function __construct($className, stdClass $data) {

@@ -10,8 +10,8 @@ class RM_View_Form_Field_MultiList
 
     const TPL = 'multi-list.phtml';
 
-    public function __construct($desc, $name, $data, array $options = array(), array $defaultKeys = array('')) {
-        parent::__construct($name, $desc, '');
+    public function __construct($desc, $name, $data, array $options = array(), array $defaultKeys = array(''), $value = '') {
+        parent::__construct($name, $desc, $value);
         $this->_data = $data;
         $this->_options = $options;
         $this->_defaultKeys = $defaultKeys;

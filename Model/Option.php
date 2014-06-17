@@ -106,7 +106,7 @@ class RM_Model_Option
         if ($this->_isUniqueKey($optionKey)) {
             $this->_dataWorker->setValue('optionKey', $optionKey);
         } else {
-            throw new Exception('Option key is not unique');
+            throw new Exception('Опция с таким ключем уже существует');
         }
     }
 
