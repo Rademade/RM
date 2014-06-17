@@ -22,36 +22,24 @@ class RM_Head_Compressor_CSS {
 		return $this->_version;
 	}
 
-	private function _getParseStyles($css) {
-		return preg_replace('/(\@?charset \"?utf-8\"?\;?)/i','', $css);
-	}
-
 	private function _getAllStyles() {
 		$css = '';
 		foreach ($this->_src as $path) {
 			$css .= file_get_contents($path);
 		}
         $css = "/* Compress */\n" . $css;
-		return $this->_getParseStyles( $css );
+		return preg_replace('/(\@?charset \"?utf-8\"?\;?)/i','', $css);
 	}
 
 	private function _getCurl() {
 		$curl = curl_init();
-		$header = array();
-		$header[] = "Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5";
-		$header[] = "Cache-Control: max-age=0";
-		$header[] = "Connection: keep-alive";
-		$header[] = "Keep-Alive: 300";
-		$header[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
-		$header[] = "Accept-Language: en-us,en;q=0.5";
-		curl_setopt($curl, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.30 (KHApplication_Model_Kernel_Catalog_Good_ParserTML, like Gecko) Chrome/17.0.742.77 Safari/534.30');
-		curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, []);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_TIMEOUT, 300);
 		curl_setopt($curl, CURLOPT_MAXREDIRS, 7);
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($curl, CURLOPT_URL, 'http://refresh-sf.com/yui/');
+		curl_setopt($curl, CURLOPT_URL, 'http://compressor.rademade.com/css');
 		curl_setopt($curl, CURLOPT_POST, true);
 		return $curl;
 	}
@@ -59,12 +47,9 @@ class RM_Head_Compressor_CSS {
 	private function _getCompressedCss() {
 		$curl = $this->_getCurl();
 		curl_setopt($curl, CURLOPT_POSTFIELDS, array(
-			'compresstext' => $this->_getAllStyles(),
-			'type' => 'css'
+			'css' => $this->_getAllStyles()
 		));
-        $html = curl_exec($curl);
-        $DomParser = RM_System_Parser_SimpleHtmlDom::strGetHtml($html);
-        return $DomParser->find('textarea', 1)->innertext;
+        return curl_exec($curl);
 	}
 
 	public function compress() {

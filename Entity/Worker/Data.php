@@ -63,6 +63,10 @@ class RM_Entity_Worker_Data
         return isset($this->_changes[$fieldName]);
     }
 
+    /**
+     * @param $name
+     * @return string
+     */
     public function getValue($name) {
         if ($this->_isExistAttribute($name)) {
             return $this->_values[ $name ];
