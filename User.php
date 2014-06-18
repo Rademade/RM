@@ -125,7 +125,8 @@ class RM_User
 
 	public function __construct(stdClass $data) {
 		parent::__construct($data);
-        $this->_phone = new RM_Phone( $data->phoneNumber );
+        $phoneClass = RM_Dependencies::getInstance()->phoneClass;
+        $this->_phone = new $phoneClass( $data->phoneNumber );
 	}
 
 	public static function create($mail, $password) {
@@ -237,6 +238,7 @@ class RM_User
 
 	public function setRole(RM_User_Role $role) {
 		$this->idRole = $role->getId();
+        $this->__refreshCache();
 	}
 
 	public function getRole() {
@@ -486,19 +488,22 @@ class RM_User
 		return 0;
 	}
 
-	public function validate() {
+	public function validate($opts = []) {
         $e = new RM_Exception();
 		$this->_validateEmail($this->getEmail(), $e, false);
-		$this->_validateLogin($this->getLogin(), $e, false);
+        $validateLogin = isset($opts['validateLogin']) ? $opts['validateLogin'] : true;
+        if ($validateLogin) {
+            $this->_validateLogin($this->getLogin(), $e, false);
+        }
         if (!$this->getPhone()->isEmpty())
 			$this->getPhone()->validate();
 
         if ($this->getFullName() == '') {
-			$e[] = 'User name not setted';
+			$e[] = 'Имя не может быть пустым';
 		}
 
-        if (!($this->getCity() instanceof Application_Model_City)) {
-			$e[] = 'User city not defined';
+        if (!$this->getCity() instanceof Application_Model_City) {
+			$e[] = 'Укажите город';
 		}
         if ((bool)$e->current())
 			throw $e;
