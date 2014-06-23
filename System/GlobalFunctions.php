@@ -40,6 +40,11 @@ class RM_System_GlobalFunctions {
             return implode($replacement, mb_split($needle, $haystack));
         }
 
+        function number_between($num, $min, $max, $strict = true) {
+            if ($strict) return $min < $num && $num < $max;
+            return $min <= $num && $num <= $max;
+        }
+
     }
 
     private static $_initialized = false;
