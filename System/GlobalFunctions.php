@@ -45,6 +45,19 @@ class RM_System_GlobalFunctions {
             return $min <= $num && $num <= $max;
         }
 
+        function any_of($list, $pred) {
+            if ($pred instanceof Closure) {
+                foreach ($list as $key => $value) {
+                    if ($pred($value, $key)) return true;
+                }
+            } else {
+                foreach ($list as $key => $value) {
+                    if (call_user_func($pred, $value)) return true;
+                }
+            }
+            return false;
+        }
+
     }
 
     private static $_initialized = false;

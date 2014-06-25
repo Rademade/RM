@@ -19,7 +19,7 @@ abstract class RM_Controller_RestFull
         $this->_method = $this->getRequest()->getMethod();
         $this->_data = new RM_Compositor(
             Zend_Json::decode( $this->getRequest()->getRawBody() ),
-            $this->getAllParams()
+            parent::getAllParams()
         );
     }
 
@@ -53,7 +53,15 @@ abstract class RM_Controller_RestFull
     public function removeItem() {
         return false;
     }
-    
+
+    public function getParam($name, $default = null) {
+        return isset($this->_data->$name) ? $this->_data->$name : $default;
+    }
+
+    public function getAllParams() {
+        return $this->_data;
+    }
+
     protected function __itemMethods() {
         switch ($this->_method) {
             case 'GET':
