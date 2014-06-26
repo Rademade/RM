@@ -1,9 +1,10 @@
 <?php
-trait Fin_Trait_Controller_EditAction {
+trait RM_Trait_Admin_Controller_Action_Edit {
 
     public function editAction() {
         if (!$this->__hasEditPageAccess()) {
             $this->__goBack();
+            return false;
         }
         parent::editAction();
         $this->_entity = $this->__getEditableEntity();

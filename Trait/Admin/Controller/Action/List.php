@@ -1,5 +1,5 @@
 <?php
-trait Fin_Trait_Controller_ListAction {
+trait RM_Trait_Admin_Controller_Action_List {
 
     public function listAction() {
         if (!$this->__hasListAccess()) {

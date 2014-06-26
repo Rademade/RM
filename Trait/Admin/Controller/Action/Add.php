@@ -1,9 +1,10 @@
 <?php
-trait Fin_Trait_Controller_AddAction {
+trait RM_Trait_Admin_Controller_Action_Add {
 
     public function addAction() {
         if (!$this->__hasAddPageAccess()) {
             $this->__goBack();
+            return false;
         }
         parent::addAction();
         $this->__setupAddPageCrumbs();
