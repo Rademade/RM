@@ -11,13 +11,12 @@ trait RM_Trait_Admin_Controller_Action_Edit {
         if (!$this->_entity) {
             $this->__goBack();
         }
-        $this->__setupEditPageCrumbs($this->_entity);
         if ($this->getRequest()->isPost()) {
             /** @var stdClass $data */
             $data = (object)$this->getRequest()->getParams();
             try {
-                if (method_exists($this, '__setData')) {
-                    $this->__setData($this->_entity, $data);
+                if (method_exists($this, '__updateEntity')) {
+                    $this->__updateEntity($this->_entity, $data);
                 } else {
                     $this->__postContentFields();
                 }
@@ -34,19 +33,25 @@ trait RM_Trait_Admin_Controller_Action_Edit {
                 $this->view->showMessage($e);
             }
         } else {
-            if (method_exists($this, '__postFields')) {
-                $this->__postFields($this->_entity);
+            if (method_exists($this, '__postEntityFields')) {
+                $this->__postEntityFields($this->_entity);
             } else {
                 $this->__postContentFields();
             }
         }
+        $this->__setupEditPage();
+        $this->__setupEditPageCrumbs($this->__getCrumbs(), $this->_entity);
     }
 
     protected function __hasEditPageAccess() {
         return true;
     }
 
-    protected function __setupEditPageCrumbs(RM_Entity $e) {
+    protected function __setupEditPage() {
+
+    }
+
+    protected function __setupEditPageCrumbs() {
 
     }
 

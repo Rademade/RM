@@ -11,12 +11,12 @@ class RM_Phone {
     }
 
 	public function __construct($phone) {
-		$this->_phone = $phone;
+		$this->setPhoneNumber($phone, false);
 	}
 	
-	public function setPhoneNumber($phoneNumber) {
+	public function setPhoneNumber($phoneNumber, $validate = true) {
 		$this->_phone = self::clearPhoneNumber($phoneNumber);
-		$this->validate();
+        if ($validate) $this->validate();
 	}
 	
 	public function clear() {

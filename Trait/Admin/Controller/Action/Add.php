@@ -7,15 +7,14 @@ trait RM_Trait_Admin_Controller_Action_Add {
             return false;
         }
         parent::addAction();
-        $this->__setupAddPageCrumbs();
         if ($this->getRequest()->isPost()) {
             /** @var stdClass $data */
             $data = (object)$this->getRequest()->getParams();
             try {
                 $itemClassName = $this->_itemClassName;
                 $this->_entity = $this->__createEntity($data, $itemClassName);
-                if (method_exists($this, '__setData')) {
-                    $this->__setData($this->_entity, $data);
+                if (method_exists($this, '__updateEntity')) {
+                    $this->__updateEntity($this->_entity, $data);
                 } else {
                     $this->__postContentFields();
                 }
@@ -32,6 +31,8 @@ trait RM_Trait_Admin_Controller_Action_Add {
                 $this->view->showMessage($e);
             }
         }
+        $this->__setupAddPage();
+        $this->__setupAddPageCrumbs($this->__getCrumbs());
     }
 
     protected function __createEntity(stdClass $data, $className) {
@@ -40,6 +41,10 @@ trait RM_Trait_Admin_Controller_Action_Add {
 
     protected function __hasAddPageAccess() {
         return true;
+    }
+
+    protected function __setupAddPage() {
+
     }
 
     protected function __setupAddPageCrumbs() {

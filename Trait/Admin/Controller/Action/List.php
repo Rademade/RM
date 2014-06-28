@@ -2,18 +2,19 @@
 trait RM_Trait_Admin_Controller_Action_List {
 
     public function listAction() {
-        if (!$this->__hasListAccess()) {
+        if (!$this->__hasListPageAccess()) {
             $this->__goBack();
             return false;
         }
         parent::listAction();
-        $this->__setupListCrumbs();
         $menu = $this->view->menu;
         $menu = Zend_Controller_Front::getInstance()->getDispatcher()->formatModuleName($menu);
         $menu = lcfirst($menu);
         $this->view->assign(array(
             $menu => $this->__findEntities($this->__getSearchQuery())
         ));
+        $this->__setupListPage();
+        $this->__setupListPageCrumbs($this->__getCrumbs());
     }
 
     protected function __getSearchQuery() {
@@ -25,11 +26,15 @@ trait RM_Trait_Admin_Controller_Action_List {
         return $itemClassName::getList();
     }
 
-    protected function __setupListCrumbs() {
+    protected function __setupListPage() {
 
     }
 
-    protected function __hasListAccess() {
+    protected function __setupListPageCrumbs() {
+
+    }
+
+    protected function __hasListPageAccess() {
         return true;
     }
 
