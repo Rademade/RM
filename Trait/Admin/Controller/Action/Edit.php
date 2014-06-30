@@ -7,8 +7,9 @@ trait RM_Trait_Admin_Controller_Action_Edit {
             return false;
         }
         parent::editAction();
+        $itemClassName = $this->_itemClassName;
         $this->_entity = $this->__getEditableEntity();
-        if (!$this->_entity) {
+        if (!$this->_entity instanceof $itemClassName) {
             $this->__goBack();
         }
         if ($this->getRequest()->isPost()) {
@@ -18,7 +19,7 @@ trait RM_Trait_Admin_Controller_Action_Edit {
                 if (method_exists($this, '__updateEntity')) {
                     $this->__updateEntity($this->_entity, $data);
                 } else {
-                    $this->__postContentFields();
+                    $this->__setContentFields();
                 }
                 if (method_exists($this->_entity, 'validate')) {
                     $this->_entity->validate();

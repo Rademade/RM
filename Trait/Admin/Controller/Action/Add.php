@@ -16,7 +16,7 @@ trait RM_Trait_Admin_Controller_Action_Add {
                 if (method_exists($this, '__updateEntity')) {
                     $this->__updateEntity($this->_entity, $data);
                 } else {
-                    $this->__postContentFields();
+                    $this->__setContentFields();
                 }
                 if (method_exists($this->_entity, 'validate')) {
                     $this->_entity->validate();
