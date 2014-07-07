@@ -398,7 +398,7 @@ class RM_User
         $select = self::_getSelect();
         $select->where('users.userMail = ?', $mail)->limit(1);
         if (($row = $db->fetchRow ( $select )) !== false) {
-            return new self($row);
+            return new static($row);
         } else {
             return null;
         }
@@ -408,7 +408,7 @@ class RM_User
      * @static
      * @deprecated
      * @param $mail
-     * @return null|RM_User
+     * @return null|Application_Model_User
      */
 	public static function getByMail($mail) {
         return static::getByEmail($mail);
@@ -447,17 +447,16 @@ class RM_User
 		return $validator->getEmail();
 	}
 
-	public function setEmail($email, $needConfirm) {
-		if ($this->getEmail() !== $email) {
-			$email = $this->_validateEmail($email, null, true );
-			$this->userMail = $email;
-			if ($needConfirm) {
-				$this->userMailStatus = self::MAIL_STATUS_NOT_VALID;
-				$mail = new Application_Model_Mail_MailConfirm( $this );
-				$mail->send( $email );
-			}
-		}
-	}
+    public function setEmail($email, $needConfirm) {
+        if ($this->getEmail() !== $email) {
+            $email = $this->_validateEmail($email, null, true);
+            $this->userMail = $email;
+            if ($needConfirm) {
+                $this->userMailStatus = self::MAIL_STATUS_NOT_VALID;
+                $this->__sendConfirmationEmail($this, $email);
+            }
+        }
+    }
 
 	public function isConfirmedEmail() {
 		return $this->getEmailStatus() == self::MAIL_STATUS_VALID;
@@ -545,6 +544,11 @@ class RM_User
 		);
 	}
 
+    protected function __sendConfirmationEmail(self $user, $email) {
+        $mail = new Application_Model_Mail_MailConfirm($user);
+        $mail->send($email);
+    }
+
 	private function _getLineProcessor() {
 		if (!($this->_lineProcessor instanceof RM_Content_Field_Process_Line)) {
 			$this->_lineProcessor = RM_Content_Field_Process_Line::init();
@@ -564,5 +568,13 @@ class RM_User
      */
     public function getUser() {
         return $this;
+    }
+
+    public function serialize() {
+        return [
+            'email' => $this->getEmail(),
+            'name' => $this->getFullName(),
+            'login' => $this->getEmail()
+        ];
     }
 }
