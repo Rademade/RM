@@ -4,7 +4,7 @@ class RM_Routing_Url {
     protected $url;
 
     /**
-     * @access public
+     * @access    public
      * @param string $url
      * @ParamType url string
      */
@@ -14,9 +14,9 @@ class RM_Routing_Url {
 
     public function format() {
         $this->url = trim(mb_strtolower($this->url, 'UTF-8'));
-        $this->url = $this->_removeWrongChars( $this->url );
-        $this->url = ( new RM_Routing_Url_Translite( $this->url ) )->__toString();
-        $this->url = $this->_prettify( $this->url );
+        $this->url = $this->_removeWrongChars($this->url);
+        $this->url = (new RM_Routing_Url_Translite($this->url))->__toString();
+        $this->url = $this->_prettify($this->url);
         return $this;
     }
 
@@ -26,30 +26,31 @@ class RM_Routing_Url {
 
     public function formatLikeAlias() {
         $this->format();
-        $this->url = $this->_aliasFormat( $this->url );
-        $this->url = $this->_prettify( $this->url );
+        $this->url = $this->_aliasFormat($this->url);
+        $this->url = $this->_prettify($this->url);
         return $this;
     }
 
     public function checkUnique($excludedId = null) {
         $db = Zend_Registry::get('db');
-        /* @var $db Zend_Db_Adapter_Abstract*/
+        /* @var $db Zend_Db_Adapter_Abstract */
         $select = $db->select();
         /* @var $select Zend_Db_Select */
-        $select->from('routing',array(
-            'count'=>'COUNT(idRoute)'
-        ))->where('url = ? ',$this->url);
+        $select->from('routing', array(
+            'count' => 'COUNT(idRoute)'
+        ))->where('url = ? ', $this->url);
         if (!is_null($excludedId)) {
-            $select->where('idRoute != ? ',$excludedId);
+            $select->where('idRoute != ? ', $excludedId);
         }
         $select->where('routeStatus != ? ', RM_Interface_Deletable::STATUS_DELETED);
         $res = $db->fetchRow($select);
         return intval($res->count) === 0;
     }
 
-    public function checkFormat(array $params ) {
+    public function checkFormat(array $params) {
         $url = $this->url;
-        foreach ($params as  $param => $value) {
+        $allParams = array_merge(array_keys($params), $this->_getValidParams());
+        foreach ($allParams as $param) {
             $url = str_replace('/:' . $param, '', $url);
         }
         $url = '/' . ltrim($url, '/');
@@ -80,6 +81,16 @@ class RM_Routing_Url {
         return $url;
     }
 
+    private function _getValidParams() {
+        $cfg = Zend_Registry::get('cfg');
+        if (isset($cfg['routing']) && isset($cfg['routing']['valid_params'])) {
+            $validParams = (array)$cfg['routing']['valid_params'];
+        } else {
+            $validParams = array();
+        }
+        return $validParams;
+    }
+
     private function _removeWrongChars($url) {
         return str_replace(array(
             "'", '"', '&', ',', '.', '?', '+', '!', '(', ')', '»', '«',
@@ -91,15 +102,15 @@ class RM_Routing_Url {
     private function _prettify($url) {
         $count = 0;
         do {
-            $url = str_replace( [' ', '--'], '-', $url, $count);
+            $url = str_replace([' ', '--'], '-', $url, $count);
         } while ($count != 0);
-        return rtrim( $url, "/" );
+        return rtrim($url, "/");
     }
 
     private function _aliasFormat($url) {
-        return trim( str_replace( array(
+        return trim(str_replace(array(
             '/', "\\"
-        ), '-', $url ), '-' );
+        ), '-', $url), '-');
     }
 
 }

@@ -49,7 +49,7 @@ class RM_Routing_Installer {
      */
     public function getRouter() {
         if (!$this->_router instanceof Zend_Controller_Router_Rewrite) {
-            throw new Exception('Zend_Controller_Router_Abstract not setted');
+            throw new Exception('Zend_Controller_Router_Abstract was not set');
         }
         return $this->_router;
     }
