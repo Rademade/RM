@@ -57,6 +57,10 @@ class RM_Model_Option
         return $value;
     }
 
+    /**
+     * @param $key
+     * @return RM_Model_Option
+     */
     public static function getByKey($key) {
         return self::findOne(array(
             'optionKey' => $key

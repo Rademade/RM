@@ -8,7 +8,7 @@ abstract class RM_XLS_Abstract {
     const FIRST_COLUMN = 'A';
     const FIRST_ROW = 1;
     const DEFAULT_DOCUMENT_TITLE = 'Document';
-    const DEFAULT_FILE_NAME = 'Report';
+    const DEFAULT_FILE_NAME = 'report';
     const DEFAULT_FILE_EXTENSION = 'xls';
     const DEFAULT_DELIMITER = '_';
 
@@ -43,7 +43,7 @@ abstract class RM_XLS_Abstract {
     abstract protected function __getEntityValues($e);
 
     public function __construct() {
-        $this->_document = new PHPExcel();
+        $this->_document = $this->__createDocument();
         $this->_document->getProperties()->setTitle($this->getTitle());
         $this->_document->getDefaultStyle()->getAlignment()
             ->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
@@ -133,6 +133,10 @@ abstract class RM_XLS_Abstract {
 
     public function resetCurrentRowHeight() {
         $this->setCurrentRowHeight(self::ROW_HEIGHT);
+    }
+
+    protected function __createDocument() {
+        return new PHPExcel();
     }
 
     protected function __getAutoDate() {

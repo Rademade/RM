@@ -574,7 +574,8 @@ class RM_User
         return [
             'email' => $this->getEmail(),
             'name' => $this->getFullName(),
-            'login' => $this->getEmail()
+            'login' => $this->getEmail(),
+            'phone' => $this->getPhone()->getPrettyPhoneFormat()
         ];
     }
 }
