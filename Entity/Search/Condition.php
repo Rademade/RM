@@ -1,7 +1,8 @@
 <?php
 abstract class RM_Entity_Search_Condition
     implements
-        RM_Query_Interface_ImproveSelect {
+        RM_Query_Interface_ImproveSelect,
+        RM_Query_Interface_Hashable {
 
     /**
      * @var RM_Query_Join
@@ -62,6 +63,19 @@ abstract class RM_Entity_Search_Condition
         }
     }
 
+    public function isHashable() {
+        return true;
+    }
+
+    public function getHash() {
+        $hashes = [];
+        foreach ($this->_getQueryParts() as $queryPart) {
+            if ($queryPart instanceof RM_Query_Interface_Hashable) {
+                $hashes[] = $queryPart->getHash();
+            }
+        }
+        return md5(serialize($hashes));
+    }
 
     /**
      * @return RM_Query_Join

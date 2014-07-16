@@ -100,13 +100,19 @@ class RM_Query_Order
     }
 
     public function getHash() {
-        $key = '';
+        $orders = '';
         if (!$this->isRandom()) {
-            foreach ($this->_orders as $order) {
-                $key = (',' . join('.', $order));
-            }
+            $orders = join(',', $this->toArray());
         }
-        return '_' . md5($key);
+        return '_' . md5($orders);
+    }
+
+    public function toArray() {
+        $orders = [];
+        foreach ($this->_orders as $order) {
+            $orders[] = $order->field . '.' . $this->_getType($order->type);
+        }
+        return $orders;
     }
 
 

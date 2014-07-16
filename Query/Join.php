@@ -1,7 +1,8 @@
 <?php
 class RM_Query_Join
     implements
-        RM_Query_Interface_ImproveSelect {
+        RM_Query_Interface_ImproveSelect,
+        RM_Query_Interface_Hashable {
 
     private $_joins = array();
 
@@ -142,4 +143,11 @@ class RM_Query_Join
         }
     }
 
+    public function isHashable() {
+        return true;
+    }
+
+    public function getHash() {
+        return md5(serialize($this->_joins));
+    }
 }
