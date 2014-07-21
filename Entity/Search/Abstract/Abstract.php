@@ -34,7 +34,7 @@ abstract class RM_Entity_Search_Abstract_Abstract {
      * @param RM_Entity_Search_Condition[] $conditions
      */
     public function setConditions(array $conditions) {
-        $this->_conditions = array();
+        $this->clearConditions();
         foreach ($conditions as $condition) {
             $this->addCondition( $condition );
         }
@@ -46,6 +46,11 @@ abstract class RM_Entity_Search_Abstract_Abstract {
     public function getConditions() {
         return $this->_conditions;
     }
+
+	public function clearConditions() {
+		$this->_conditions = [];
+		return $this;
+	}
 
     public function setPhrase($searchPhrase) {
         $searchPhrase = trim($searchPhrase);

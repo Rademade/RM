@@ -88,6 +88,11 @@ class RM_User
     );
 
     /**
+     * @var RM_Photo
+     */
+    protected $_avatar;
+
+    /**
      * @var RM_Phone
      */
     private $_phone;
@@ -95,10 +100,6 @@ class RM_User
      * @var Application_Model_Discount
      */
     private $_discount;
-    /**
-     * @var RM_Photo
-     */
-    private $_avatar;
     /**
      * @var Application_Model_City
      */

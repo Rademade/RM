@@ -58,6 +58,12 @@ class RM_System_GlobalFunctions {
             return false;
         }
 
+		function invoke($list, $method, $args = []) {
+			foreach ($list as $item) {
+				call_user_func_array([$item, $method], $args);
+			}
+		}
+
     }
 
     private static $_initialized = false;
