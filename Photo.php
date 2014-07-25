@@ -156,7 +156,7 @@ class RM_Photo
     }
 
     public function getPhotoDir() {
-        if (preg_match('/^(.*)\/([0-9a-z]{4})\.(jpg|gif|jpeg|png)$/i', $this->getPhotoPath(), $data)) {
+        if (preg_match('/^(.*)\/([0-9a-z]{4})(\.(jpg|gif|jpeg|png))?$/i', $this->getPhotoPath(), $data)) {
             return $data[1];
         } else {
             throw new Exception(self::ERROR_NOT_FOUND);
@@ -202,7 +202,7 @@ class RM_Photo
             $width = floor($maxHeight / $height * $width);
             $height = $maxHeight;
         }
-        return self::getProportionPath($width, $height, $this->_getSavePath());
+        return $this->_getResizedPath($width, $height);
     }
 
     public function getPath($width = null, $height = null) {
@@ -215,7 +215,7 @@ class RM_Photo
             if (is_null($height) && $this->getWidth() !== 0) {
                 $height = $width / $this->getWidth() * $this->getHeight();
             }
-            return self::getProportionPath($width, $height, $this->_getSavePath());
+            return $this->_getResizedPath($width, $height);
         }
     }
 
@@ -280,6 +280,10 @@ class RM_Photo
         } else {
             throw new Exception('Access photo error');
         }
+    }
+
+    protected function _getResizedPath($width, $height) {
+        return self::getProportionPath($width, $height, $this->_getSavePath());
     }
 
     public function _toJSON() {
