@@ -154,12 +154,16 @@ abstract class RM_Controller_Admin
             foreach ($entity->getContentManager()->getAllContentLangs() as $contentLang) {
                 $fields = array();
                 foreach ($contentLang->getAllFields() as $field) {
-                    $fields[ $field->getName() ] = $field->getInitialContent();
+                    $fields[ $field->getName() ] = $this->__getContentFieldValue($field);
                 }
                 $_POST['lang'][ $contentLang->getIdLang() ] = $fields;
             }
         }
     }
+
+	protected function __getContentFieldValue(RM_Content_Field $field) {
+		return $field->getInitialContent();
+	}
 
     protected function _turnSwitcher($methodSuffix, $key) {
         $data = (object)$this->getRequest()->getPost();

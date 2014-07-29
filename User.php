@@ -568,6 +568,7 @@ class RM_User
 
     public function serialize() {
         return [
+			'id' => $this->getId(),
             'email' => $this->getEmail(),
             'name' => $this->getFullName(),
             'login' => $this->getEmail(),
