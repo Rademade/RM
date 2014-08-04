@@ -50,6 +50,10 @@ class RM_Photo
      * @var RM_Entity_Worker_Cache
      */
     protected $_cacheWorker;
+    /**
+     * @var RM_Photo_Resizer
+     */
+    private $_photoResizer;
     private $_noSave = false;
 
     public function __construct($data) {
@@ -79,20 +83,21 @@ class RM_Photo
         return $photo;
     }
 
+    public static function getEmpty() {
+        /* @var RM_Photo $photo */
+        $photo = new static(new RM_Compositor(array(
+            'photoPath' => self::NO_IMAGE
+        )));
+        $photo->noSave();
+        return $photo;
+    }
+
     public function save() {
         if (!$this->isNoSave()) {
             $this->_rmPhotoDataWorker->save();
             $this->__refreshCache();
         }
         return $this;
-    }
-
-    public static function getEmpty() {
-        $photo = new static(new RM_Compositor(array(
-            'photoPath' => self::NO_IMAGE
-        )));
-        $photo->noSave();
-        return $photo;
     }
 
     private function createContent() {
@@ -164,17 +169,7 @@ class RM_Photo
     }
 
     public function getFullPhotoPath() {
-        return PUBLIC_PATH . $this->_getSavePath();
-    }
-
-    protected static function getProportionPath($width, $height, $imagePath) {
-        return join('', array(
-            '/image.php?',
-            "width={$width}&",
-            "height={$height}&",
-            "crop&",
-            "image={$imagePath}"
-        ));
+        return $this->getPhotoResizer()->getFullPhotoPath();
     }
 
     /**
@@ -190,33 +185,11 @@ class RM_Photo
     }
 
     public function getProportionalPhoto($maxWidth, $maxHeight, &$width = null, &$height = null) {
-        $height = $this->getHeight();
-        $width = $this->getWidth();
-        if ($height == 0 || $width == 0) {
-            return '';
-        }
-        if ($maxWidth / $width < $maxHeight / $height) {
-            $height = floor($maxWidth / $width * $height);
-            $width = $maxWidth;
-        } else {
-            $width = floor($maxHeight / $height * $width);
-            $height = $maxHeight;
-        }
-        return $this->_getResizedPath($width, $height);
+        return $this->getPhotoResizer()->getProportionalPhoto($maxWidth, $maxHeight, $width, $height);
     }
 
     public function getPath($width = null, $height = null) {
-        if (is_null($width) && is_null($height)) { //original
-            return $this->_getSavePath();
-        } else {
-            if (is_null($width) && $this->getHeight() !== 0) {
-                $width = $height / $this->getHeight() * $this->getWidth();
-            }
-            if (is_null($height) && $this->getWidth() !== 0) {
-                $height = $width / $this->getWidth() * $this->getHeight();
-            }
-            return $this->_getResizedPath($width, $height);
-        }
+        return $this->getPhotoResizer()->getPath($width, $height);
     }
 
     private function getImageInfo() {
@@ -282,17 +255,6 @@ class RM_Photo
         }
     }
 
-    protected function _getResizedPath($width, $height) {
-        return self::getProportionPath($width, $height, $this->_getSavePath());
-    }
-
-    public function _toJSON() {
-        return array(
-            'id' => $this->getId(),
-            'photoPath' => $this->_getSavePath()
-        );
-    }
-
     public function setUser(RM_User_Interface $user) {
         $this->_rmPhotoDataWorker->setValue('idUser', $user->getId());
     }
@@ -313,7 +275,22 @@ class RM_Photo
         return $dirPath . substr($randomPath, $i, $step);
     }
 
-    function jsonSerialize() {
+    protected function getPhotoResizer() {
+        if (!$this->_photoResizer instanceof RM_Photo_Resizer) {
+            $photoResizerClassName = RM_Dependencies::getInstance()->photoResizerClass;
+            $this->_photoResizer = new $photoResizerClassName($this);
+        }
+        return $this->_photoResizer;
+    }
+
+    public function _toJSON() {
+        return array(
+            'id' => $this->getId(),
+            'photoPath' => $this->_getSavePath()
+        );
+    }
+
+    public function jsonSerialize() {
         return array(
             'path' => $this->getPath()
         );

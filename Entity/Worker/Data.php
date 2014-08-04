@@ -65,7 +65,7 @@ class RM_Entity_Worker_Data
 
     /**
      * @param $name
-     * @return string
+     * @return string|int|float|null
      */
     public function getValue($name) {
         if ($this->_isExistAttribute($name)) {

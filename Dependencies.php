@@ -9,7 +9,8 @@ class RM_Dependencies
         'userClass' => 'RM_User',
         'userProfile' => 'RM_User',
         'pageClass' => 'RM_Page',
-        'phoneClass' => 'RM_Phone'
+        'phoneClass' => 'RM_Phone',
+        'photoResizerClass' => 'RM_Photo_Resizer'
     );
 
     /**
@@ -17,7 +18,7 @@ class RM_Dependencies
      */
     private static $_self;
 
-    private function __construct() {}
+    private function __construct() { }
 
     /**
      * @static
@@ -31,14 +32,14 @@ class RM_Dependencies
     }
 
     public function __set($key, $val) {
-        $this->_storage[ $key ]  = $val;
+        $this->_storage[$key] = $val;
     }
 
     public function __get($key) {
-        if (!isset($this->_storage[ $key ]) && isset($this->_default[ $key ])) {
-            $this->_storage[ $key ] = $this->_default[ $key ];
+        if (!isset($this->_storage[$key]) && isset($this->_default[$key])) {
+            $this->_storage[$key] = $this->_default[$key];
         }
-        return $this->_storage[ $key ];
+        return $this->_storage[$key];
     }
 
 }
