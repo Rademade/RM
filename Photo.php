@@ -228,6 +228,7 @@ class RM_Photo
         $savePath = $this->_generateImageSavePath();
         $this->setPhotoPath($savePath . '.' . $extension);
         copy($tmpName, $this->getFullPhotoPath());
+        $this->getPhotoResizer()->removeOldPhotos();
         $this->save();
     }
 

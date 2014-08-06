@@ -48,6 +48,10 @@ class RM_Photo_Resizer {
         return $this->_photo->_getSavePath();
     }
 
+    public function removeOldPhotos() {
+
+    }
+
     protected function _getResizedPath($width, $height) {
         return self::getProportionPath($width, $height, $this->getSavePath());
     }
