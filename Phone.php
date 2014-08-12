@@ -6,8 +6,7 @@ class RM_Phone {
 	private $_phone;
 
     public static function clearPhoneNumber($phone) {
-        $uselessChars = ['-', '–', '(', ')', ' '];
-        return trim( str_replace($uselessChars, '', $phone) );
+        return preg_replace('/\D/', '', $phone);
     }
 
 	public function __construct($phone) {
@@ -26,6 +25,10 @@ class RM_Phone {
 	public function getPhoneNumber() {
 		return $this->_phone;
 	}
+
+    public function getNumberWithCode($code) {
+        return preg_replace('/.*(\d{10})/', '+' . $code . '${1}', $this->getPhoneNumber());
+    }
 	
 	public function validate() {
 		if (!preg_match(static::$validationRegex, $this->getPhoneNumber()))
