@@ -197,7 +197,7 @@ class RM_Content_Lang
 		$select->where('idContent = ?', $idContent);
 		$select->where('idLang = ?', $idLang);
 		$contentLang = static::_initItem($select );
-		if (!($contentLang instanceof self)) {
+		if (!$contentLang instanceof self) {
 			$contentLang = new static( new RM_Compositor( array(
                 'idContent' => $idContent,
                 'idLang' => $idLang,
@@ -213,7 +213,10 @@ class RM_Content_Lang
     	parent::save();
 		$this->_saveFields();
 		$this->__refreshCache();
-        $this->getContentManager()->__cleanCache();
+		$content = $this->getContentManager();
+		if ($content instanceof RM_Content) {
+			$content->__cleanCache();
+		}
         return $this;
 	}
 

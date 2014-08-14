@@ -138,7 +138,7 @@ class RM_Content
 	}
 
 	/**
-	 * Get current content lang from this contnent manager
+	 * Get current content lang from this content manager
 	 * About current lang know Lang
 	 *
 	 * @name getCurrentContentLang
@@ -148,10 +148,20 @@ class RM_Content
 	public function getCurrentContentLang() {
 		$currentLangId = RM_Lang::getCurrent()->getId();
 		$contentLang = $this->getContentLangByLangId( $currentLangId );
-		if ( !$contentLang instanceof RM_Content_Lang || $contentLang->getId() === 0 ) {
-			$contentLang = $this->getDefaultContentLang();
+		if ( !$contentLang instanceof RM_Content_Lang || $contentLang->getId() === 0) {
+			if ($currentLangId !== RM_Lang::getDefault()->getId()) {
+				$contentLang = $this->getDefaultContentLang();
+			}
+			if (!$contentLang instanceof RM_Content_Lang) {
+				$contentLang = $this->getFirstAvailableContentLang();
+			}
 		}
 		return $contentLang;
+	}
+
+	public function getFirstAvailableContentLang() {
+		$this->loadContentLangs();
+		return reset($this->_contentLangs);
 	}
 
     /**
@@ -178,7 +188,12 @@ class RM_Content
 
 	public function removeContentLang(RM_Lang $lang) {
 		$idLang = $lang->getId();
-		$this->getContentLangByLangId( $idLang )->remove();
+
+		$contentLang = $this->getContentLangByLangId( $idLang );
+		if ($contentLang instanceof RM_Content_Lang) {
+			$contentLang->remove();
+			var_dump(['db remove', $idLang]);
+		}
 		unset( $this->_contentLangs[ $idLang ] );
 	}
 

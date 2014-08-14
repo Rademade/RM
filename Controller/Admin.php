@@ -128,21 +128,35 @@ abstract class RM_Controller_Admin
         }
     }
 
+
     protected function __setContentFields() {
         if (
             $this->getRequest()->isPost() &&
             $this->_entity instanceof RM_Interface_Contentable
         ) {
             $data = (object)$this->getRequest()->getPost();
-            foreach ($data->lang as $idLang => $fields) {
+			/* @var RM_Interface_Contentable $entity */
+			$entity = $this->_entity;
+			$content = $entity->getContentManager();
+
+			foreach ($data->lang as $idLang => $fields) {
                 $lang = RM_Lang::getById( $idLang );
-                $entity = $this->_entity;
-                /* @var RM_Interface_Contentable $entity */
-                $contentLang = $entity->getContentManager()->addContentLang($lang);
-                foreach ($fields as $fieldName => $fieldContent) {
+
+				// Content lang will be removed if field with name 'no-save' given
+				if (isset($fields['no-save'])) {
+					// Load all available languages to be able remove necessary
+					$content->getAllContentLangs();
+					$content->removeContentLang($lang);
+					continue;
+				}
+
+				$contentLang = $content->addContentLang($lang);
+
+				foreach ($fields as $fieldName => $fieldContent) {
                     /* @var $contentLang RM_Content_Lang */
                     $contentLang->setFieldContent($fieldName, $fieldContent, $data->process[ $fieldName ]);
                 }
+
             }
         }
     }

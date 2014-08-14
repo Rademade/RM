@@ -24,7 +24,6 @@ class RM_View_Form  {
 
 	public function __construct() {
 		$this->_view = Zend_Layout::getMvcInstance()->getView();
-		$this->_langPanel = new RM_View_Form_Langs();
 		return $this;
 	}
 	
@@ -32,7 +31,14 @@ class RM_View_Form  {
 	 * @return RM_View_Form_Langs
 	 */
 	public function getLangPanel() {
+		if (!$this->_langPanel instanceof RM_View_Form_Langs) {
+			$this->_langPanel = new RM_View_Form_Langs();
+		}
 		return $this->_langPanel;
+	}
+
+	public function setLangPanel($panel) {
+		$this->_langPanel = $panel;
 	}
 
 	public function add(RM_View_Form_Field $field) {
@@ -99,7 +105,7 @@ class RM_View_Form  {
 		$translateFields = '';
 		if ($this->getLangPanel()->isMultiLang()) {
 			$translateFields .= $this->getLangPanel()->renderLangsPanel();
-			foreach ($this->getLangPanel()->getLangs() as $lang) {
+			foreach ($this->getLangPanel()->getAllLangs() as $lang) {
 				$translateFields .= $this->_renderLangTable(
 					$lang,
 					$this->_renderLangFields( $lang->getId() )

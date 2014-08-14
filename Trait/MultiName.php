@@ -20,7 +20,7 @@ trait RM_Trait_MultiName {
     }
 
     public function getAnyName() {
-        foreach ($this->getContentManager()->getContentLangs() as $contentLang) {
+        foreach ($this->getContentManager()->getAllContentLangs() as $contentLang) {
             if ($contentLang->getFieldContent('name') != '') {
                 return $contentLang->getFieldContent('name');
             }
@@ -29,11 +29,13 @@ trait RM_Trait_MultiName {
     }
 
     protected function __getCurrentName() {
-        return $this->getContentManager()->getCurrentContentLang()->getFieldContent('name');
+		$lang = $this->getContentManager()->getCurrentContentLang();
+        return $lang ? $lang->getFieldContent('name') : '';
     }
 
     protected function __getDefaultName() {
-        return $this->getContentManager()->getDefaultContentLang()->getFieldContent('name');
+		$lang = $this->getContentManager()->getDefaultContentLang();
+        return $lang ? $lang->getFieldContent('name') : '';
     }
 
 }
