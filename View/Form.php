@@ -51,7 +51,13 @@ class RM_View_Form  {
 		}
 		return $this;
 	}
-	
+
+    public function addFields(array $fields) {
+        foreach ($fields as $field) {
+            $this->add($field);
+        }
+    }
+
 	private function _renderFields( $idLang ) {
 		$buffer = '';
 		foreach ($this->_fields as $field) {

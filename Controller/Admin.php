@@ -115,7 +115,7 @@ abstract class RM_Controller_Admin
 
     protected function __redirectToLogin() {
         $this->__disableView();
-        $this->redirect( $this->view->url([], self::LOGIN_ROUTE) );
+        $this->redirect( $this->view->url([], static::LOGIN_ROUTE) );
     }
 
     protected function __getCrumbs() {
