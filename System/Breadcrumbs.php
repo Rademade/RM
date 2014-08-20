@@ -37,14 +37,11 @@ class RM_System_Breadcrumbs implements Iterator, Countable {
      */
     public function add() {
         $args = func_get_args();
-        if (func_num_args() == 2 && gettype($args[1]) == 'string') {
-            return $this->_addWithUrl($args[0], $args[1]);
-        } else {
-            return call_user_func_array(array($this, '_addWithRoute'), $args);
-        }
+        $target = func_num_args() === 3 ? '_addWithRoute' : '_addWithUrl';
+        return call_user_func_array(array($this, $target), $args);
     }
 
-    private function _addWithUrl($name, $url) {
+    private function _addWithUrl($name, $url = '') {
         array_push($this->_breadcrumbs, array(
             'name' => $name,
             'url' => $url

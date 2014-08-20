@@ -10,9 +10,7 @@ trait RM_Trait_Admin_Controller_Action_List {
         $menu = $this->view->menu;
         $menu = Zend_Controller_Front::getInstance()->getDispatcher()->formatModuleName($menu);
         $menu = lcfirst($menu);
-        $this->view->assign(array(
-            $menu => $this->__findEntities($this->__getSearchQuery())
-        ));
+        $this->view->assign($menu, $this->__findEntities($this->__getSearchQuery()));
         $this->__setupListPage();
         $this->__setupListPageCrumbs($this->__getCrumbs());
     }
