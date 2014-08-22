@@ -29,17 +29,11 @@ abstract class RM_Controller_Admin
 
     public function preDispatch() {
         parent::preDispatch();
-        $this->__initParams();
         $this->__onlyAdmin();
-        $this->view->assign('page', !is_null($this->_getParam('page')) ? (int)$this->_getParam('page') : 1);
+        $this->__initParams();
+        $this->__initPageNumber();
         $this->__setTitle($this->_itemName);
         $this->__buildCrumbs();
-    }
-
-    protected function __initParams() {
-        if ($this->_ajaxRoute) {
-            $this->_ajaxUrl = $this->view->url( $this->getAllParams(), $this->_ajaxRoute);
-        }
     }
 
     public function listAction() {
@@ -123,8 +117,8 @@ abstract class RM_Controller_Admin
     }
 
     protected function __buildCrumbs() {
-        if (is_string( $this->_listRoute )) {
-            $this->__getCrumbs()->add($this->getListCrumbName(), [], $this->_listRoute );
+        if (is_string($this->_listRoute)) {
+            $this->__getCrumbs()->add($this->getListCrumbName(), [], $this->_listRoute);
         }
     }
 
@@ -205,6 +199,16 @@ abstract class RM_Controller_Admin
      */
     protected function _getAjaxService() {
         return new RM_Controller_Service_Ajax($this->_itemClassName );
+    }
+
+    protected function __initParams() {
+        if ($this->_ajaxRoute) {
+            $this->_ajaxUrl = $this->view->url($this->getAllParams(), $this->_ajaxRoute);
+        }
+    }
+
+    protected function __initPageNumber() {
+        $this->view->page = (int)$this->getParam('page') ?: 1;
     }
 
 }

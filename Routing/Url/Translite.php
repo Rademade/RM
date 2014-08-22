@@ -1,6 +1,9 @@
 <?php
 class RM_Routing_Url_Translite {
 
+    private static $_needle;
+    private static $_replace;
+
     private $string;
 
     function __construct($str) {
@@ -8,23 +11,78 @@ class RM_Routing_Url_Translite {
     }
 
     private function transliterate_return($str) {
-        return str_replace($this->getNiddle(), $this->getReplace(), $str);
+        return str_replace($this->getNeedle(), $this->getReplace(), $str);
     }
-    
-    private function getNiddle() {
-    	return array(
-	    	'а', 'б', 'в', 'г', 'д', 'ђ', 'е', 'ж', 'з', 'и', 'ј', 'к', 'л', 'љ', 'м',
-	    	'н', 'њ', 'о', 'п', 'р', 'с', 'т', 'ћ', 'у', 'ф', 'х', 'ц', 'ч', 'џ', 'ш',
-    		'я', 'ь', 'ы', 'й', 'щ', 'ъ', 'ю', 'э', 'ё', 'ñ', 'á', 'í', 'ú', 'і'
-	    );
+
+    private function getNeedle() {
+        $this->_loadDictionary();
+        return self::$_needle;
     }
 
     private function getReplace() {
-	    return array (
-	    	'a', 'b', 'v', 'g', 'd', 'd', 'e', 'z', 'z', 'i', 'j', 'k', 'l', 'lj', 'm',
-	    	'n', 'nj', 'o', 'p', 'r', 's', 't', 'c', 'u', 'f', 'h', 'c', 'ch', 'dz', 's',
-	    	'ya', '', 'y', 'j', 'w', '', 'je', 'ju', 'jo', 'n', 'a', 'i', 'u', 'i'
-	   	);		
+        $this->_loadDictionary();
+        return self::$_replace;
+    }
+
+    /**
+     * Аа Бб Вв Гг Дд Ее Ёё Жж Зз Ии Йй Кк Лл Мм Нн Оо Пп Рр Сс Тт Уу Фф Хх Цц Чч Шш Щщ Ъъ Ыы Ьь Ээ Юю Яя
+     */
+    private function _loadDictionary() {
+
+        if (self::$_needle) return;
+
+        $f = [];
+        $t = [];
+
+        $f[] = 'а'; $t[] = 'a';
+        $f[] = 'б'; $t[] = 'b';
+        $f[] = 'в'; $t[] = 'v';
+        $f[] = 'г'; $t[] = 'g';
+        $f[] = 'д'; $t[] = 'd';
+        $f[] = 'е'; $t[] = 'e';
+        $f[] = 'ё'; $t[] = 'e';
+        $f[] = 'ж'; $t[] = 'zh';
+        $f[] = 'з'; $t[] = 'z';
+        $f[] = 'и'; $t[] = 'i';
+        $f[] = 'й'; $t[] = 'y';
+        $f[] = 'к'; $t[] = 'k';
+        $f[] = 'л'; $t[] = 'l';
+        $f[] = 'м'; $t[] = 'm';
+        $f[] = 'н'; $t[] = 'n';
+        $f[] = 'о'; $t[] = 'o';
+        $f[] = 'п'; $t[] = 'p';
+        $f[] = 'р'; $t[] = 'r';
+        $f[] = 'с'; $t[] = 's';
+        $f[] = 'т'; $t[] = 't';
+        $f[] = 'y'; $t[] = 'u';
+        $f[] = 'ф'; $t[] = 'f';
+        $f[] = 'х'; $t[] = 'h';
+        $f[] = 'ц'; $t[] = 'c';
+        $f[] = 'ч'; $t[] = 'ch';
+        $f[] = 'ш'; $t[] = 'sh';
+        $f[] = 'щ'; $t[] = 'shch';
+        $f[] = 'ъ'; $t[] = '';
+        $f[] = 'ы'; $t[] = 'y';
+        $f[] = 'ь'; $t[] = '';
+        $f[] = 'э'; $t[] = 'e';
+        $f[] = 'ю'; $t[] = 'yu';
+        $f[] = 'я'; $t[] = 'ya';
+
+        $f[] = 'ђ'; $t[] = 'd';
+        $f[] = 'љ'; $t[] = 'lj';
+        $f[] = 'њ'; $t[] = 'nj';
+        $f[] = 'ћ'; $t[] = 'c';
+        $f[] = 'џ'; $t[] = 'dz';
+        $f[] = 'ñ'; $t[] = 'n';
+        $f[] = 'á'; $t[] = 'a';
+        $f[] = 'í'; $t[] = 'i';
+        $f[] = 'ú'; $t[] = 'u';
+
+        $f[] = 'і'; $t[] = 'i';
+        $f[] = 'ј'; $t[] = 'j';
+
+        self::$_needle = $f;
+        self::$_replace = $t;
     }
 
     public function __toString() {
