@@ -17,10 +17,10 @@ abstract class RM_XLS_Abstract {
      */
     protected $_entitiesForSheets = array();
 
-    protected $_title = self::DEFAULT_DOCUMENT_TITLE;
+    protected $_title;
 
-    protected $_fileName = self::DEFAULT_FILE_NAME;
-    protected $_fileExtension = self::DEFAULT_FILE_EXTENSION;
+    protected $_fileName;
+    protected $_fileExtension;
     protected $_autoDate = true;
 
     /**
@@ -43,6 +43,12 @@ abstract class RM_XLS_Abstract {
     abstract protected function __getEntityValues($e);
 
     public function __construct() {
+        $this->_title = static::DEFAULT_DOCUMENT_TITLE;
+        $this->_fileName = static::DEFAULT_FILE_NAME;
+        $this->_fileExtension = static::DEFAULT_FILE_EXTENSION;
+        $this->_currentRow = static::FIRST_ROW;
+        $this->_currentColumn = static::FIRST_COLUMN;
+
         $this->_document = $this->__createDocument();
         $this->_document->getProperties()->setTitle($this->getTitle());
         $this->_document->getDefaultStyle()->getAlignment()
@@ -132,7 +138,7 @@ abstract class RM_XLS_Abstract {
     }
 
     public function resetCurrentRowHeight() {
-        $this->setCurrentRowHeight(self::ROW_HEIGHT);
+        $this->setCurrentRowHeight(static::ROW_HEIGHT);
     }
 
     protected function __createDocument() {
@@ -181,7 +187,7 @@ abstract class RM_XLS_Abstract {
     }
 
     private function _resetRow() {
-        $this->_currentRow = self::FIRST_ROW;
+        $this->_currentRow = static::FIRST_ROW;
     }
 
     private function _nextRow() {
@@ -189,11 +195,11 @@ abstract class RM_XLS_Abstract {
     }
 
     private function _resetColumn() {
-        $this->_currentColumn = self::FIRST_COLUMN;
+        $this->_currentColumn = static::FIRST_COLUMN;
     }
 
     private function _columnsAutoWidth() {
-        foreach (range(self::FIRST_COLUMN, $this->_currentColumn) as $column) {
+        foreach (range(static::FIRST_COLUMN, $this->_currentColumn) as $column) {
             $this->_document->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
         }
     }
