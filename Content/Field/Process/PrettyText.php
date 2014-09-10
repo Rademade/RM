@@ -5,19 +5,12 @@ class RM_Content_Field_Process_PrettyText
 	extends
         RM_Content_Field_Process {
 
-	private static $_self;
+    use RM_Content_Field_Process_Singleton;
 
     /**
      * @var Html2Text
      */
     private $_converter;
-
-	public static function init() {
-		if (!self::$_self instanceof static) {
-            self::$_self = new static();
-		}
-		return self::$_self;
-	}
 
 	public function getInitialContent($html) {
 		return nl2br($html);

@@ -122,7 +122,6 @@ abstract class RM_Controller_Admin
         }
     }
 
-
     protected function __setContentFields() {
         if (
             $this->getRequest()->isPost() &&
@@ -150,7 +149,6 @@ abstract class RM_Controller_Admin
                     /* @var $contentLang RM_Content_Lang */
                     $contentLang->setFieldContent($fieldName, $fieldContent, $data->process[ $fieldName ]);
                 }
-
             }
         }
     }

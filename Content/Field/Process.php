@@ -6,8 +6,7 @@ abstract class RM_Content_Field_Process {
 	const PROCESS_TYPE_LINE = 3;
     const PROCESS_TYPE_NONE = 4;
 	const PROCESS_TYPE_PRETTY_TEXT = 5;
-
-	protected function __construct() {}
+	const PROCESS_TYPE_MINIMAL_HTML = 6;
 
 	public static function getByType( $type ) {
         switch ($type) {
@@ -21,6 +20,8 @@ abstract class RM_Content_Field_Process {
                 return RM_Content_Field_Process_None::init();
 			case self::PROCESS_TYPE_PRETTY_TEXT:
                 return RM_Content_Field_Process_PrettyText::init();
+            case self::PROCESS_TYPE_MINIMAL_HTML:
+                return RM_Content_Field_Process_MinimalHtml::init();
             default:
                 throw new Exception('Wrong process type asked');
         }

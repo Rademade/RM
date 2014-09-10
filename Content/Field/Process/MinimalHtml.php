@@ -1,5 +1,5 @@
 <?php
-class RM_Content_Field_Process_Html
+class RM_Content_Field_Process_MinimalHtml
 	extends
         RM_Content_Field_Process_HtmlAbstract {
 
@@ -12,27 +12,15 @@ class RM_Content_Field_Process_Html
             'h3',
             'h4',
             'h5',
-            'h6',
-            'a',
+            'h6', 
             'span',
             'p',
             'div',
-            'ul',
-            'li',
-            'ol',
             'b',
             'strong',
             'i',
             'em',
             'u',
-            'img',
-            'table',
-            'tr',
-            'th',
-            'td',
-            'thead',
-            'tbody',
-            'tfoot',
             'br',
         ];
     }
@@ -46,14 +34,8 @@ class RM_Content_Field_Process_Html
 
     protected function __loadAllowedAttributes() {
         return [
-            'src',
-            'href',
-            'alt',
-            'height',
-            'width',
             'align',
             'style',
-            'target',
             'data-id',
             'data-align',
             'rel',
@@ -62,4 +44,17 @@ class RM_Content_Field_Process_Html
             'title'
         ];
     }
+
+     /**
+     * @return HTMLPurifier_Config
+     */
+    protected function __getConfig() {
+        $config = parent::__getConfig();
+        $config->set('URI.Disable', true);
+        $config->set('URI.DisableExternal', true);
+        $config->set('URI.DisableExternalResources', true);
+        $config->set('URI.DisableResources', true);
+        return $config;
+    }
+
 }

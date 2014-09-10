@@ -1,24 +1,10 @@
 <?php
 class RM_Content_Field_Process_Line
-	extends RM_Content_Field_Process {
+	extends
+        RM_Content_Field_Process {
 
-	private static $_self;
+    use RM_Content_Field_Process_Singleton;
 
-	protected function __construct(){
-		parent::__construct();
-	}
-
-    /**
-     * @static
-     * @return RM_Content_Field_Process_Line
-     */
-	public static function init() {
-		if (!(self::$_self instanceof self)) {
-			self::$_self = new self();
-		}
-		return self::$_self;
-	}
-		
 	public function getInitialContent($html) {
 		return htmlspecialchars_decode( $html );
 	}

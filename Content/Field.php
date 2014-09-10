@@ -129,7 +129,6 @@ class RM_Content_Field
 	}
 
 	public function setProcessMethodType($type) {
-		$type = (int)$type;
 		if ($this->getProcessMethodType() !== $type) {
 			$this->_process = null;
 			$this->processType = $type;
@@ -141,8 +140,8 @@ class RM_Content_Field
 	}
 
 	public function getProcessMethod() {
-		if (!($this->_process instanceof RM_Content_Field_Process)) {
-			$this->_process = RM_Content_Field_Process::getByType( $this->getProcessMethodType() );
+		if (!$this->_process instanceof RM_Content_Field_Process) {
+            $this->_process = RM_Content_Field_Process::getByType( $this->getProcessMethodType() );
 		}
 		return $this->_process;
 	}
