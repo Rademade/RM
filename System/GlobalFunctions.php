@@ -64,6 +64,20 @@ class RM_System_GlobalFunctions {
 			}
 		}
 
+        function browser_log() {
+            $args = func_get_args();
+            if (empty($args)) return;
+            ob_start();
+            ?><script type="text/javascript">
+                window.console || (window.console = {});
+                window.console.log || (window.console.log = function() {});<?php
+                foreach ($args as $arg) {
+                    ?>console.log(<?=Zend_Json::encode($arg)?>);<?php
+                }
+            ?></script><?php
+            echo ob_get_clean();
+        }
+
     }
 
     private static $_initialized = false;

@@ -12,8 +12,4 @@ trait RM_Content_Field_Process_Singleton {
             : static::$_instance = new static();
     }
 
-    final private function __wakeup() {}
-
-    final private function __clone() {}
-
 }
