@@ -7,7 +7,7 @@ use cassandra\CqlResult;
 
 class RM_Cassandra_Cql {
 
-    private static $_taboo = [ '`', '"', '(', ')'];
+    private static $_taboo = ['`', '"', '(', ')'];
 
     /**
      * @param Zend_Db_Select|string $query

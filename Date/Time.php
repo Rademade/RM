@@ -8,6 +8,8 @@ class RM_Date_Time
     const SECONDS_PER_HOUR = 3600;
     const SECONDS_PER_MINUTE = 60;
     const SECONDS_PER_DAY = 86400;
+    const SECONDS_PER_WEEK = 604800;
+    const SECONDS_PER_MONTH = 2592000;
 
     const LAST_HOUR = 23;
     const LAST_MINUTE = 59;
