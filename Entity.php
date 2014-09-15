@@ -7,7 +7,9 @@
  */
 abstract class RM_Entity
     implements
-        RM_Entity_Search_Result_Interface {
+        RM_Entity_Search_Result_Interface,
+        RM_Interface_Identifiable,
+        RM_Interface_Savable {
 
 	const TABLE_NAME = null;
 
