@@ -1,24 +1,14 @@
 <?php
-
-RM_Cassandra_Loader::load();
-
-use cassandra\Compression;
-use cassandra\CqlResult;
-
 class RM_Cassandra_Cql {
 
-    private static $_taboo = ['`', '"', '(', ')'];
-
     /**
-     * @param Zend_Db_Select|string $query
-     * @param int $compression
+     * @param string $query
+     * @param array $bindings
      *
-     * @return CqlResult
+     * @return array
      */
-    public static function exec($query, $compression = Compression::NONE) {
-        $pool = RM_Cassandra_Entity::getConnection();
-        $raw  = $pool->get();
-        return $raw->client->execute_cql_query(str_replace(self::$_taboo, '', $query), $compression);
+    public static function exec($query, $bindings = []) {
+        return RM_Cassandra_Db::get()->query($query, $bindings);
     }
 
 }

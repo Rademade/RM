@@ -1,11 +1,13 @@
 <?php
+require_once LIBRARY_PATH . '/Uuid/Uuid.php';
 
-RM_Cassandra_Loader::load();
-
-use phpcassa\ColumnFamily;
-use phpcassa\UUID;
+use Rhumsaa\Uuid\Console\Exception;
 use RM_Interface_Identifiable as Identifiable;
 use RM_Interface_Savable as Savable;
+use RM_Cassandra_Query_ValueDecorator as ValueDecorator;
+use RM_Cassandra_Query_Select as Select;
+use RM_Cassandra_Query_Insert as Insert;
+use Rhumsaa\Uuid\Uuid;
 
 abstract class RM_Cassandra_Entity
     implements
@@ -14,72 +16,63 @@ abstract class RM_Cassandra_Entity
 
     const TABLE_NAME = '';
 
-    /**
-     * @var ColumnFamily[]
-     */
-    protected static $_tables = [];
+    protected static $_asUuid = '';
+    protected static $_asInteger = '';
 
-    protected $_key;
+    protected $_id;
     protected $_attributes;
     protected $_aggregations;
     protected $_dirty;
 
-    public function __construct($key = null, array $attributes = array()) {
-        $this->_key = $key;
+    public function __construct(array $attributes = array()) {
+        $this->_id = isset($attributes['id']) ? $attributes['id'] : null;
         $this->_attributes = $attributes;
+        unset($this->_attributes['id']);
         $this->_dirty = false;
     }
 
-    public static function getConnection() {
-        return RM_Cassandra_Connection::connect();
+    public static function getSelect() {
+        return static::enhanceSelect(new Select(static::TABLE_NAME));
     }
 
-    /**
-     * @return ColumnFamily
-     */
-    public static function getTable() {
-        $class = get_called_class();
-        if (!isset(static::$_tables[$class])) {
-            static::$_tables[$class] = static::__openTable();
-        }
-        return static::$_tables[$class];
+    public static function enhanceSelect(Select $select) {
+        return $select;
     }
 
-    /**
-     * @return ColumnFamily
-     * @throws Exception
-     */
-    protected static function __openTable() {
-        if (!static::TABLE_NAME) {
-            throw new Exception('Table name was not defined');
-        }
-        return new ColumnFamily(static::getConnection(), static::TABLE_NAME);
-    }
-
-    public static function byKey($key) {
+    public static function byId($id) {
         try {
-            $attributes = static::getTable()->get($key);
-        } catch (Exception $e) {
-            return null;
-        }
-        return new static($key, $attributes);
+            $select = static::getSelect()->one();
+            $select->where()->valueOf('id')->equalsTo($id)->asUuid();
+            $data = RM_Cassandra_Cql::exec($select);
+            if (isset($data[0])) return static::buildOne($data[0]);
+        } catch (Exception $e) {}
     }
 
-    public static function getList() {
-        $list = array();
-        $range = static::getTable()->get_range();
-        foreach ($range as $key => $attributes) {
-            $list[] = new static($key, $attributes);
+    public static function findOne(array $conditions) {
+        $select = static::getSelect()->one();
+        $w = $select->where();
+        foreach ($conditions as $attrName => $attrValue) {
+            $w->valueOf($attrName)->equalsTo($attrValue);
         }
-        return $list;
+        $data = RM_Cassandra_Cql::exec($select);
+        if (isset($data[0])) return static::buildOne($data[0]);
     }
 
-    public function key() {
-        return $this->_key ?: $this->_key = (string)UUID::uuid1();
+    public static function buildOne($data) {
+        return new static($data);
+    }
+
+    public static function buildMany(array $data) {
+        return array_map(function($data) {
+            return static::buildOne($data);
+        }, $data);
     }
 
     public function getId() {
-        return $this->key();
+        if (!$this->_id) {
+            $this->_id = Uuid::uuid1();
+        }
+        return $this->_id;
     }
 
     public function &attributes() {
@@ -113,10 +106,10 @@ abstract class RM_Cassandra_Entity
                 $this->_aggregations = [];
             }
             $this->_aggregations[$attrName] = $value;
-            $this->attributes()['id' . ucfirst($attrName)] = $value->getId();
-        } else {
-            $this->attributes()[$attrName] = $value;
+            $attrName = 'id' . ucfirst($attrName);
+            $value = $value->getId();
         }
+        $this->attributes()[$attrName] = $this->__typeCast($attrName, $value);
         $this->_dirty = true;
         return $this;
     }
@@ -124,8 +117,16 @@ abstract class RM_Cassandra_Entity
     public function save() {
         if ($this->_dirty) {
             $this->__saveAggregations();
-            $this->__removeNullAttributes();
-            static::getTable()->insert($this->key(), $this->attributes());
+
+            $insert = new Insert(static::TABLE_NAME);
+            $insert->value($this->getId())->namedAs('id')->treatedAs(ValueDecorator::AS_UUID);
+            foreach ($this->attributes() as $attrName => $attrValue) {
+                $asUuid = false !== strpos(static::$_asUuid, $attrName);
+                $insert->value($attrValue)->namedAs($attrName)->treatedAs($asUuid ? ValueDecorator::AS_UUID : null);
+            }
+
+            RM_Cassandra_Cql::exec($insert);
+
             $this->_dirty = false;
         }
         return $this;
@@ -141,6 +142,11 @@ abstract class RM_Cassandra_Entity
         array_unshift($args, $attribute);
 
         return call_user_func_array([$this, $task], $args);
+    }
+
+    protected function __typeCast($attrName, $attrValue) {
+        $treatedAsInt = false !== strpos(static::$_asInteger, $attrName);
+        return $treatedAsInt ? (int)$attrValue : (string)$attrValue;
     }
 
     protected function __saveAggregations() {
@@ -171,15 +177,6 @@ abstract class RM_Cassandra_Entity
             if (method_exists($this, $lookupMethod)) {
                 $e = $this->{$lookupMethod}($attributes[$idAttribute]);
                 return $this->aggregations()[$entityAttribute] = $e;
-            }
-        }
-    }
-
-    protected function __removeNullAttributes() {
-        $attributes = &$this->attributes();
-        foreach ($attributes as $attrName => $attrValue) {
-            if (null === $attrValue) {
-                unset($attributes[$attrName]);
             }
         }
     }
