@@ -282,6 +282,10 @@ abstract class RM_Entity
 		}
 	}
 
+    public static function column($column) {
+        return static::TABLE_NAME . '.' . $column;
+    }
+
     protected static function _initItemFromData($data) {
         return new static($data);
     }

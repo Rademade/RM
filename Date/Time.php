@@ -118,7 +118,7 @@ class RM_Date_Time
     }
 
     public function toArray($moon = self::MOON_00) {
-        if ($moon == self::MOON_24) {
+        if ((int)$moon === self::MOON_24) {
             $isEndOfDay = $this->isEndOfDay();
             $parts = array(
                 $isEndOfDay ? 24 : $this->getHours(),
@@ -171,7 +171,7 @@ class RM_Date_Time
     }
 
     public function equal(RM_Date_Time $other) {
-        return $this->getTimestamp() == $other->getTimestamp();
+        return $this->getTimestamp() === $other->getTimestamp();
     }
 
     public function lesserEqual(RM_Date_Time $other) {
@@ -187,15 +187,15 @@ class RM_Date_Time
     }
 
     public function isLastHour() {
-        return $this->getHours() == self::LAST_HOUR;
+        return $this->getHours() === self::LAST_HOUR;
     }
 
     public function isLastMinute() {
-        return $this->getMinutes() == self::LAST_MINUTE;
+        return $this->getMinutes() === self::LAST_MINUTE;
     }
 
     public function isLastSecond() {
-        return $this->getSeconds() == self::LAST_SECOND;
+        return $this->getSeconds() === self::LAST_SECOND;
     }
 
     public function isBeginOfDay() {

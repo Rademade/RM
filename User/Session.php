@@ -15,6 +15,10 @@ class RM_User_Session {
 
 	const REMEMBER_TIME = 5184000;
 
+    const IP_ADDRESS_REGEX = '/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/';
+
+    const DEFAULT_IP = '127.0.0.1';
+
 	protected function __construct() {
 		$this->session = new Zend_Session_Namespace ("User");
 	}
@@ -45,35 +49,26 @@ class RM_User_Session {
 		return static::$_self;
 	}
 
-	private function _setIdUser($idUser) {
-		$idUser = intval($idUser);
-		$this->session->idUser = $idUser;
-	}
-
-	public function getIdUser() {
-		return (int)$this->session->idUser;
-	}
-
-	public function create(RM_User_Interface $user){
-		$this->_setIdUser( $user->getId() );
-	}
-
 	public static function getMyIp() {
-        $IP_ServerKeys = array(
+        $ipKeys = [
             'HTTP_CLIENT_IP',
             'HTTP_X_FORWARDED_FOR',
             'HTTP_X_FORWARDED',
             'HTTP_FORWARDED_FOR',
             'HTTP_FORWARDED',
             'REMOTE_ADDR'
-        );
-        foreach ($IP_ServerKeys as $serverKey) {
-            if ( isset( $_SERVER[ $serverKey ] ) ) {
-                return $_SERVER[ $serverKey ];
+        ];
+        foreach ($ipKeys as $key) {
+            if (isset($_SERVER[$key]) && self::testIp($ip = $_SERVER[$key])) {
+                return $ip;
             }
         }
-        return '127.0.0.1';
+        return self::DEFAULT_IP;
 	}
+
+    public static function testIp($ip) {
+        return preg_match(self::IP_ADDRESS_REGEX, $ip);
+    }
 
     public function remember() {
         Zend_Session::rememberMe(self::REMEMBER_TIME);
@@ -112,5 +107,18 @@ class RM_User_Session {
         $userClass = RM_Dependencies::getInstance()->userClass;
 		return $this->getUser() instanceof $userClass;
 	}
+
+    public function getIdUser() {
+		return (int)$this->session->idUser;
+	}
+
+    public function create(RM_User_Interface $user){
+		$this->_setIdUser( $user->getId() );
+	}
+
+    private function _setIdUser($idUser) {
+        $idUser = intval($idUser);
+        $this->session->idUser = $idUser;
+    }
 
 }
