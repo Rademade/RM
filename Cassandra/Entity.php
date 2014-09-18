@@ -8,6 +8,7 @@ use RM_Cassandra_Query_ValueDecorator as ValueDecorator;
 use RM_Cassandra_Query_Select as Select;
 use RM_Cassandra_Query_Insert as Insert;
 use Rhumsaa\Uuid\Uuid;
+use RM_Cassandra_Cql as Cql30;
 
 abstract class RM_Cassandra_Entity
     implements
@@ -15,9 +16,12 @@ abstract class RM_Cassandra_Entity
         Savable {
 
     const TABLE_NAME = '';
+    const ID_ATTRIBUTE_NAME = 'id';
+    const AGGREGATED_ENTITY_ID_ATTRIBUTE_PREFIX = 'id';
+    const AGGREGATED_ENTITY_LOOKUP_METHOD_PREFIX = 'find';
 
-    protected static $_asUuid = '';
-    protected static $_asInteger = '';
+    protected static $_asUuid;
+    protected static $_asInteger;
 
     protected $_id;
     protected $_attributes;
@@ -25,9 +29,9 @@ abstract class RM_Cassandra_Entity
     protected $_dirty;
 
     public function __construct(array $attributes = array()) {
-        $this->_id = isset($attributes['id']) ? $attributes['id'] : null;
+        $this->_id = rm_isset($attributes, static::ID_ATTRIBUTE_NAME);
         $this->_attributes = $attributes;
-        unset($this->_attributes['id']);
+        unset($this->_attributes[static::ID_ATTRIBUTE_NAME]);
         $this->_dirty = false;
     }
 
@@ -43,7 +47,7 @@ abstract class RM_Cassandra_Entity
         try {
             $select = static::getSelect()->one();
             $select->where()->valueOf('id')->equalsTo($id)->asUuid();
-            $data = RM_Cassandra_Cql::exec($select);
+            $data = Cql30::exec($select);
             if (isset($data[0])) return static::buildOne($data[0]);
         } catch (Exception $e) {}
     }
@@ -54,7 +58,7 @@ abstract class RM_Cassandra_Entity
         foreach ($conditions as $attrName => $attrValue) {
             $w->valueOf($attrName)->equalsTo($attrValue);
         }
-        $data = RM_Cassandra_Cql::exec($select);
+        $data = Cql30::exec($select);
         if (isset($data[0])) return static::buildOne($data[0]);
     }
 
@@ -102,11 +106,8 @@ abstract class RM_Cassandra_Entity
 
     public function set($attrName, $value) {
         if ($value instanceof RM_Interface_Identifiable) {
-            if (!$this->_aggregations) {
-                $this->_aggregations = [];
-            }
-            $this->_aggregations[$attrName] = $value;
-            $attrName = 'id' . ucfirst($attrName);
+            $this->aggregations()[$attrName] = $value;
+            $attrName = static::AGGREGATED_ENTITY_ID_ATTRIBUTE_PREFIX . ucfirst($attrName);
             $value = $value->getId();
         }
         $this->attributes()[$attrName] = $this->__typeCast($attrName, $value);
@@ -117,16 +118,8 @@ abstract class RM_Cassandra_Entity
     public function save() {
         if ($this->_dirty) {
             $this->__saveAggregations();
-
-            $insert = new Insert(static::TABLE_NAME);
-            $insert->value($this->getId())->namedAs('id')->treatedAs(ValueDecorator::AS_UUID);
-            foreach ($this->attributes() as $attrName => $attrValue) {
-                $asUuid = false !== strpos(static::$_asUuid, $attrName);
-                $insert->value($attrValue)->namedAs($attrName)->treatedAs($asUuid ? ValueDecorator::AS_UUID : null);
-            }
-
-            RM_Cassandra_Cql::exec($insert);
-
+            $insert = $this->__buildInsertQuery();
+            Cql30::exec($insert);
             $this->_dirty = false;
         }
         return $this;
@@ -144,9 +137,31 @@ abstract class RM_Cassandra_Entity
         return call_user_func_array([$this, $task], $args);
     }
 
+    protected function __buildInsertQuery() {
+        $insert = new Insert(static::TABLE_NAME);
+        $id = $this->getId();
+        $idAttribute = static::ID_ATTRIBUTE_NAME;
+
+        $insert->value($id)->namedAs($idAttribute)->treatedAs(ValueDecorator::AS_UUID);
+
+        foreach ($this->attributes() as $attrName => $attrValue) {
+            $asUuid = $this->__treatedAsUuid($attrName);
+            $insert->value($attrValue)->namedAs($attrName)->treatedAs($asUuid ? ValueDecorator::AS_UUID : null);
+        }
+
+        return $insert;
+    }
+
+    protected function __treatedAsUuid($attrName) {
+        return is_array(static::$_asUuid) && in_array($attrName, static::$_asUuid);
+    }
+
+    protected function __treatedAsInteger($attrName) {
+        return is_array(static::$_asInteger) && in_array($attrName, static::$_asInteger);
+    }
+
     protected function __typeCast($attrName, $attrValue) {
-        $treatedAsInt = false !== strpos(static::$_asInteger, $attrName);
-        return $treatedAsInt ? (int)$attrValue : (string)$attrValue;
+        return $this->__treatedAsInteger($attrName) ? (int)$attrValue : $attrValue;
     }
 
     protected function __saveAggregations() {
@@ -157,7 +172,7 @@ abstract class RM_Cassandra_Entity
                 if ($entity instanceof Savable) {
                     $entity->save();
                 }
-                $attributes['id' . ucfirst($entityName)] = $entity->getId();
+                $attributes[static::AGGREGATED_ENTITY_ID_ATTRIBUTE_PREFIX . ucfirst($entityName)] = $entity->getId();
             }
         }
     }
@@ -169,11 +184,11 @@ abstract class RM_Cassandra_Entity
         }
 
         $entityName = ucfirst($entityAttribute);
-        $idAttribute = 'id' . $entityName;
+        $idAttribute = static::AGGREGATED_ENTITY_ID_ATTRIBUTE_PREFIX . $entityName;
         $attributes = &$this->attributes();
 
         if (isset($attributes[$idAttribute])) {
-            $lookupMethod = 'find' . $entityName;
+            $lookupMethod = static::AGGREGATED_ENTITY_LOOKUP_METHOD_PREFIX . $entityName;
             if (method_exists($this, $lookupMethod)) {
                 $e = $this->{$lookupMethod}($attributes[$idAttribute]);
                 return $this->aggregations()[$entityAttribute] = $e;
