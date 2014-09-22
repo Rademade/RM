@@ -45,6 +45,10 @@ class RM_System_GlobalFunctions {
             return $min <= $num && $num <= $max;
         }
 
+        function number_between_strict($num, $min, $max) {
+            return $min <= $num && $num <= $max;
+        }
+
         function any_of($list, $pred) {
             if ($pred instanceof Closure) {
                 foreach ($list as $key => $value) {
@@ -76,6 +80,10 @@ class RM_System_GlobalFunctions {
                 }
             ?></script><?php
             echo ob_get_clean();
+        }
+
+        function is_not_empty_array($array) {
+            return is_array($array) && sizeof($array);
         }
 
         /**
