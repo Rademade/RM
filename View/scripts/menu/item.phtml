@@ -3,7 +3,11 @@
        if ($this->currentMenu == $this->menuItem['menu']) :
            ?>class="current"<?
         endif;
-    ?> href="<?=$this->menuItem['url']?>"><?
+    ?> href="<?=$this->menuItem['url']?>"<?
+        if (rm_isset($this->menuItem, 'in-new-window')) :
+            ?> target="_blank" <?
+        endif;
+    ?>><?
         echo $this->menuItem['name'];
         if (isset($this->menuItem['count']) && $this->menuItem['count'] > 0):
             echo ' (' . $this->menuItem['count'] . ') ';
