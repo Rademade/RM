@@ -22,6 +22,7 @@ abstract class RM_Cassandra_Entity
 
     protected static $_asUuid;
     protected static $_asInteger;
+    protected static $_asBoolean;
 
     protected $_id;
     protected $_attributes;
@@ -145,8 +146,15 @@ abstract class RM_Cassandra_Entity
         $insert->value($id)->namedAs($idAttribute)->treatedAs(ValueDecorator::AS_UUID);
 
         foreach ($this->attributes() as $attrName => $attrValue) {
-            $asUuid = $this->__treatedAsUuid($attrName);
-            $insert->value($attrValue)->namedAs($attrName)->treatedAs($asUuid ? ValueDecorator::AS_UUID : null);
+            if ($this->__treatedAsUuid($attrName)) {
+                $as = ValueDecorator::AS_UUID;
+            } elseif ($this->__treatedAsBoolean($attrName)) {
+                $as = ValueDecorator::AS_BOOLEAN;
+            } else {
+                $as = null;
+            }
+
+            $insert->value($attrValue)->namedAs($attrName)->treatedAs($as);
         }
 
         return $insert;
@@ -158,6 +166,10 @@ abstract class RM_Cassandra_Entity
 
     protected function __treatedAsInteger($attrName) {
         return is_array(static::$_asInteger) && in_array($attrName, static::$_asInteger);
+    }
+
+    protected function __treatedAsBoolean($attrName) {
+        return is_array(static::$_asBoolean) && in_array($attrName, static::$_asBoolean);
     }
 
     protected function __typeCast($attrName, $attrValue) {

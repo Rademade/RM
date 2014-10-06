@@ -9,6 +9,7 @@ class RM_Cassandra_Query_ValueDecorator {
     const AS_STRING = 1;
     const AS_INTEGER = 2;
     const AS_UUID = 3;
+    const AS_BOOLEAN = 4;
 
     protected static $_instance;
 
@@ -43,6 +44,8 @@ class RM_Cassandra_Query_ValueDecorator {
                 return '\'' . addslashes((string)$value) . '\'';
             case self::AS_UUID:
                 return (string)$value;
+            case self::AS_BOOLEAN:
+                return $value ? 'true' : 'false';
         }
         if (is_string($value)) {
             return $this->__decorateSingular($value, self::AS_STRING);
