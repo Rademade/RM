@@ -28,7 +28,7 @@ class RM_User_Validation_Email
 	public function isUnique($excludedId = 0) {
         $profileClass = RM_Dependencies::getInstance()->userProfile;
         $user = $profileClass::getByEmail( $this->getEmail() );
-        return !$user instanceof $profileClass || $user->getId() !== $excludedId;
+        return !$user instanceof $profileClass || $user->getId() === $excludedId;
 	}
 
 
