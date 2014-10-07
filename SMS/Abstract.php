@@ -48,7 +48,10 @@ abstract class RM_SMS_Abstract {
         try {
             $this->_phone->setPhoneNumber($recipient);
             $this->_recipients[] = $this->_phone->getPhoneNumber();
-        } catch (Exception $e) {}
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     public function getRecipients() {
@@ -117,6 +120,9 @@ abstract class RM_SMS_Abstract {
     }
 
     public function send() {
+        if (empty($this->_recipients)) {
+            return 'No recipients';
+        }
         $this->__beforeSendEvent();
         $rCurl = curl_init($this->getApiUrl());
         curl_setopt($rCurl, CURLOPT_HEADER, 0);
