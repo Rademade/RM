@@ -156,6 +156,14 @@ class RM_Date_Datetime
      * @param $count
      * @return RM_Date_Datetime
      */
+    public function addWeeks($count) {
+        return $this->add(new DateInterval('P' . $count . 'W'));
+    }
+
+    /**
+     * @param $count
+     * @return RM_Date_Datetime
+     */
     public function addDays($count) {
         return $this->add(new DateInterval('P' . $count . 'D'));
     }
@@ -190,6 +198,10 @@ class RM_Date_Datetime
 
     public function addMonth() {
         return $this->addMonths(1);
+    }
+
+    public function addWeek() {
+        return $this->addWeeks(1);
     }
 
     public function addDay() {
