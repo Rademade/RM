@@ -150,6 +150,9 @@ abstract class RM_SMS_Abstract {
             throw new Exception('SMS Service: Error while parsing response');
         }
         $xml = simplexml_import_dom($dom);
+        if ('Complete' !== (string)$xml->name) {
+            throw new Exception('SMS Service: Error "' . $xml->description . '"');
+        }
         return $xml->asXML();
     }
 
