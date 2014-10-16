@@ -59,7 +59,9 @@ class RM_Content_Field_Process_Html
             'rel',
             'id',
             'name',
-            'title'
+            'title',
+            'class',
+            'data-href'
         ];
     }
 }
