@@ -67,7 +67,7 @@ class RM_Cassandra_SessionStore
      */
     public function destroy($id) {
         $delete = new RM_Cassandra_Query_Delete(Session::TABLE_NAME);
-        $delete->where()->valueOf(Session::ID_ATTRIBUTE)->equalsTo($id);
+        $delete->where()->valueOf(Session::ID_NAME)->equalsTo($id);
         RM_Cassandra_Cql::exec($delete);
         return true;
     }
