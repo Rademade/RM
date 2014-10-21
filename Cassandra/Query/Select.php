@@ -6,7 +6,9 @@ use RM_Cassandra_Query_TableDecorator as TableDecorator;
  * Class RM_Cassandra_Query_Select
  * @link http://www.datastax.com/documentation/cql/3.0/cql/cql_reference/select_r.html
  */
-class RM_Cassandra_Query_Select {
+class RM_Cassandra_Query_Select
+    implements
+        RM_Cassandra_Query_Conditional {
 
     /**
      * @var string

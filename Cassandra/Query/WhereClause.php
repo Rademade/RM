@@ -54,15 +54,15 @@ class RM_Cassandra_Query_WhereClause {
     }
 
     public function asInteger() {
-        return $this->__treadValueAs(QueryValueDecorator::AS_INTEGER);
+        return $this->treatedAs(QueryValueDecorator::AS_INTEGER);
     }
 
     public function asString() {
-        return $this->__treadValueAs(QueryValueDecorator::AS_STRING);
+        return $this->treatedAs(QueryValueDecorator::AS_STRING);
     }
 
     public function asUuid() {
-        return $this->__treadValueAs(QueryValueDecorator::AS_UUID);
+        return $this->treatedAs(QueryValueDecorator::AS_UUID);
     }
 
     public function raw($condition) {
@@ -97,7 +97,7 @@ class RM_Cassandra_Query_WhereClause {
         return $this->assemble();
     }
 
-    protected function __treadValueAs($tp) {
+    public function treatedAs($tp) {
         $this->_treatedAs = $tp;
         return $this;
     }

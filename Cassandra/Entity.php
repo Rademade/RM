@@ -15,14 +15,21 @@ abstract class RM_Cassandra_Entity
         Identifiable,
         Savable {
 
-    const TABLE_NAME = '';
-    const ID_ATTRIBUTE_NAME = 'id';
-    const AGGREGATED_ENTITY_ID_ATTRIBUTE_PREFIX = 'id';
-    const AGGREGATED_ENTITY_LOOKUP_METHOD_PREFIX = 'find';
+    use RM_Cassandra_Trait_EntityTypeOfAttributes;
 
-    protected static $_asUuid;
-    protected static $_asInteger;
-    protected static $_asBoolean;
+    const TABLE_NAME = '';
+
+    const ID_NAME = 'id';
+    const ID_TYPE = self::AS_UUID;
+
+    const ENTITY_ID_ATTRIBUTE_PREFIX = 'id';
+    const ENTITY_LOOKUP_METHOD_PREFIX = 'find';
+
+    const AS_IS = ValueDecorator::AS_IS;
+    const AS_STRING = ValueDecorator::AS_STRING;
+    const AS_INTEGER = ValueDecorator::AS_INTEGER;
+    const AS_UUID = ValueDecorator::AS_UUID;
+    const AS_BOOLEAN = ValueDecorator::AS_BOOLEAN;
 
     protected $_id;
     protected $_attributes;
@@ -30,10 +37,10 @@ abstract class RM_Cassandra_Entity
     protected $_dirty;
 
     public function __construct(array $attributes = array()) {
-        $this->_id = rm_isset($attributes, static::ID_ATTRIBUTE_NAME);
+        $this->_id = $this->typeCast(rm_isset($attributes, static::ID_NAME), static::ID_TYPE);
         $this->_attributes = $attributes;
-        unset($this->_attributes[static::ID_ATTRIBUTE_NAME]);
-        $this->_dirty = false;
+        unset($this->_attributes[static::ID_NAME]);
+        $this->_dirty = !empty($this->_id);
     }
 
     public static function getSelect() {
@@ -45,9 +52,10 @@ abstract class RM_Cassandra_Entity
     }
 
     public static function byId($id) {
+        if (!$id) return;
         try {
             $select = static::getSelect()->one();
-            $select->where()->valueOf('id')->equalsTo($id)->asUuid();
+            $select->where()->valueOf(static::ID_NAME)->equalsTo($id)->treatedAs(static::ID_TYPE);
             $data = Cql30::exec($select);
             if (isset($data[0])) return static::buildOne($data[0]);
         } catch (Exception $e) {}
@@ -102,16 +110,16 @@ abstract class RM_Cassandra_Entity
             return $e;
         }
 
-        return $default;
+        return $this->typeCastAttribute($attrName, $default);
     }
 
     public function set($attrName, $value) {
         if ($value instanceof RM_Interface_Identifiable) {
             $this->aggregations()[$attrName] = $value;
-            $attrName = static::AGGREGATED_ENTITY_ID_ATTRIBUTE_PREFIX . ucfirst($attrName);
+            $attrName = static::ENTITY_ID_ATTRIBUTE_PREFIX . ucfirst($attrName);
             $value = $value->getId();
         }
-        $this->attributes()[$attrName] = $this->__typeCast($attrName, $value);
+        $this->attributes()[$attrName] = $this->typeCastAttribute($attrName, $value);
         $this->_dirty = true;
         return $this;
     }
@@ -122,6 +130,15 @@ abstract class RM_Cassandra_Entity
             $insert = $this->__buildInsertQuery();
             Cql30::exec($insert);
             $this->_dirty = false;
+        }
+        return $this;
+    }
+
+    public function remove() {
+        if ($this->_id) {
+            $delete = new RM_Cassandra_Query_Delete(static::TABLE_NAME);
+            $delete->where()->valueOf(static::ID_NAME)->equalsTo($this->getId())->treatedAs(static::ID_TYPE);
+            Cql30::exec($delete);
         }
         return $this;
     }
@@ -138,44 +155,6 @@ abstract class RM_Cassandra_Entity
         return call_user_func_array([$this, $task], $args);
     }
 
-    protected function __buildInsertQuery() {
-        $insert = new Insert(static::TABLE_NAME);
-        $id = $this->getId();
-        $idAttribute = static::ID_ATTRIBUTE_NAME;
-
-        $insert->value($id)->namedAs($idAttribute)->treatedAs(ValueDecorator::AS_UUID);
-
-        foreach ($this->attributes() as $attrName => $attrValue) {
-            if ($this->__treatedAsUuid($attrName)) {
-                $as = ValueDecorator::AS_UUID;
-            } elseif ($this->__treatedAsBoolean($attrName)) {
-                $as = ValueDecorator::AS_BOOLEAN;
-            } else {
-                $as = null;
-            }
-
-            $insert->value($attrValue)->namedAs($attrName)->treatedAs($as);
-        }
-
-        return $insert;
-    }
-
-    protected function __treatedAsUuid($attrName) {
-        return is_array(static::$_asUuid) && in_array($attrName, static::$_asUuid);
-    }
-
-    protected function __treatedAsInteger($attrName) {
-        return is_array(static::$_asInteger) && in_array($attrName, static::$_asInteger);
-    }
-
-    protected function __treatedAsBoolean($attrName) {
-        return is_array(static::$_asBoolean) && in_array($attrName, static::$_asBoolean);
-    }
-
-    protected function __typeCast($attrName, $attrValue) {
-        return $this->__treatedAsInteger($attrName) ? (int)$attrValue : $attrValue;
-    }
-
     protected function __saveAggregations() {
         if (!$this->_aggregations) return;
         $attributes = &$this->attributes();
@@ -184,9 +163,21 @@ abstract class RM_Cassandra_Entity
                 if ($entity instanceof Savable) {
                     $entity->save();
                 }
-                $attributes[static::AGGREGATED_ENTITY_ID_ATTRIBUTE_PREFIX . ucfirst($entityName)] = $entity->getId();
+                $attributes[static::ENTITY_ID_ATTRIBUTE_PREFIX . ucfirst($entityName)] = $entity->getId();
             }
         }
+    }
+
+    protected function __buildInsertQuery() {
+        $insert = new Insert(static::TABLE_NAME);
+
+        $insert->value($this->getId())->namedAs(static::ID_NAME)->treatedAs(static::ID_TYPE);
+
+        foreach (static::$attributesDefinition as $attrName => $treatAs) {
+            $insert->value($this->get($attrName))->namedAs($attrName)->treatedAs($treatAs);
+        }
+
+        return $insert;
     }
 
     protected function __lookupAggregation($entityAttribute) {
@@ -196,11 +187,11 @@ abstract class RM_Cassandra_Entity
         }
 
         $entityName = ucfirst($entityAttribute);
-        $idAttribute = static::AGGREGATED_ENTITY_ID_ATTRIBUTE_PREFIX . $entityName;
+        $idAttribute = static::ENTITY_ID_ATTRIBUTE_PREFIX . $entityName;
         $attributes = &$this->attributes();
 
         if (isset($attributes[$idAttribute])) {
-            $lookupMethod = static::AGGREGATED_ENTITY_LOOKUP_METHOD_PREFIX . $entityName;
+            $lookupMethod = static::ENTITY_LOOKUP_METHOD_PREFIX . $entityName;
             if (method_exists($this, $lookupMethod)) {
                 $e = $this->{$lookupMethod}($attributes[$idAttribute]);
                 return $this->aggregations()[$entityAttribute] = $e;
