@@ -1,4 +1,6 @@
 <?php
+#todo comments - list of methods
+#
 trait RM_Trait_Admin_Controller_Action_Edit {
 
     public function editAction() {
@@ -30,8 +32,12 @@ trait RM_Trait_Admin_Controller_Action_Edit {
                 } else {
                     $this->_entity->save();
                 }
-                $value = $this->__entityWasSaved($this->_entity);
-                if (null !== $value) return $value;
+                if (method_exists($this, '__afterSave')) {
+                    $value = $this->__afterSave($this->_entity);
+                    if (null !== $value) return $value;
+                } else {
+                    $this->__goBack();
+                }
             } catch (Exception $e) {
                 $this->__showMessage($e);
             }
@@ -70,10 +76,6 @@ trait RM_Trait_Admin_Controller_Action_Edit {
     protected function __noEditableEntity() {
         $this->__goBack();
         return false;
-    }
-
-    protected function __entityWasSaved() {
-        $this->__goBack();
     }
 
     protected function __showMessage($message) {

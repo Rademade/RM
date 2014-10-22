@@ -18,7 +18,10 @@ trait RM_Trait_Admin_Controller_Action_List {
 
     protected function __findEntities($query) {
         $itemClassName = $this->_itemClassName;
-        return $itemClassName::getList();
+        $idAttribute = $itemClassName::TABLE_NAME . '.' . $itemClassName::getKeyAttributeField();
+        $order = new RM_Query_Order();
+        $order->add($idAttribute, 'DESC');
+        return $itemClassName::getList($order, $this->__getSearchLimits());
     }
 
     protected function __setupListPage() {
@@ -48,6 +51,17 @@ trait RM_Trait_Admin_Controller_Action_List {
     protected function __postEntities() {
         $name = $this->__generateVariableName();
         $this->view->assign($name, $this->__findEntities($this->__getSearchQuery()));
+    }
+
+    protected function __getPage() {
+        return (int)$this->view->page;
+    }
+
+    protected function __getSearchLimits() {
+        $limits = new RM_Query_Limits(19);
+        $limits->setPageRange(15);
+        $limits->setPage($this->__getPage());
+        return $limits;
     }
 
 }
