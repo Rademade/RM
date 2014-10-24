@@ -6,6 +6,9 @@ class RM_Cassandra_Query_WhereClause {
     const OP_EQ = '=';
     const OP_NOT_EQ = '!=';
     const OP_GR = '>';
+    const OP_GR_EQ = '>=';
+    const OP_LESS = '<';
+    const OP_LESS_EQ = '<=';
     const OP_IN = 'IN';
 
     protected $_conditions;
@@ -53,6 +56,24 @@ class RM_Cassandra_Query_WhereClause {
         return $this;
     }
 
+    public function greaterEqualThan($value) {
+        $this->_operation = self::OP_GR_EQ;
+        $this->_value = $value;
+        return $this;
+    }
+
+    public function lesserThan($value) {
+        $this->_operation = self::OP_LESS;
+        $this->_value = $value;
+        return $this;
+    }
+
+    public function lesserEqualThan($value) {
+        $this->_operation = self::OP_LESS_EQ;
+        $this->_value = $value;
+        return $this;
+    }
+
     public function asInteger() {
         return $this->treatedAs(QueryValueDecorator::AS_INTEGER);
     }
@@ -63,6 +84,10 @@ class RM_Cassandra_Query_WhereClause {
 
     public function asUuid() {
         return $this->treatedAs(QueryValueDecorator::AS_UUID);
+    }
+
+    public function asBoolean() {
+        return $this->treatedAs(QueryValueDecorator::AS_BOOLEAN);
     }
 
     public function raw($condition) {

@@ -24,6 +24,9 @@ class RM_Cassandra_Query_ValueDecorator {
      * From CQL 3.0:
      * Enclose ASCII text, timestamp, and inet values in single quotation marks
      * Enclose names of a keyspace, table, or column in double quotation marks.
+     * @param $value
+     * @param null $as
+     * @return mixed
      */
     public function decorate($value, $as = null) {
         if (null === $as) {
