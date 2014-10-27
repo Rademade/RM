@@ -70,7 +70,6 @@ abstract class RM_Content_Field_Process_HtmlAbstract
         $config->set('CSS.AllowedProperties', $this->getAllowedCssAttributes());
         $config->set('Attr.AllowedFrameTargets', array('_blank'));
         $config->set('Attr.DefaultImageAlt', '');
-        $config->set('Attr.AllowedClasses', 'js-external-resource');
         $config->set('Attr.EnableID', true);
         return $config;
     }
