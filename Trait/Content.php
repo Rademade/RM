@@ -44,6 +44,10 @@ trait RM_Trait_Content {
         return $this->getContentManager()->getCurrentContentLang();
     }
 
+    public function isContentLangExist(RM_Lang $lang) {
+        return $this->getContentManager()->getContentLang($lang) instanceof RM_Content_Lang;
+    }
+
     protected function __saveContent() {
         $this->__setIdContent( $this->getContentManager()->save()->getId() );
     }

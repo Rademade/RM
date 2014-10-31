@@ -21,6 +21,10 @@ class RM_Lang
 
     const REX_LANG_URL = '([a-z]{2,4})';
 
+    const ISO_NAME_EN = 'en_US';
+    const ISO_NAME_RU = 'ru_RU';
+    const ISO_NAME_UA = 'uk_UA';
+
 	protected static $_properties = array(
 		'idLang' => array(
 			'id' => true,
