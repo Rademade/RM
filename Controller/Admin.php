@@ -119,6 +119,9 @@ abstract class RM_Controller_Admin
     protected function __buildCrumbs() {
         if (is_string($this->_listRoute)) {
             $this->__getCrumbs()->add($this->getListCrumbName(), [], $this->_listRoute);
+        } elseif (is_array($this->_listRoute)) {
+            list($routeParams, $routeName) = $this->_listRoute;
+            $this->__getCrumbs()->add($this->getListCrumbName(), $routeParams, $routeName);
         }
     }
 
