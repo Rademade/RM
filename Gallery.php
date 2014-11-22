@@ -166,9 +166,10 @@ class RM_Gallery
 
 
     public function save() {
-        $this->_rmGalleryDataWorker->save();
+        if ($this->_rmGalleryDataWorker->save() && static::AUTO_CACHE) {
+            $this->__refreshCache();
+        }
         $this->_savePhotos();
-        $this->__cache();
         return $this;
     }
 
