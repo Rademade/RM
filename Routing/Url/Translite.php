@@ -81,6 +81,10 @@ class RM_Routing_Url_Translite {
         $f[] = 'і'; $t[] = 'i';
         $f[] = 'ј'; $t[] = 'j';
 
+        $f[] = 'ґ'; $t[] = 'g';
+        $f[] = 'є'; $t[] = 'e';
+        $f[] = 'ї'; $t[] = 'ї';
+
         self::$_needle = $f;
         self::$_replace = $t;
     }

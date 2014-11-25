@@ -14,8 +14,8 @@ class RM_Routing_Url {
 
     public function format() {
         $this->url = trim(mb_strtolower($this->url, 'UTF-8'));
-        $this->url = $this->_removeWrongChars($this->url);
         $this->url = (new RM_Routing_Url_Translite($this->url))->__toString();
+        $this->url = $this->_removeWrongChars($this->url);
         $this->url = $this->_prettify($this->url);
         return $this;
     }
@@ -92,11 +92,7 @@ class RM_Routing_Url {
     }
 
     private function _removeWrongChars($url) {
-        return str_replace(array(
-            "'", '"', '&', ',', '.', '?', '+', '!', '(', ')', '»', '«',
-            '$', "\\", ';', '[', ']', '—', '#', '=', '↑', '*',
-            '…', '%', '{', '}', '”', ';', '’'
-        ), '', $url);
+        return preg_replace('/[^a-z0-9\-_\.~ ]/i', '', $url);
     }
 
     private function _prettify($url) {
