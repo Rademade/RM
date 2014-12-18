@@ -61,9 +61,7 @@ abstract class RM_Entity_ToMany_Intermediate
     }
 
     public static function _setSelectRules(Zend_Db_Select $select) {
-        $select->where(
-            static::FIELD_STATUS . ' != ?', self::STATUS_DELETED
-        );
+        $select->where(static::TABLE_NAME . '.' . static::FIELD_STATUS . ' != ?', self::STATUS_DELETED);
     }
 
     /**
