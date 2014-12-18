@@ -110,6 +110,9 @@ class RM_Gallery_Photo
 		$idGallery,
 		RM_Query_Limits $limit
 	) {
+        if ($idGallery == 0) {
+            return array();
+        }
 		$select = static::_getSelect();
 		$select->where('galleriesPhotos.idGallery = ?', intval($idGallery));
 		$order = new RM_Query_Order();
