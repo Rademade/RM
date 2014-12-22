@@ -40,7 +40,10 @@ abstract class RM_Entity_ToMany_Intermediate
     }
 
     public function destroy() {
-        $this->getTo()->destroy();
+        $to = $this->getTo();
+        if ($to instanceof RM_Entity) {
+            $to->destroy();
+        }
         parent::destroy();
     }
 
