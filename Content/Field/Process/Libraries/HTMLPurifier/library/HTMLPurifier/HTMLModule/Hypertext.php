@@ -16,6 +16,7 @@ class HTMLPurifier_HTMLModule_Hypertext extends HTMLPurifier_HTMLModule
                 // 'charset' => 'Charset',
                 'name' => 'Text',
                 'data-href' => 'Text',
+                'data-js-link' => 'URI',
                 'href' => 'URI',
                 // 'hreflang' => 'LanguageCode',
                 'rel' => 'Text',

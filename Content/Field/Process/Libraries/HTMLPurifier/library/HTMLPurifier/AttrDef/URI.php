@@ -27,6 +27,8 @@ class HTMLPurifier_AttrDef_URI extends HTMLPurifier_AttrDef
 
         if ($config->get('URI.Disable')) return false;
 
+        if ($uri == 'javascript:void(0);') return $uri;
+
         $uri = $this->parseCDATA($uri);
 
         // parse the URI

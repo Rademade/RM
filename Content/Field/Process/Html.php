@@ -61,7 +61,8 @@ class RM_Content_Field_Process_Html
             'name',
             'title',
             'class',
-            'data-href'
+            'data-href',
+            'data-js-link'
         ];
     }
 }
