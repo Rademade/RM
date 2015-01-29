@@ -215,6 +215,10 @@ class RM_Routing
 		}
 	}
 
+    public function setRawUrl($rawUrl) {
+        $this->url = $rawUrl;
+    }
+
     public function __get($name) {
         $val = $this->_routingDataWorker->getValue($name);
         if (is_null($val)) {

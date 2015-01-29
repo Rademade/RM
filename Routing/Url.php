@@ -12,10 +12,12 @@ class RM_Routing_Url {
         $this->url = $url;
     }
 
-    public function format() {
+    public function format($raw = false) {
         $this->url = trim(mb_strtolower($this->url, 'UTF-8'));
         $this->url = (new RM_Routing_Url_Translite($this->url))->__toString();
-        $this->url = $this->_removeWrongChars($this->url);
+        if (!$raw) {
+            $this->url = $this->_removeWrongChars($this->url);
+        }
         $this->url = $this->_prettify($this->url);
         return $this;
     }
@@ -73,9 +75,9 @@ class RM_Routing_Url {
         return $this->url;
     }
 
-    public function getAssembledUrl( array $params ) {
+    public function getAssembledUrl(array $params) {
         $url = $this->url;
-        foreach ($params as  $param => $value) {
+        foreach ($params as $param => $value) {
             $url = str_replace(':' . $param, $value, $url);
         }
         return $url;
@@ -100,12 +102,12 @@ class RM_Routing_Url {
         do {
             $url = str_replace([' ', '--'], '-', $url, $count);
         } while ($count != 0);
-        return rtrim($url, "/");
+        return rtrim($url, '/');
     }
 
     private function _aliasFormat($url) {
         return trim(str_replace(array(
-            '/', "\\"
+            '/', '\\'
         ), '-', $url), '-');
     }
 
