@@ -191,7 +191,7 @@ abstract class RM_Controller_Admin
     protected static function __configureParser() {
         $config = RM_Content_Field_Process_Html::init()->getCurrentConfig();
         $config->set('HTML.SafeIframe', true);
-        $config->set('URI.SafeIframeRegexp', '%^(http:)?//(www.youtube(?:-nocookie)?.com/embed/|player.vimeo.com/video/)%');
+        $config->set('URI.SafeIframeRegexp', '%^(http(s)?:)?//(www.youtube(?:-nocookie)?.com/embed/|player.vimeo.com/video/)%');
         return $config;
     }
 
