@@ -46,7 +46,7 @@ class RM_Query_Exec {
         //RM_TODO refactoring
         /* @var  Zend_Db_Adapter_Abstract $db */
         $sqlQuery = preg_replace(
-            '/^(SELECT)(.*?)(FROM)/i',
+            '/^(SELECT)(.*?)\s(FROM)/i',
             '$1 COUNT(' . $idFieldName . ') as count $3',
             $select->assemble()
         );
