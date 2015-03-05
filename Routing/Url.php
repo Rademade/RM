@@ -94,7 +94,7 @@ class RM_Routing_Url {
     }
 
     private function _removeWrongChars($url) {
-        return preg_replace('/[^a-z0-9\-_\.~ ]/i', '', $url);
+        return preg_replace('/[^a-z0-9\-\/_\.~ ]/i', '', $url);
     }
 
     private function _prettify($url) {
