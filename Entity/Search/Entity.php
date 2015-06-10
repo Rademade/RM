@@ -55,10 +55,7 @@ class RM_Entity_Search_Entity
         $model = $this->_entityName;
         return RM_Query_Exec::getRowCount(
             $this->__getSelect(),
-            join( '.', array(
-                $model::TABLE_NAME,
-                $model::getKeyAttributeField()
-            ) )
+            'DISTINCT(' . $this->_getKeyFieldName($model) . ')'
         );
     }
 
@@ -72,6 +69,17 @@ class RM_Entity_Search_Entity
         ) );
         $this->__installQueryCondition( $select );
         return $select;
+    }
+
+    /**
+     * @param RM_Entity $model
+     * @return string
+     */
+    private function _getKeyFieldName($model) {
+        return join('.', array(
+            $model::TABLE_NAME,
+            $model::getKeyAttributeField()
+        ));
     }
 
 }
