@@ -67,6 +67,15 @@ class RM_Photo
         parent::destroy();
     }
 
+    public function duplicate() {
+        /* @var self $self */
+        $self = new static($this->_rmPhotoDataWorker->getAllData());
+        $self->_rmPhotoDataWorker->_getKey()->setValue(0);
+        $self->setContent($this->getContent()->duplicate());
+        $self->save();
+        return $self;
+    }
+
     /**
      * @deprecated
      * @param RM_User_Interface $user
@@ -130,6 +139,11 @@ class RM_Photo
             }
         }
         return $this->_content;
+    }
+
+    public function setContent(RM_Content $content) {
+        $this->_content = $content;
+        $this->_rmPhotoDataWorker->setValue('idContent', $content->getId());
     }
 
     public function getId() {
