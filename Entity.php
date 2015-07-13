@@ -242,10 +242,12 @@ abstract class RM_Entity
      * TODO cache
      * @param array $conditions
      * @param int   $limit
+     * @param array $options
      * @return static[]
+     * @throws Exception
      */
-    public static function find(array $conditions = array(), $limit = 0) {
-        $select = static::_getSelect();
+    public static function find(array $conditions = array(), $limit = 0, array $options = array()) {
+        $select = static::_getSelect($options);
         foreach ($conditions as $field => $value) {
             $operand = is_array($value) ? ' IN (?)' : ' = ?';
             $select->where($field . $operand, $value);
