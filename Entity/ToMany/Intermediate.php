@@ -6,6 +6,10 @@ abstract class RM_Entity_ToMany_Intermediate
         RM_Interface_Deletable,
         JsonSerializable {
 
+    const FIELD_FROM = '';
+    const FIELD_TO = '';
+    const FIELD_STATUS = '';
+
     /**
      * @var RM_Entity_Worker_Data
      */
@@ -15,26 +19,19 @@ abstract class RM_Entity_ToMany_Intermediate
      */
     protected $_cacheWorker;
 
-    const FIELD_FROM = '';
-    const FIELD_TO = '';
-    const FIELD_STATUS = '';
-
     /**
      * @static
      * @param RM_Entity $from
      * @param RM_Entity $to
-     * @return RM_Entity_ToMany_Intermediate
+     * @return static
      */
-    public static function create(
-        RM_Entity $from,
-        RM_Entity $to
-    ) {
+    public static function create(RM_Entity $from, RM_Entity $to) {
         $intermediate = static::getByBoth($from, $to);
         if (!$intermediate instanceof static) {
-            $intermediate = new static( new RM_Compositor( array(
+            $intermediate = new static(new RM_Compositor(array(
                 static::FIELD_FROM => $from->getId(),
                 static::FIELD_TO => $to->getId()
-            ) ) );
+            )));
         }
         return $intermediate;
     }
@@ -51,12 +48,9 @@ abstract class RM_Entity_ToMany_Intermediate
      * @static
      * @param RM_Entity $from
      * @param RM_Entity $to
-     * @return RM_Entity_ToMany_Intermediate
+     * @return static
      */
-    public static function getByBoth(
-        RM_Entity $from,
-        RM_Entity $to
-    ) {
+    public static function getByBoth(RM_Entity $from, RM_Entity $to) {
         $select = static::_getSelect();
         $select->where(static::TABLE_NAME . '.' . static::FIELD_FROM . ' = ?', $from->getId());
         $select->where(static::TABLE_NAME . '.' . static::FIELD_TO . ' = ?', $to->getId());
@@ -89,7 +83,7 @@ abstract class RM_Entity_ToMany_Intermediate
     }
 
     public function getIdFrom() {
-        return $this->_dataWorker->getValue( static::FIELD_FROM );
+        return $this->_dataWorker->getValue(static::FIELD_FROM);
     }
 
     public function setIdFrom($id) {
@@ -97,11 +91,8 @@ abstract class RM_Entity_ToMany_Intermediate
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getIdTo() {
-        return $this->_dataWorker->getValue( static::FIELD_TO );
+        return $this->_dataWorker->getValue(static::FIELD_TO);
     }
 
     public function setIdTo($id) {
@@ -110,16 +101,16 @@ abstract class RM_Entity_ToMany_Intermediate
     }
 
     public function getStatus() {
-        return $this->_dataWorker->getValue( static::FIELD_STATUS );
+        return $this->_dataWorker->getValue(static::FIELD_STATUS);
     }
 
-    public function setStatus( $status ) {
+    public function setStatus($status) {
         $status = (int)$status;
         if (in_array($status, array(
             self::STATUS_DELETED,
             self::STATUS_UNDELETED
         ))) {
-            $this->_dataWorker->setValue( static::FIELD_STATUS , $status);
+            $this->_dataWorker->setValue(static::FIELD_STATUS, $status);
         }
     }
 
@@ -129,7 +120,7 @@ abstract class RM_Entity_ToMany_Intermediate
     }
 
     public function remove() {
-        $this->setStatus( self::STATUS_DELETED );
+        $this->setStatus(self::STATUS_DELETED);
         $this->save();
         $this->__cleanCache();
     }
@@ -140,4 +131,5 @@ abstract class RM_Entity_ToMany_Intermediate
             'idTo' => $this->getIdTo()
         );
     }
+
 }
