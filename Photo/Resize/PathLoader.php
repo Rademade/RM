@@ -108,7 +108,7 @@ class RM_Photo_Resize_PathLoader {
         if (!is_file($this->getOriginFullPath())) {
             throw new Exception('Wrong image path was given');
         }
-        if (getimagesize($this->getOriginFullPath()) === false) {
+        if (@getimagesize($this->getOriginFullPath()) === false) {
             throw new Exception('Wrong image file was given');
         }
     }
