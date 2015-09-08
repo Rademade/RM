@@ -29,7 +29,7 @@ class RM_Entity_Worker_Data
 
     /**
      * @param RM_Entity|string $className
-     * @param stdClass  $data
+     * @param stdClass         $data
      */
     public function __construct($className, stdClass $data) {
         $this->_calledClassName = $className;
@@ -69,7 +69,7 @@ class RM_Entity_Worker_Data
      */
     public function getValue($name) {
         if ($this->_isExistAttribute($name)) {
-            return $this->_values[ $name ];
+            return $this->_values[$name];
         }
         return null;
     }
@@ -77,7 +77,7 @@ class RM_Entity_Worker_Data
     public function setValue($name, $value) {
         if ($this->_isExistAttribute($name)) {
             if ($this->_values[$name] !== $value) {
-                $this->_changes[ $this->_attrNameToField( $name ) ] = $value;
+                $this->_changes[$this->_attrNameToField($name)] = $value;
                 $this->_values[$name] = RM_Entity_Attribute_Properties::parseValue($this->_properties[$name], $value);
                 return true;
             }
@@ -87,10 +87,9 @@ class RM_Entity_Worker_Data
     }
 
     public function isInserted() {
-        $key = $this->_values[ $this->_keyName ];
-
+        $key = $this->_values[$this->_keyName];
         $inserted = ($key !== 0);
-        if ($inserted && !$this->_properties[ $this->_keyName ]->isAutoIncrement()) {
+        if ($inserted && !$this->_properties[$this->_keyName]->isAutoIncrement()) {
             $entity = call_user_func( //TODO refactor
                 $this->_calledClassName . '::getById',
                 $key
@@ -105,9 +104,9 @@ class RM_Entity_Worker_Data
         $className = $this->_calledClassName;
         if (!$this->isInserted()) {
             $this->_values = $this->_getPreSaveData();
-            $className::getDb()->insert( $this->_table, $this->_getInsertData() );
-            if ($this->_properties[ $this->_keyName ]->isAutoIncrement()) {
-                $this->_values[ $this->_keyName ] = (int)$className::getDb()->lastInsertId();
+            $className::getDb()->insert($this->_table, $this->_getInsertData());
+            if ($this->_properties[$this->_keyName]->isAutoIncrement()) {
+                $this->_values[$this->_keyName] = (int)$className::getDb()->lastInsertId();
             }
             $this->_changes = array();
             return true;
@@ -116,7 +115,7 @@ class RM_Entity_Worker_Data
                 $className::getDb()->update(
                     $this->_table,
                     $this->_changes,
-                    $this->_attrNameToField( $this->_keyName ) . ' = ' . $this->_values[ $this->_keyName ]
+                    $this->_attrNameToField($this->_keyName) . ' = ' . $this->_values[$this->_keyName]
                 );
                 $this->_changes = array();
                 return true;
@@ -130,7 +129,7 @@ class RM_Entity_Worker_Data
         $className = $this->_calledClassName;
         $className::getDb()->delete(
             $this->_table,
-            $this->_attrNameToField( $this->_keyName ) . ' = ' . $this->_values[ $this->_keyName ]
+            $this->_attrNameToField($this->_keyName) . ' = ' . $this->_values[$this->_keyName]
         );
     }
 
@@ -156,7 +155,6 @@ class RM_Entity_Worker_Data
         $this->_table = $className::TABLE_NAME;
         $this->_properties = $className::getAttributesProperties();
         $this->_keyName = $className::getKeyAttributeName();
-
         if (empty($this->_properties)) {
             throw new Exception('Entity properties are not defined');
         }
@@ -168,18 +166,14 @@ class RM_Entity_Worker_Data
      */
     private function _initEntity($data) {
         foreach ($this->_properties as $property) {
-
             $fieldName = $property->getFieldName();
-
-            $this->_values[ $property->getName() ] = RM_Entity_Attribute_Properties::parseValue(
+            $this->_values[$property->getName()] = RM_Entity_Attribute_Properties::parseValue(
                 $property,
                 isset($data->$fieldName) ? $data->$fieldName : $property->getDefault()
             );
-
             if ($property->isKey()) { //set key attribute
                 $this->_keyName = $property->getName();
             }
-
         }
         if (is_null($this->_keyName)) {
             throw new Exception('Key attribute is not defined');
@@ -194,7 +188,7 @@ class RM_Entity_Worker_Data
         $data = $this->_values;
         foreach ($this->_properties as $name => $property) {
             if (!$data[$name] && $property->getDefault()) {
-                $data[ $name ] = $property->getDefault();
+                $data[$name] = $property->getDefault();
             }
         }
         return $data;
@@ -203,13 +197,13 @@ class RM_Entity_Worker_Data
     private function _getInsertData() {
         $data = array();
         foreach ($this->_values as $name => $value) {
-            $data[ $this->_attrNameToField( $name ) ] = $value;
+            $data[$this->_attrNameToField($name)] = $value;
         }
         return $data;
     }
 
     private function _attrNameToField($name) {
-        return $this->_properties[ $name ]->getFieldName();
+        return $this->_properties[$name]->getFieldName();
     }
 
 }
