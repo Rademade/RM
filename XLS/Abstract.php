@@ -26,9 +26,9 @@ abstract class RM_XLS_Abstract {
     /**
      * @var PHPExcel
      */
-    private $_document;
-    private $_currentRow = self::FIRST_ROW;
-    private $_currentColumn = self::FIRST_COLUMN;
+    protected $_document;
+    protected $_currentRow = self::FIRST_ROW;
+    protected $_currentColumn = self::FIRST_COLUMN;
 
     /**
      * @return array
@@ -149,7 +149,7 @@ abstract class RM_XLS_Abstract {
         return RM_Date_Datetime::now()->getShortDate();
     }
 
-    private function _renderHead() {
+    protected function _renderHead() {
         $this->_resetRow();
         $this->_resetColumn();
         foreach ($this->__getHeaderTitles() as $headerTitle) {
@@ -159,7 +159,7 @@ abstract class RM_XLS_Abstract {
         $this->_nextRow();
     }
 
-    private function _renderEntities() {
+    protected function _renderEntities() {
         $sheetIndex = $this->_document->getActiveSheetIndex();
         $entities = isset($this->_entitiesForSheets[$sheetIndex])
             ? $this->_entitiesForSheets[$sheetIndex] : array();
@@ -179,26 +179,26 @@ abstract class RM_XLS_Abstract {
         $this->_columnsAutoWidth();
     }
 
-    private function _writeCurrentRow($value) {
+    protected function _writeCurrentRow($value) {
         if (is_array($value)) {
             $value = join(', ', $value) . ' ';
         }
         $this->_document->getActiveSheet()->setCellValue($this->_currentColumn++ . $this->_currentRow, $value);
     }
 
-    private function _resetRow() {
+    protected function _resetRow() {
         $this->_currentRow = static::FIRST_ROW;
     }
 
-    private function _nextRow() {
+    protected function _nextRow() {
         $this->_currentRow++;
     }
 
-    private function _resetColumn() {
+    protected function _resetColumn() {
         $this->_currentColumn = static::FIRST_COLUMN;
     }
 
-    private function _columnsAutoWidth() {
+    protected function _columnsAutoWidth() {
         foreach (range(static::FIRST_COLUMN, $this->_currentColumn) as $column) {
             $this->_document->getActiveSheet()->getColumnDimension($column)->setAutoSize(true);
         }
