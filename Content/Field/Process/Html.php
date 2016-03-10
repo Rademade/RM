@@ -33,7 +33,7 @@ class RM_Content_Field_Process_Html
             'thead',
             'tbody',
             'tfoot',
-            'br',
+            'br'
         ];
     }
 
