@@ -183,7 +183,7 @@ abstract class RM_Entity
         /* @var $select Zend_Db_Select */
         $select->from(static::TABLE_NAME, static::_getDbAttributes());
         static::_setSelectRules($select);
-        if (!(isset($options['no_rule']) && $options['no_rule'])) {
+        if (isset($options['no_rule']) && $options['no_rule']) {
             // clear where (removes deleted status condition)
             $select->reset(Zend_Db_Select::WHERE);
         }
