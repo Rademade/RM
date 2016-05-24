@@ -169,6 +169,10 @@ class RM_Date_Date {
 		}
 	}
 
+	public function getDateTime() {
+		return date('Y-m-d H:i:s', $this->getTimestamp());
+	}
+
 	public function getRangeDaysCount(RM_Date_Date $fromDate) {
 		return round( ( $this->getTimestamp() - $fromDate->getTimestamp() ) / self::DAY );
 	}
