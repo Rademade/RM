@@ -150,7 +150,9 @@ abstract class RM_Controller_Admin
 
 				foreach ($fields as $fieldName => $fieldContent) {
                     /* @var $contentLang RM_Content_Lang */
-                    $contentLang->setFieldContent($fieldName, $fieldContent, $data->process[ $fieldName ]);
+                    if (isset($data->process[ $fieldName ])) {
+                        $contentLang->setFieldContent($fieldName, $fieldContent, $data->process[ $fieldName ]);
+                    }
                 }
             }
         }
