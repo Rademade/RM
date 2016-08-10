@@ -267,6 +267,14 @@ class RM_Date_Datetime
         return $this;
     }
 
+    public function isLess(RM_Date_Datetime $then) {
+        return $this->getTimestamp() <= $then->getTimestamp();
+    }
+
+    public function isMore(RM_Date_Datetime $then) {
+        return $this->getTimestamp() >= $then->getTimestamp();
+    }
+
     protected static function __initDatetimeLocale() {
         self::$_locale = new RM_Date_DatetimeLocale();
     }
