@@ -27,7 +27,7 @@ trait RM_Trait_Admin_Controller_Action_Add {
                     $this->_entity->save();
                 }
                 if (method_exists($this, '__afterSave')) {
-                    $value = $this->__afterSave($this->_entity);
+                    $value = $this->__afterSave($this->_entity, $data);
                     if (null !== $value) return $value;
                 } else {
                     $this->__goBack();

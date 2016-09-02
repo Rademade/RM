@@ -1,19 +1,19 @@
 <?php 
 class RM_Date_Date {
-	
-	private $_year;
-	private $_month;
-	private $_day;
-	
-	const DAY = 86400;
+    
+    private $_year;
+    private $_month;
+    private $_day;
+
+    const DAY = 86400;
     const HOUR = 3600;
     const MIN = 60;
 
     const MONTH_COUNT = 12;
 
-	const ISO_DATE = 1;         // Y-m-d
-	const SEARCH_DATE = 2;      // d.m.Y
-	const STRONG_DATE = 3;      // d/m/Y
+    const ISO_DATE = 1;         // Y-m-d
+    const SEARCH_DATE = 2;      // d.m.Y
+    const STRONG_DATE = 3;      // d/m/Y
     const JS_DATE = 4;
 
 	public function __construct( $year, $month, $day ) {
@@ -23,16 +23,16 @@ class RM_Date_Date {
 	}
 	
 	public static function initFromDate($format, $date) {
-		$format = (int)$format;
-		if (self::isTrueFormat($format)) {
-			if (preg_match(self::_getParseDatePreg($format), $date, $p)) {
-				return self::_arrayInit($format, $p);
-			} else {
-				throw new Exception('Wrong date format given');
-			}
-		} else {
-			throw new Exception('Wrong date format given');
-		}
+        $format = (int)$format;
+        if (self::isTrueFormat($format)) {
+            if (preg_match(self::_getParseDatePreg($format), $date, $p)) {
+                return self::_arrayInit($format, $p);
+            } else {
+                throw new Exception('Wrong date format given');
+            }
+        } else {
+            throw new Exception('Wrong date format given');
+        }
 	}
 
     /**
