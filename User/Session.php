@@ -84,6 +84,7 @@ class RM_User_Session {
 	public function logout() {
         Zend_Session::rememberUntil(0);
         $this->session->idUser = 0;
+		$this->session->idOrder = null;
 	}
 
 	/**
