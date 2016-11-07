@@ -139,9 +139,18 @@ abstract class RM_Model_Tag
         }
     }
 
+    /**
+     * @deprecated
+     * @return int
+     */
+    public function getType() {
+        return $this->getTagType();
+    }
+
     public function getTagType() {
         return $this->_dataWorker->getValue('tagType');
     }
+
 
     public function setTagType($tagType) {
         $this->_dataWorker->setValue('tagType', $tagType);
