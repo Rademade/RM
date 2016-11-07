@@ -82,7 +82,8 @@ abstract class RM_Model_Tag
     }
 
     public function save() {
-        $this->_generateAlias();
+        $this->validate();
+        $this->_reGenerateAlias();
         $this->_dataWorker->setValue('idContent', $this->getContentManager()->save()->getId());
         $this->_dataWorker->save();
         $this->__refreshAliasCache();
@@ -113,8 +114,29 @@ abstract class RM_Model_Tag
         return $this->_dataWorker->getValue('tagAlias');
     }
 
+    public function setAlias($alias) {
+        $this->__cleanAliasCache();
+        $this->__setAlias($alias);
+        $this->_validateAlias();
+    }
+
+    private function _validateAlias() {
+        if ($this->getAlias() !== '') {
+            $tag = static::getByAlias($this->getAlias());
+            if ($tag instanceof static && $tag->getId() != $this->getId()) {
+                $this->setAlias($this->getAlias());
+            }
+        }
+    }
+
     protected function __setAlias($alias) {
         $this->_dataWorker->setValue('tagAlias', $alias);
+    }
+
+    protected function _reGenerateAlias() {
+        if ($this->getAlias() == '') {
+            $this->_generateAlias();
+        }
     }
 
     public function getType() {
