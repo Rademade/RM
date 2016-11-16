@@ -40,13 +40,10 @@ trait RM_Trait_Admin_Controller_Action_Edit {
                 }
             } catch (Exception $e) {
                 $this->__showMessage($e);
+                $this->__postFields();
             }
         } else {
-            if (method_exists($this, '__postEntityFields')) {
-                $this->__postEntityFields($this->_entity);
-            } else {
-                $this->__postContentFields();
-            }
+            $this->__postFields();
         }
         $this->__setupEditPage();
         $this->__setupEditPageCrumbs($this->__getCrumbs(), $this->_entity);
@@ -80,6 +77,14 @@ trait RM_Trait_Admin_Controller_Action_Edit {
 
     protected function __showMessage($message) {
         $this->view->showMessage($message);
+    }
+    
+    protected function __postFields() {
+        if (method_exists($this, '__postEntityFields')) {
+            $this->__postEntityFields($this->_entity);
+        } else {
+            $this->__postContentFields();
+        }
     }
 
 }
