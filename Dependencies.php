@@ -42,4 +42,8 @@ class RM_Dependencies
         return $this->_storage[$key];
     }
 
+    public function __isset($key) {
+        return isset($this->_storage[$key]) || isset($this->_default[$key]);
+    }
+
 }

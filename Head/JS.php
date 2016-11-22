@@ -3,12 +3,12 @@ class RM_Head_JS
     extends
         RM_Head_Abstract {
 
-    private $_compress = null;
-    private $_path;
-	private $_compress_path;
-	private $_files;
-	private $_ver;
-	private $_usedTags = array();
+    protected $_compress = null;
+    protected $_path;
+	protected $_compress_path;
+	protected $_files;
+	protected $_ver;
+	protected $_usedTags = array();
 
 	public function __construct(Zend_Config $cfg) {
         if (isset($cfg->compress)) {
@@ -46,7 +46,7 @@ class RM_Head_JS
 		}
 	}
 
-	public function _compressTag($tag) {
+	public function _compressTag($tag, $tagName = '') {
 		$c = new RM_Head_Compressor_JS();
 		foreach ($this->_files->{$tag} as $path) {
 			$c->add($this->__getFullPath($this->_path, $path));
@@ -58,7 +58,7 @@ class RM_Head_JS
 		$c->compress();
 		$this->getView()->headScript()->appendFile(join('', array(
 			$this->_compress_path,
-			$c->getFileName()
+			$tagName . $c->getFileName()
 		)));
 	}
 
@@ -69,7 +69,7 @@ class RM_Head_JS
 	public function add($tag, $compress = true) {
 		if ($this->_isResolveAddTag($tag)) {
 			if ($this->isCommpress() && $compress) {
-                $this->_compressTag( $tag );
+                $this->_compressTag( $tag, $tag );
 			} else {
                 $this->_appendTag( $tag );
 			}

@@ -44,8 +44,8 @@ class RM_Head
 
     public function _init() {
         $cfg = new Zend_Config_Ini( APPLICATION_PATH . '/configs/views/' . static::getModuleName() . '.ini' );
-        $this->_js = new RM_Head_JS( $cfg->js );
-        $this->_css = new RM_Head_CSS( $cfg->css );
+        $this->_initJsCompressor($cfg);
+        $this->_initCssCompressor($cfg);
     }
 
     public function _load() {
@@ -73,5 +73,30 @@ class RM_Head
         return Zend_Layout::getMvcInstance()->getView();
     }
 
+    /**
+     * @param $cfg
+     */
+    private function _initJsCompressor($cfg) {
+        $dependencies = RM_Dependencies::getInstance();
+        if (isset($dependencies->jsCompressorClass)) {
+            $jsCompressorClass = $dependencies->jsCompressorClass;
+        } else {
+            $jsCompressorClass = 'RM_Head_JS';
+        }
+        $this->_js = new $jsCompressorClass($cfg->js);
+    }
+
+    /**
+     * @param $cfg
+     */
+    private function _initCssCompressor($cfg) {
+        $dependencies = RM_Dependencies::getInstance();
+        if (isset($dependencies->cssCompressorClass)) {
+            $cssCompressorClass = $dependencies->cssCompressorClass;
+        } else {
+            $cssCompressorClass = 'RM_Head_CSS';
+        }
+        $this->_css = new $cssCompressorClass($cfg->css);
+    }
 
 }
