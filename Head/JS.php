@@ -1,7 +1,7 @@
 <?php
 class RM_Head_JS
     extends
-        RM_Head_Abstract {
+    RM_Head_Abstract {
 
     protected $_compress = null;
     protected $_path;
@@ -58,7 +58,7 @@ class RM_Head_JS
         $c->compress();
         $this->getView()->headScript()->appendFile(join('', array(
             $this->_compress_path,
-            $tag . '_' . $c->getFileName()
+            $c->getFileName()
         )));
     }
 
