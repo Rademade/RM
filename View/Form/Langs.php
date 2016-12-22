@@ -17,9 +17,7 @@ class RM_View_Form_Langs {
 	
 	public function __construct($forceDefaultLang = true) {
 		RM_Head::getInstance()->getJS()->add('langs');
-		$order = new RM_Query_Order();
-		$order->add('idLang', RM_Query_Order::DESC);
-		$this->_allLangs = RM_Lang::getList(false, $order);
+		$this->_allLangs = $this->__initAllLangs();
 
 		if ($forceDefaultLang) {
 			$this->_defaultLang = RM_Lang::getDefault();
@@ -130,5 +128,11 @@ class RM_View_Form_Langs {
 			}
 		}
 	}
-	
+
+	protected function __initAllLangs() {
+		$order = new RM_Query_Order();
+		$order->add('idLang', RM_Query_Order::DESC);
+		return RM_Lang::getList(false, $order);
+	}
+
 }
