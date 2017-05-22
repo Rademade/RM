@@ -29,12 +29,12 @@ trait RM_Trait_MultiName {
     }
 
     protected function __getCurrentName() {
-		$lang = $this->getContentManager()->getCurrentContentLang();
+        $lang = $this->getContentManager()->getCurrentContentLang();
         return $lang ? $lang->getFieldContent('name') : '';
     }
 
     protected function __getDefaultName() {
-		$lang = $this->getContentManager()->getDefaultContentLang();
+        $lang = $this->getContentManager()->getDefaultContentLang();
         return $lang ? $lang->getFieldContent('name') : '';
     }
 

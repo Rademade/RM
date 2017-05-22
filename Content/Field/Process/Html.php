@@ -1,6 +1,6 @@
 <?php
-class RM_Content_Field_Process_Html
-	extends
+class RM_Content_Field_Process_Html 
+    extends
         RM_Content_Field_Process_HtmlAbstract {
 
     use RM_Content_Field_Process_Singleton;

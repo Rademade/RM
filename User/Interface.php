@@ -8,13 +8,13 @@ interface RM_User_Interface
      * @abstract
      * @return int
      */
-	public function getId();
+    public function getId();
 
-	/**
-	 * @abstract
-	 * @return RM_Interface_Roleable
-	 */
-	public function getRole();
+    /**
+     * @abstract
+     * @return RM_Interface_Roleable
+     */
+    public function getRole();
 
     /**
      * @abstract

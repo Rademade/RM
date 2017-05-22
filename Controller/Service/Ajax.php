@@ -28,11 +28,11 @@ class RM_Controller_Service_Ajax {
             if (is_string($method)) {
                 $result = $this->{$method}($data);
             } else {
-				$result->error = "Wrong AJAX process type given";
-			}
+                $result->error = "Wrong AJAX process type given";
+            }
         } else {
-			$result->error = "Attribute AJAX process type not given";
-		}
+            $result->error = "Attribute AJAX process type not given";
+        }
         return $result;
     }
 

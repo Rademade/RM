@@ -7,7 +7,7 @@ class RM_Routing_Url_Translite {
     private $string;
 
     function __construct($str) {
-    	$this->string = $str;
+        $this->string = $str;
     }
 
     private function transliterate_return($str) {
@@ -90,7 +90,7 @@ class RM_Routing_Url_Translite {
     }
 
     public function __toString() {
-    	return $this->transliterate_return( $this->string );
+        return $this->transliterate_return( $this->string );
     }
    
 }

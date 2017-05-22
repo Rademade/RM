@@ -72,12 +72,12 @@ class RM_Mail_NodeProtocol extends Zend_Mail_Protocol_Abstract {
         $this->_send( array(
             'command'   => 'send',
             'message'	=> array(
-				'from'      => $this->_sendFrom,
-				'to'        => $this->_sendTo,
-				'subject'   => $this->_mailSubject,
-				'body'      => $this->_mailBody
-	        ),
-	        'config'    => $this->getRemoteTransportConfig()->__toJSON()				
+                'from'      => $this->_sendFrom,
+                'to'        => $this->_sendTo,
+                'subject'   => $this->_mailSubject,
+                'body'      => $this->_mailBody
+            ),
+            'config'    => $this->getRemoteTransportConfig()->__toJSON()
         ) );
     }
 
