@@ -1,33 +1,33 @@
 <?php
 class RM_System_Breadcrumbs implements Iterator, Countable {
 
-	protected $_breadcrumbs = array();
-	/**
-	 * @var Zend_View
-	 */
-	private $_view;
+    protected $_breadcrumbs = array();
+    /**
+     * @var Zend_View
+     */
+    private $_view;
+    
+    public function __construct() {
+        $this->_view = Zend_Layout::getMvcInstance()->getView();
+    }
+    
+    /**
+     * @return Zend_View
+     */
+    public function getView() {
+        return $this->_view;
+    }
 
-	public function __construct() {
-		$this->_view = Zend_Layout::getMvcInstance()->getView();
-	}
-
-	/**
-	 * @return Zend_View
-	 */
-	public function getView() {
-		return $this->_view;
-	}
-	
-	private function _compleateParams(array $params) {
-		$params = array_merge(
-			Zend_Controller_Front::getInstance()->getRequest()->getParams(),
-			$params
-		);
-		if (!isset($params['page'])) {
-			$params['page'] = 1;
-		}
-		return $params;
-	}
+    private function _compleateParams(array $params) {
+        $params = array_merge(
+            Zend_Controller_Front::getInstance()->getRequest()->getParams(),
+            $params
+        );
+        if (!isset($params['page'])) {
+            $params['page'] = 1;
+        }
+        return $params;
+    }
 
     /**
      * @internal param string $name Breadcrumb name
@@ -46,7 +46,7 @@ class RM_System_Breadcrumbs implements Iterator, Countable {
             'name' => $name,
             'url' => $url
         ));
-
+    
         return $this;
     }
 
@@ -58,13 +58,13 @@ class RM_System_Breadcrumbs implements Iterator, Countable {
                 $routeName
             )
         ));
-
+    
         return $this;
     }
 
     public function getBack() {
-		return $this->_breadcrumbs[sizeof($this->_breadcrumbs)-2]['url'];
-	}
+        return $this->_breadcrumbs[sizeof($this->_breadcrumbs)-2]['url'];
+    }
 
     public function getLastName() {
         return $this->_breadcrumbs[sizeof($this->_breadcrumbs)-1]['name'];
@@ -74,36 +74,36 @@ class RM_System_Breadcrumbs implements Iterator, Countable {
         return $this->current();
     }
 
-	public function addPageBack($idPage, array $params = array()) {
-		$page = RM_Page::getById($idPage);
-		$this->add(
-			$page->getContent()->getName(),
-			$this->_compleateParams( $params ),
-			$this->getView()->GetListRouteName( $page )
-		);
-	}
-	
-	public function clear() {
-		$this->_breadcrumbs = array();
-		return $this;
-	}
+    public function addPageBack($idPage, array $params = array()) {
+        $page = RM_Page::getById($idPage);
+        $this->add(
+            $page->getContent()->getName(),
+            $this->_compleateParams( $params ),
+            $this->getView()->GetListRouteName( $page )
+        );
+    }
 
-	public function rewind() {
-		reset($this->_breadcrumbs);
+    public function clear() {
+        $this->_breadcrumbs = array();
+        return $this;
+    }
+
+    public function rewind() {
+        reset($this->_breadcrumbs);
     }
 
     public function current() {
-		$current = current($this->_breadcrumbs);
-		return $current['url'];
+        $current = current($this->_breadcrumbs);
+        return $current['url'];
     }
 
     public function key() {
-		$current = current($this->_breadcrumbs);
-		return $current['name'];
+        $current = current($this->_breadcrumbs);
+        return $current['name'];
     }
 
     public function next() {
-		return next($this->_breadcrumbs);
+        return next($this->_breadcrumbs);
     }
 
     public function valid() {
@@ -118,5 +118,5 @@ class RM_System_Breadcrumbs implements Iterator, Countable {
     public function removeLast() {
         array_pop($this->_breadcrumbs);
     }
-    
+
 }

@@ -31,13 +31,13 @@ class Resize {
     protected $_imagePath;
     protected $_resizedImagePath;
 
-	/**
-	 * @var Imagick
-	 */
+    /**
+     * @var Imagick
+     */
     protected $_imagick;
-	/**
-	 * @var array
-	 */
+    /**
+     * @var array
+     */
     protected $_size;
 
     /**
@@ -48,7 +48,7 @@ class Resize {
     public function __construct($rootDirPath, $imagePath) {
         $this->_rootDirPath = $rootDirPath;
         $this->_imagePath = parse_url($imagePath)['path'];
-	}
+    }
 
     public function setPathLoader(RM_Photo_Resize_PathLoader $pathLoader) {
         $this->_pathLoader = $pathLoader;
@@ -72,9 +72,9 @@ class Resize {
         return $this->_resizer;
     }
 
-	public function getMime() {
-		return $this->getSize()['mime'];
-	}
+    public function getMime() {
+        return $this->getSize()['mime'];
+    }
 
     public function getSize() {
         if (is_null($this->_size)) {
@@ -128,14 +128,14 @@ class Resize {
         $height = $this->_fixResizeHeight( $height );
         $this->getPathLoader()->setResizeFileNameParams([$width, $height, $isCrop ? 1 : 0]);
         $resizedImagePath = $this->getPathLoader()->getFullResizedImagePath( );
-		if ( !is_file( $resizedImagePath ) ) { //if null generates unique path
+        if ( !is_file( $resizedImagePath ) ) { //if null generates unique path
             $this->getPathLoader()->createDirForResizedImage();
             $this->_resizeProcessor( func_get_args() );//сделано для разширения метода и дополнительных аргуметов
             $this->getResizer()->saveImage( $resizedImagePath );
-		}
+        }
         $this->_lastResizedImage = new RM_Photo_Resize_ResizedImage($resizedImagePath, $this->getMime());
         return $this->_lastResizedImage;
-	}
+    }
 
     /**
      * Method left only for compatibility with old interface

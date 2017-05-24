@@ -47,10 +47,10 @@ abstract class RM_Entity_Search_Abstract_Abstract {
         return $this->_conditions;
     }
 
-	public function clearConditions() {
-		$this->_conditions = [];
-		return $this;
-	}
+    public function clearConditions() {
+        $this->_conditions = [];
+        return $this;
+    }
 
     public function setPhrase($searchPhrase) {
         $searchPhrase = trim($searchPhrase);

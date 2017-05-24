@@ -4,7 +4,7 @@
  * @deprecated
  */
 abstract class RM_System_Controller_Ajax
-	extends
+    extends
         RM_Controller_Ajax {
 
 }

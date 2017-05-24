@@ -75,7 +75,7 @@ class RM_Page
         $this->_cacheWorker = new RM_Entity_Worker_Cache(get_class());
     }
 
-    protected function __setPageData( $controller, $action, $url) {
+    protected function __setPageData($controller, $action, $url) {
         $route = RM_Routing::create(
             RM_Routing::TMP_ROUTE_NAME,
             $controller,

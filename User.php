@@ -464,7 +464,7 @@ class RM_User
         $where->add('idUser', RM_Query_Where::EXACTLY, $this->getId());
         $where->add('orderStatus', RM_Query_Where::EXACTLY, Application_Model_Order::STATUS_DONE);
         return 0;
-//		return Application_Model_Order::getPurseSum($where);
+//      return Application_Model_Order::getPurseSum($where);
     }
 
     public function getDiscount() {
@@ -568,7 +568,7 @@ class RM_User
 
     public function serialize() {
         return [
-			'id' => $this->getId(),
+            'id' => $this->getId(),
             'email' => $this->getEmail(),
             'name' => $this->getFullName(),
             'login' => $this->getEmail(),

@@ -1,16 +1,15 @@
 <?php
 class RM_Query_Order
-	implements
-		RM_Query_Interface_ImproveSelect,
-		RM_Query_Interface_Hashable {
+    implements
+        RM_Query_Interface_ImproveSelect,
+        RM_Query_Interface_Hashable {
+    
+    private $_orders = array();
+    private $_expr;
+    private $_isRandom = false;
 
-	
-	private $_orders = array();
-	private $_expr;
-	private $_isRandom = false;
-	
-	const ASC = 1;
-	const DESC = 2;
+    const ASC = 1;
+    const DESC = 2;
 
     /**
      * @static
@@ -40,10 +39,10 @@ class RM_Query_Order
      * @param $type
      * @return RM_Query_Order
      */
-	public function addOrder($field, $type) {
+    public function addOrder($field, $type) {
         $this->add($field, $type);
         return $this;
-	}
+    }
 
     /**
      * @param Zend_Db_Select $select
@@ -116,15 +115,15 @@ class RM_Query_Order
     }
 
 
-	private function _checkField($name) {
-		$name = trim($name);
-		if ($name === '') {
-			throw new Exception('WRONG FIELD GIVEN');
-		}
-		return $name;
-	}
-	
-	private function _checkType($type) {
+    private function _checkField($name) {
+        $name = trim($name);
+        if ($name === '') {
+            throw new Exception('WRONG FIELD GIVEN');
+        }
+        return $name;
+    }
+    
+    private function _checkType($type) {
         switch ($type) {
             case 'ASC':
             case self::ASC:
@@ -133,22 +132,22 @@ class RM_Query_Order
             case self::DESC:
                 return self::DESC;
             default:
-    			throw new Exception('Wrong order type given');
+                throw new Exception('Wrong order type given');
         }
-	}
+    }
 
-	private function _getType($type) {
-		switch (intval($type)) {
-			case self::ASC:
-				return 'ASC';
-				break;
-			case self::DESC:
-				return 'DESC';
-				break;
+    private function _getType($type) {
+        switch (intval($type)) {
+            case self::ASC:
+                return 'ASC';
+                break;
+            case self::DESC:
+                return 'DESC';
+                break;
             default:
                 throw new Exception('Wrong order type given');
         }
-	}
+    }
 
 
 }
