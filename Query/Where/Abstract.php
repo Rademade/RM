@@ -15,7 +15,6 @@ abstract class RM_Query_Where_Abstract
     const END_LIKE = 8; //LIKE %val
     const MORE_EXACTLY = 9;
     const LESS_EXACTLY = 10;
-    //const NOT_IN = 11;
     const FULLTEXT_MATCH = 12;
 
     public function isHashable(){
