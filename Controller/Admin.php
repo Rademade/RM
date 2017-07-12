@@ -34,6 +34,7 @@ abstract class RM_Controller_Admin
         $this->__initPageNumber();
         $this->__setTitle($this->_itemName);
         $this->__buildCrumbs();
+        $this->__initModuleConst();
     }
     
     public function listAction() {
@@ -47,8 +48,8 @@ abstract class RM_Controller_Admin
     public function addAction() {
         static::__configureParser();
         $this->__getCrumbs()->add($this->getAddCrumbName(), array(), $this->_addRoute);
-        $this->view->headTitle()->append( ucfirst($this->_addTitle) );
-        $this->view->assign('tabs', [ RM_Lang::getDefault() ]);
+        $this->view->headTitle()->append(ucfirst($this->_addTitle));
+        $this->view->assign('tabs', [RM_Lang::getDefault()]);
     }
     
     public function editAction() {
@@ -56,11 +57,11 @@ abstract class RM_Controller_Admin
         $this->view->headTitle()->append( ucfirst($this->_editTitle) );
         $this->__getCrumbs()->add($this->getEditCrumbName(), ['id' => 0], $this->_editRoute);
         $this->view->assign( array(
-            'tabs' => [ RM_Lang::getDefault() ],
+            'tabs' => [RM_Lang::getDefault()],
             'edit' => true
         ) );
         $this->_helper->viewRenderer->setScriptAction('add');
-        $this->_entity = $this->_getItemById( $this->getParam('id') );
+        $this->_entity = $this->_getItemById($this->getParam('id'));
     }
     
     /**
@@ -109,7 +110,7 @@ abstract class RM_Controller_Admin
     
     protected function __redirectToLogin() {
         $this->__disableView();
-        $this->redirect( $this->view->url([], static::LOGIN_ROUTE) );
+        $this->redirect($this->view->url([], static::LOGIN_ROUTE));
     }
     
     protected function __getCrumbs() {
@@ -136,7 +137,7 @@ abstract class RM_Controller_Admin
             $content = $entity->getContentManager();
     
             foreach ($data->lang as $idLang => $fields) {
-                $lang = RM_Lang::getById( $idLang );
+                $lang = RM_Lang::getById($idLang);
     
                 // Content lang will be removed if field with name 'no-save' given
                 if (isset($fields['no-save'])) {
@@ -150,8 +151,8 @@ abstract class RM_Controller_Admin
     
                 foreach ($fields as $fieldName => $fieldContent) {
                     /* @var $contentLang RM_Content_Lang */
-                    if (isset($data->process[ $fieldName ])) {
-                        $contentLang->setFieldContent($fieldName, $fieldContent, $data->process[ $fieldName ]);
+                    if (isset($data->process[$fieldName])) {
+                        $contentLang->setFieldContent($fieldName, $fieldContent, $data->process[$fieldName]);
                     }
                 }
             }
@@ -167,7 +168,7 @@ abstract class RM_Controller_Admin
                 foreach ($contentLang->getAllFields() as $field) {
                     $fields[ $field->getName() ] = $this->__getContentFieldValue($field);
                 }
-                $_POST['lang'][ $contentLang->getIdLang() ] = $fields;
+                $_POST['lang'][$contentLang->getIdLang()] = $fields;
             }
         }
     }
@@ -179,12 +180,12 @@ abstract class RM_Controller_Admin
     protected function _turnSwitcher($methodSuffix, $key) {
         $data = (object)$this->getRequest()->getPost();
         $prefix = (isset($data->{$key}) && intval($data->{$key}) === 1) ? 'set' : 'unset';
-        call_user_func( [$this->_entity, $prefix . $methodSuffix] );
+        call_user_func([$this->_entity, $prefix . $methodSuffix]);
     }
     
     
     protected function __goBack() {
-        $this->redirect( RM_View_Top::getInstance()->getBreadcrumbs()->getBack() );
+        $this->redirect(RM_View_Top::getInstance()->getBreadcrumbs()->getBack());
     }
     
     /**
@@ -201,7 +202,7 @@ abstract class RM_Controller_Admin
      * @return RM_Controller_Service_Ajax
      */
     protected function _getAjaxService() {
-        return new RM_Controller_Service_Ajax($this->_itemClassName );
+        return new RM_Controller_Service_Ajax($this->_itemClassName);
     }
     
     protected function __initParams() {
@@ -212,6 +213,10 @@ abstract class RM_Controller_Admin
     
     protected function __initPageNumber() {
         $this->view->page = (int)$this->getParam('page') ?: 1;
+    }
+
+    protected function __initModuleConst() {
+        define('APPLICATION_MODULE', $this->getParam('module'));
     }
 
 }
