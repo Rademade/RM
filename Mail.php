@@ -9,7 +9,7 @@ abstract class RM_Mail {
     public function __construct() {
         $this->_cnf = Zend_Registry::get("cfg");
         $transport = 'Zend_Mail_Transport_Smtp';
-        if ( isset($this->_cnf['mail']['transport']['type']) ) {
+        if (isset($this->_cnf['mail']['transport']['type'])) {
             $transport = $this->_cnf['mail']['transport']['type'];
         }
         $this->transport = new $transport(
@@ -28,13 +28,18 @@ abstract class RM_Mail {
     }
 
     protected function sendMail(RM_Mail_Message $mail) {
-        if ( isset($this->_cnf['mail']['remote-transport']) ) {
-            $mail->setRemoteTransportConfig( RM_Mail_Message_RemoteTransport::init( $this->_cnf['mail']['remote-transport'] ) );
-        }
-        if ( isset($this->_cnf['mail']['in-background']) && $this->_cnf['mail']['in-background'] ) {
-            RM_Mail_Message_Background::add($mail, $this->transport);
-        } else {
-            $mail->send( $this->transport );
+        $recipients = array_filter($mail->getRecipients());
+        if ($recipients) {
+            $mail->clearRecipients();
+            $mail->addTo($recipients);
+            if (isset($this->_cnf['mail']['remote-transport'])) {
+                $mail->setRemoteTransportConfig(RM_Mail_Message_RemoteTransport::init($this->_cnf['mail']['remote-transport']));
+            }
+            if (isset($this->_cnf['mail']['in-background']) && $this->_cnf['mail']['in-background']) {
+                RM_Mail_Message_Background::add($mail, $this->transport);
+            } else {
+                $mail->send($this->transport);
+            }
         }
     }
 
@@ -42,12 +47,12 @@ abstract class RM_Mail {
         $view = new Zend_View();
         $view->setScriptPath($this->_cnf['mail']['viewPath']);
         if (isset($this->_cnf['mail']['view']['helperPath'])) {
-            $view->setHelperPath( $this->_cnf['mail']['view']['helperPath'] );
+            $view->setHelperPath($this->_cnf['mail']['view']['helperPath']);
         } else {
-            $view->setHelperPath( APPLICATION_PATH . "/modules/admin/views/helpers" );
+            $view->setHelperPath(APPLICATION_PATH . "/modules/admin/views/helpers");
         }
         if (!empty($this->_viewData)) {
-            $view->assign( $this->_viewData );
+            $view->assign($this->_viewData);
         }
         return $view;
     }
