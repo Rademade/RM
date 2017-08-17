@@ -172,6 +172,16 @@ class RM_Date_Datetime
      * @param $count
      * @return RM_Date_Datetime
      */
+    public function minusDays($count) {
+        $dateInterval =  new DateInterval('P' . $count . 'D');
+        $dateInterval->invert = $count;
+        return $this->add($dateInterval);
+    }
+
+    /**
+     * @param $count
+     * @return RM_Date_Datetime
+     */
     public function addHours($count) {
         return $this->add(new DateInterval('PT' . $count . 'H'));
     }
