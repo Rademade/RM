@@ -36,7 +36,7 @@ class RM_Head
         return Layouts::$moduleName;
     }
 
-    public function dispatchLoopStartup(Zend_Controller_Request_Abstract $request) {
+    public function dispatchLoopStartup(Zend_Controller_Request_Abstract $request = null) {
         $this->_init();
         $this->_load();
         self::$_self = $this;
