@@ -40,7 +40,14 @@ class RM_Content_Field_Process_Html
     protected function __loadAllowedCssAttributes() {
         return [
             'text-align',
-            'float'
+            'float',
+            'padding',
+            'margin',
+            'border',
+            'border-width',
+            'background-color',
+            'width',
+            'height'
         ];
     }
 
