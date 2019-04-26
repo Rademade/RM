@@ -3,13 +3,15 @@ class RM_Query_Order
     implements
         RM_Query_Interface_ImproveSelect,
         RM_Query_Interface_Hashable {
-    
+
     private $_orders = array();
-    private $_expr;
     private $_isRandom = false;
 
     const ASC = 1;
     const DESC = 2;
+
+    const QUERY_TYPE_HASH = 1;
+    const QUERY_TYPE_EXPRESSION = 2;
 
     /**
      * @static
@@ -27,8 +29,17 @@ class RM_Query_Order
     public function add($field, $type) {
         //TODO check for duplicate
         $this->_orders[] = (object)array(
-            'field' =>  $this->_checkField($field),
-            'type'  =>  $this->_checkType($type)
+            'field' => $this->_checkField($field),
+            'type' => $this->_checkType($type),
+            'queryType' => self::QUERY_TYPE_HASH
+        );
+        return $this;
+    }
+
+    public function addExpression(Zend_Db_Expr $expression) {
+        $this->_orders[] = (object)array(
+            'expression' => $expression,
+            'queryType' => self::QUERY_TYPE_EXPRESSION
         );
         return $this;
     }
@@ -48,17 +59,15 @@ class RM_Query_Order
      * @param Zend_Db_Select $select
      */
     public function improveQuery(Zend_Db_Select $select) {
-        $execOrder = array();
-        if ($this->_expr instanceof Zend_Db_Expr) {
-            $select->order( $this->_expr );
-        } else {
-            foreach ($this->_orders as $order) {
-                $execOrder[] = join(' ', array(
+        foreach ($this->_orders as $order) {
+            if ($order->queryType == self::QUERY_TYPE_EXPRESSION) {
+                $select->order($order->expression);
+            } else {
+                $select->order(join(' ', array(
                     $order->field,
-                    $this->_getType( $order->type )
-                ));
+                    $this->_getType($order->type)
+                )));
             }
-            $select->order( $execOrder );
         }
     }
 
@@ -66,14 +75,12 @@ class RM_Query_Order
      * @param RM_Query_Order $order
      */
     public function mergeWith(self $order) {
-        if ($order->_expr instanceof Zend_Db_Expr) {
-            $this->_expr = $order->_expr;
-        }
         foreach ($order->_orders as $orderData) {
-            $this->add(
-                $orderData->field,
-                $orderData->type
-            );
+            if ($orderData->queryType == self::QUERY_TYPE_EXPRESSION) {
+                $this->addExpression($orderData->expression);
+            } else {
+                $this->add($orderData->field, $orderData->type);
+            }
         }
     }
 
@@ -83,14 +90,14 @@ class RM_Query_Order
 
     public function byRandom() {
         $this->_isRandom = true;
-        $this->_expr = new Zend_Db_Expr('RAND()');
+        $this->addExpression(new Zend_Db_Expr('RAND()'));
     }
 
     public function isRandom() {
         return $this->_isRandom;
     }
 
-    public function isHashable(){
+    public function isHashable() {
         if ($this->isRandom()) {
             return false;
         } else {
@@ -122,7 +129,7 @@ class RM_Query_Order
         }
         return $name;
     }
-    
+
     private function _checkType($type) {
         switch ($type) {
             case 'ASC':
