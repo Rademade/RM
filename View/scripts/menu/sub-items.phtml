@@ -8,11 +8,21 @@
     <ul class="submenu"><?
         foreach ($this->subItems as $subItem) :
             if ($this->hasAccess($this->currentUser, $subItem, $this->defaultRole)) :
-                echo $this->partial('menu/item.phtml', array(
-                    'menuItem' => $subItem,
-                    'currentMenu' => $this->currentMenu,
-                    'defaultRole' => $this->defaultRole
-                ));
+                if (isset($subItem['subItems'])) :
+                    echo $this->partial('menu/sub-items.phtml', array(
+                        'subItems' => $subItem['subItems'],
+                        'menuItem' => $subItem,
+                        'currentMenu' => $this->currentMenu,
+                        'currentUser' => $this->currentUser,
+                        'defaultRole' => isset($subItem['minRole']) ? $subItem['minRole'] : $this->defaultRole
+                    ));
+                else :
+                    echo $this->partial('menu/item.phtml', array(
+                        'menuItem' => $subItem,
+                        'currentMenu' => $this->currentMenu,
+                        'defaultRole' => $this->defaultRole
+                    ));
+                endif;
             endif;
         endforeach;
     ?></ul>
