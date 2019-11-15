@@ -45,6 +45,7 @@ class RM_Photo_Resize_Resizer {
     }
 
     public function saveImage($savePath) {
+        $this->_getImagick()->setImageFormat('webp');
         $this->_getImagick()->writeImage( $savePath );
         $this->_getImagick()->clear();
         $this->_getImagick()->destroy();
